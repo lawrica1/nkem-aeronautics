@@ -9,4 +9,5 @@ export const FIRM_OPTIONS = [
   { value: "agro-hub-southwest", label: "Agro-Hub Southwest" },
   { value: "otafarms-southwest", label: "OTAFARMS Southwest" },
   { value: "none", label: "Not affiliated" },
+  { value: "other", label: "Other" },
 ];

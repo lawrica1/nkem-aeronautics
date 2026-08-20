@@ -11,14 +11,11 @@ export function Partners() {
         <p className="text-xs font-semibold tracking-widest text-brand-gold uppercase">
           In Partnership With
         </p>
-        <div className="rounded-lg bg-white/95 p-3 shadow-lg">
-          <img
-            src="/images/partners/soweda-logo.jpg"
-            alt="South West Development Authority (SOWEDA)"
-            className="h-20 w-auto"
-          />
-        </div>
-        <p className="text-sm text-white/70">South West Development Authority (SOWEDA)</p>
+        <img
+          src="/images/partners/soweda-logo.jpg"
+          alt="South West Development Authority (SOWEDA)"
+          className="size-24 rounded-full object-cover drop-shadow-lg"
+        />
       </div>
     </section>
   );

@@ -1,9 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+"use client";
+
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Users2, ClipboardCheck, MapPin } from "lucide-react";
 import { LoginForm } from "@/components/LoginForm";
 
-export function Login() {
-  const navigate = useNavigate();
+export function LoginView() {
+  const router = useRouter();
 
   return (
     <main className="grid min-h-screen w-full lg:grid-cols-2">
@@ -109,7 +112,7 @@ export function Login() {
       {/* Form panel */}
       <div className="flex flex-col justify-center px-6 py-16 sm:px-16">
         <div className="mx-auto w-full max-w-sm">
-          <Link to="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
+          <Link href="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
             NKEM AERONAUTICS LTD
           </Link>
 
@@ -119,12 +122,12 @@ export function Login() {
           </p>
 
           <div className="mt-8">
-            <LoginForm onSuccess={() => navigate("/logbook")} />
+            <LoginForm onSuccess={() => router.push("/logbook")} />
           </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="font-medium text-brand-green hover:underline">
+            <Link href="/signup" className="font-medium text-brand-green hover:underline">
               Sign Up
             </Link>
           </p>

@@ -1,11 +1,23 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { hasAccount } from "@/lib/api";
 
 const WHATSAPP_NUMBER = "237670439117";
 
 export function Hero() {
+  // Starts false to match the server render, then syncs after mount —
+  // reading localStorage directly during render would mismatch SSR output.
+  const [returning, setReturning] = useState(false);
+
+  useEffect(() => {
+    setReturning(hasAccount());
+  }, []);
+
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-brand-navy px-6 py-24 text-white">
       {/* Real hero photo (crop-spraying aircraft) with a navy wash so white text stays legible. */}
@@ -50,13 +62,13 @@ export function Hero() {
             style={{ animationDelay: "300ms" }}
           >
             <Link
-              to="/login"
+              href={returning ? "/login" : "/signup"}
               className={cn(
                 buttonVariants(),
                 "h-auto gap-2 rounded-full bg-brand-gold px-8 py-3 text-base font-semibold text-brand-navy-dark transition-transform hover:scale-105 hover:bg-brand-gold/90",
               )}
             >
-              Nkem Aeronautics Official Portal
+              {returning ? "Log In to Portal" : "Sign Up — Nkem Aeronautics Portal"}
               <ArrowRight className="size-4" />
             </Link>
             <a
