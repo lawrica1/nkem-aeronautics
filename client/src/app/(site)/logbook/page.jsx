@@ -1,10 +1,20 @@
-import { useNavigate, Link } from "react-router-dom";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { UserRound, Bell, ClipboardList } from "lucide-react";
 import { getToken, clearToken } from "@/lib/api";
 
-export function LogbookPortal() {
-  const navigate = useNavigate();
-  const isLoggedIn = !!getToken();
+export default function LogbookPortalPage() {
+  const router = useRouter();
+  // Starts false to match the server render, then syncs after mount —
+  // reading localStorage directly during render would mismatch SSR output.
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getToken());
+  }, []);
 
   if (!isLoggedIn) {
     return (
@@ -12,7 +22,7 @@ export function LogbookPortal() {
         <h1 className="text-2xl font-semibold text-brand-navy-dark">Logbook Portal</h1>
         <p className="mt-2 text-muted-foreground">Log in to view your farmer logbook and mission history.</p>
         <Link
-          to="/login"
+          href="/login"
           className="mt-6 rounded-full bg-brand-navy px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
         >
           Log In
@@ -23,7 +33,7 @@ export function LogbookPortal() {
 
   function handleLogout() {
     clearToken();
-    navigate("/");
+    router.push("/");
   }
 
   return (

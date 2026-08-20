@@ -1,3 +1,5 @@
+"use client";
+
 import { useInView } from "@/hooks/useInView";
 import { cn } from "@/lib/utils";
 

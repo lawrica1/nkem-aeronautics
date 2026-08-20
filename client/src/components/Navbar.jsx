@@ -1,19 +1,24 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { getToken } from "@/lib/api";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { getToken, hasAccount } from "@/lib/api";
 
 export function Navbar() {
-  const location = useLocation();
+  const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isReturning, setIsReturning] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(!!getToken());
-  }, [location.pathname]);
+    setIsReturning(hasAccount());
+  }, [pathname]);
 
   return (
     <header className="bg-brand-navy text-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <Link to="/">
+        <Link href="/">
           <p className="text-2xl font-bold tracking-tight">NKEM AERONAUTICS LTD</p>
           <p className="mt-1 text-sm italic text-brand-gold">
             "Where fate and human glory lead, we are always there."
@@ -21,19 +26,25 @@ export function Navbar() {
         </Link>
         <ul className="flex items-center gap-8 text-sm font-medium">
           <li>
-            <Link to="/">Home</Link>
+            <Link href="/">Home</Link>
           </li>
           <li>
-            <Link to="/services">Services</Link>
+            <Link href="/services">Services</Link>
           </li>
           <li>
-            <Link to="/logbook">Logbook Portal</Link>
+            <Link href="/logbook">Logbook Portal</Link>
           </li>
           <li>
-            <Link to="/contact">Contact</Link>
+            <Link href="/contact">Contact</Link>
           </li>
           <li>
-            {isLoggedIn ? <Link to="/logbook">My Dashboard</Link> : <Link to="/login">Log In</Link>}
+            {isLoggedIn ? (
+              <Link href="/logbook">My Dashboard</Link>
+            ) : isReturning ? (
+              <Link href="/login">Log In</Link>
+            ) : (
+              <Link href="/signup">Sign Up</Link>
+            )}
           </li>
         </ul>
       </nav>

@@ -1,13 +1,18 @@
+"use client";
+
 import { useState } from "react";
-import { Eye, EyeOff, UserRound } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSignup } from "@/hooks/useSignup";
 import { useFirms } from "@/hooks/useFirms";
+import { SECTORS } from "@/components/SectorTabs";
+import { cn } from "@/lib/utils";
 
 const EMPTY_FORM = {
+  sector: "agricultural",
   surname: "",
   name: "",
   sex: "",
@@ -17,15 +22,22 @@ const EMPTY_FORM = {
   crop: "",
   password: "",
   firm: "",
-  photo: null,
+  otherFirm: "",
+  wildlifeOrg: "",
+  wildlifeRole: "",
 };
 
 export function SignupForm({ onSuccess }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [showPassword, setShowPassword] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(null);
+  // Kept separate from `form` (which is sent as JSON) since a File can't be
+  // serialized that way — wire this into the mutation body once the backend
+  // has a multipart/upload endpoint to receive it.
+  const [_photo, setPhoto] = useState(null);
   const signup = useSignup();
   const { data: firms } = useFirms();
+  const isAgricultural = form.sector === "agricultural";
+  const isWildlife = form.sector === "wildlife";
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -35,31 +47,36 @@ export function SignupForm({ onSuccess }) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handlePhotoChange(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setForm((prev) => ({ ...prev, photo: file }));
-    setPhotoPreview(URL.createObjectURL(file));
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
-    signup.mutate(form, { onSuccess });
+    signup.mutate(form, {
+      onSuccess: (data) => onSuccess?.({ ...data, telephone: form.telephone, email: form.email }),
+    });
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex items-center gap-4">
-        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-input">
-          {photoPreview ? (
-            <img src={photoPreview} alt="" className="size-full object-cover" />
-          ) : (
-            <UserRound className="size-7 text-muted-foreground" />
-          )}
-        </div>
-        <div className="space-y-1">
-          <Label htmlFor="photo">Profile Photo (optional)</Label>
-          <Input id="photo" name="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="h-auto py-1.5" />
+      <div className="space-y-2">
+        <Label>Signing up for</Label>
+        <div className="flex flex-wrap gap-2">
+          {SECTORS.map((sector) => {
+            const isActive = form.sector === sector.id;
+            return (
+              <button
+                key={sector.id}
+                type="button"
+                onClick={() => handleSelect("sector", sector.id)}
+                className={cn(
+                  "rounded-full px-4 py-2 text-sm font-medium transition-all",
+                  isActive
+                    ? "bg-brand-green text-white shadow-sm"
+                    : "bg-brand-gray-light text-neutral-600 hover:bg-neutral-200",
+                )}
+              >
+                {sector.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -100,30 +117,87 @@ export function SignupForm({ onSuccess }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address">Address / Farm Location</Label>
+        <Label htmlFor="photo">Profile Photo</Label>
+        <Input
+          id="photo"
+          name="photo"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="address">{isAgricultural ? "Address / Farm Location" : "Address"}</Label>
         <Input id="address" name="address" required value={form.address} onChange={handleChange} />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="crop">Crop Cultivation</Label>
-        <Input id="crop" name="crop" required value={form.crop} onChange={handleChange} />
-      </div>
+      {isAgricultural && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="crop">Crop Cultivation</Label>
+            <Input id="crop" name="crop" required value={form.crop} onChange={handleChange} />
+          </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="firm">Firm Affiliation</Label>
-        <Select value={form.firm} onValueChange={(v) => handleSelect("firm", v)}>
-          <SelectTrigger id="firm" className="w-full">
-            <SelectValue placeholder="Select firm affiliation" />
-          </SelectTrigger>
-          <SelectContent>
-            {firms?.map((firm) => (
-              <SelectItem key={firm.value} value={firm.value}>
-                {firm.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="firm">Firm Affiliation</Label>
+            <Select value={form.firm} onValueChange={(v) => handleSelect("firm", v)}>
+              <SelectTrigger id="firm" className="w-full">
+                <SelectValue placeholder="Select firm affiliation" />
+              </SelectTrigger>
+              <SelectContent>
+                {firms?.map((firm) => (
+                  <SelectItem key={firm.value} value={firm.value}>
+                    {firm.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {form.firm === "other" && (
+            <div className="space-y-2">
+              <Label htmlFor="otherFirm">Firm Name</Label>
+              <Input
+                id="otherFirm"
+                name="otherFirm"
+                placeholder="Enter the firm you're affiliated with"
+                required
+                value={form.otherFirm}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {isWildlife && (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="wildlifeOrg">Wildlife Organization / Site</Label>
+            <Input
+              id="wildlifeOrg"
+              name="wildlifeOrg"
+              placeholder="e.g. Lusaka Zoo, Kafue National Park"
+              required
+              value={form.wildlifeOrg}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="wildlifeRole">Position / Role</Label>
+            <Input
+              id="wildlifeRole"
+              name="wildlifeRole"
+              placeholder="e.g. Zoo Warden, Forest Warden"
+              required
+              value={form.wildlifeRole}
+              onChange={handleChange}
+            />
+          </div>
+        </>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
