@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ListChecks, Building2, NotebookPen, MessageCircle } from "lucide-react";
 import { SignupForm } from "@/components/SignupForm";
@@ -9,6 +10,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useVerifyOtp } from "@/hooks/useVerifyOtp";
 import { useResendOtp } from "@/hooks/useResendOtp";
+
+function BrandHeader() {
+  return (
+    <Link
+      href="/"
+      className="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-brand-navy-dark"
+    >
+      <Image
+        src="/images/logo.png"
+        alt="Nkem Aeronautics"
+        width={36}
+        height={36}
+        className="size-9 shrink-0 rounded-full"
+      />
+      NKEM AERONAUTICS LTD
+    </Link>
+  );
+}
 
 function maskTelephone(telephone) {
   if (!telephone) return null;
@@ -143,9 +162,7 @@ export function SignupView() {
       <div className="flex flex-col justify-center overflow-y-auto px-6 py-16 sm:px-16">
         {step === "done" && (
           <div className="mx-auto w-full max-w-md text-center">
-            <Link href="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
-              NKEM AERONAUTICS LTD
-            </Link>
+            <BrandHeader />
             <h2 className="mt-8 text-2xl font-bold text-brand-navy-dark">You&apos;re signed up</h2>
             <p className="mt-2 text-muted-foreground">
               Your logbook ID:{" "}
@@ -164,9 +181,7 @@ export function SignupView() {
 
         {step === "otp" && (
           <div className="mx-auto w-full max-w-md">
-            <Link href="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
-              NKEM AERONAUTICS LTD
-            </Link>
+            <BrandHeader />
 
             <h2 className="mt-8 text-2xl font-bold text-brand-navy-dark">Verify your account</h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -234,9 +249,7 @@ export function SignupView() {
 
         {step === "form" && (
           <div className="mx-auto w-full max-w-md">
-            <Link href="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
-              NKEM AERONAUTICS LTD
-            </Link>
+            <BrandHeader />
 
             <h2 className="mt-8 text-2xl font-bold text-brand-navy-dark">Create your account</h2>
             <p className="mt-1 text-sm text-muted-foreground">

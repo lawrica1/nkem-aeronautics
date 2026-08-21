@@ -6,7 +6,7 @@ export const metadata = {
   description:
     "Advanced aerial UAV solutions for agriculture, wildlife & surveillance, and real estate across Zambia and Sub-Saharan Africa.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.png",
   },
 };
 

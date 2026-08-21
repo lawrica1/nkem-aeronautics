@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { Users2, ClipboardCheck, MapPin } from "lucide-react";
 import { LoginForm } from "@/components/LoginForm";
@@ -112,7 +113,14 @@ export function LoginView() {
       {/* Form panel */}
       <div className="flex flex-col justify-center px-6 py-16 sm:px-16">
         <div className="mx-auto w-full max-w-sm">
-          <Link href="/" className="text-lg font-bold tracking-tight text-brand-navy-dark">
+          <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-brand-navy-dark">
+            <Image
+              src="/images/logo.png"
+              alt="Nkem Aeronautics"
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-full"
+            />
             NKEM AERONAUTICS LTD
           </Link>
 
