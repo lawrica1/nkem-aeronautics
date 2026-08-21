@@ -2,10 +2,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { connectDb } from "@/lib/server/db";
 import { Farmer } from "@/lib/server/models/Farmer";
+import { Admin } from "@/lib/server/models/Admin";
 import { HttpError } from "@/lib/server/httpError";
 
 const SALT_ROUNDS = 10;
 const TOKEN_TTL = "30d";
+const ADMIN_TOKEN_TTL = "12h";
+export const ADMIN_COOKIE = "nkem_admin";
 
 function getJwtSecret() {
   const secret = process.env.JWT_SECRET;
@@ -55,4 +58,42 @@ export async function requireFarmer(request) {
   }
 
   return farmer;
+}
+
+// The `aud: "admin"` claim keeps a farmer's token from being replayed
+// against an admin route (and vice versa) — they're both just JWTs signed
+// with the same secret otherwise.
+export function signAdminToken(adminId) {
+  return jwt.sign({ sub: String(adminId), aud: "admin" }, getJwtSecret(), {
+    expiresIn: ADMIN_TOKEN_TTL,
+  });
+}
+
+// Reads the admin session cookie (not a Bearer header — the export routes
+// need to work as plain <a href> downloads, which can't attach custom
+// headers, so the session rides along as a cookie instead).
+export async function requireAdmin(request) {
+  const token = request.cookies.get(ADMIN_COOKIE)?.value;
+  if (!token) {
+    throw new HttpError(401, "Not signed in.");
+  }
+
+  let payload;
+  try {
+    payload = verifyToken(token);
+  } catch {
+    throw new HttpError(401, "Invalid or expired session.");
+  }
+
+  if (payload.aud !== "admin") {
+    throw new HttpError(401, "Invalid session.");
+  }
+
+  await connectDb();
+  const admin = await Admin.findById(payload.sub);
+  if (!admin) {
+    throw new HttpError(401, "Account not found.");
+  }
+
+  return admin;
 }

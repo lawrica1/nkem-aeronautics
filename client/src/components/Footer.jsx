@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BrandMark } from "@/components/BrandMark";
 
 export function Footer() {
@@ -6,7 +7,16 @@ export function Footer() {
       <div className="m-auto w-full max-w-6xl px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-3">
           <div>
-            <p className="font-semibold text-brand-gold">NKEM AERONAUTICS LTD</p>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/images/logo.png"
+                alt="Nkem Aeronautics"
+                width={32}
+                height={32}
+                className="size-8 shrink-0 rounded-full"
+              />
+              <p className="font-semibold text-brand-gold">NKEM AERONAUTICS LTD</p>
+            </div>
             <p className="mt-3 text-sm text-brand-footer-text">
               Leading aerial technological solutions for agriculture, land preparation, and
               autonomous surveillance across Africa.
