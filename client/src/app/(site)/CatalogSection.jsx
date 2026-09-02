@@ -20,6 +20,11 @@ const CATALOG_COPY = {
     heading: "Real Estate & Surveillance Drone Catalog",
     subtitle: "Aerial imaging equipment for property and site documentation.",
   },
+  evtol: {
+    heading: "eVTOL Drone & UAV Catalogue",
+    subtitle:
+      "Fixed-wing, VTOL, survey, mapping, cargo, and agricultural UAV platforms available for purchase enquiries.",
+  },
 };
 
 export function CatalogSection() {

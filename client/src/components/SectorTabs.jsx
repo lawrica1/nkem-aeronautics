@@ -1,17 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-
-export const SECTORS = [
-  { id: "agricultural", label: "Agricultural Operations" },
-  { id: "wildlife", label: "Wildlife & Surveillance" },
-  { id: "realestate", label: "Real Estate & Surveillance" },
-];
+import { CATALOG_SECTORS } from "@/lib/catalog";
 
 export function SectorTabs({ active, onChange }) {
   return (
     <div className="flex flex-wrap justify-center gap-3">
-      {SECTORS.map((sector) => {
+      {CATALOG_SECTORS.map((sector) => {
         const isActive = active === sector.id;
         return (
           <button

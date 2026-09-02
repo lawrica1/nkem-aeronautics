@@ -84,13 +84,13 @@
 }
 
 @theme {
-  --color-brand-navy: #1b3a5c;
-  --color-brand-navy-dark: #152a45;
-  --color-brand-gold: #f2b705;
-  --color-brand-green: #3f7d4f;
-  --color-brand-gray-light: #e9e9e9;
-  --color-brand-input: #f0f0f0;
-  --color-brand-footer-text: #c7d1de;
+  --color-brand-navy: #0d2440;
+  --color-brand-navy-dark: #07182d;
+  --color-brand-gold: #38a8ff;
+  --color-brand-green: #0b84e5;
+  --color-brand-gray-light: #e8f3ff;
+  --color-brand-input: #eef6ff;
+  --color-brand-footer-text: #c8def3;
 
   --animate-float: float 5s ease-in-out infinite;
   --animate-gradient: gradient-pan 14s ease infinite;

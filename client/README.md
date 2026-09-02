@@ -10,4 +10,4 @@ npm run start
 npm run lint    # oxlint
 ```
 
-Env: `NEXT_PUBLIC_API_URL` (defaults to `http://localhost:5000/api`).
+Env: `MONGODB_URI` and `JWT_SECRET` are required for API routes. `NEXT_PUBLIC_API_URL` is optional and defaults to same-origin `/api`.

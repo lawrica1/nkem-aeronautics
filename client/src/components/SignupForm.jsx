@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSignup } from "@/hooks/useSignup";
 import { useFirms } from "@/hooks/useFirms";
-import { SECTORS } from "@/components/SectorTabs";
+import { PLATFORM_SECTORS } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
 const EMPTY_FORM = {
@@ -59,7 +59,7 @@ export function SignupForm({ onSuccess }) {
       <div className="space-y-2">
         <Label>Signing up for</Label>
         <div className="flex flex-wrap gap-2">
-          {SECTORS.map((sector) => {
+          {PLATFORM_SECTORS.map((sector) => {
             const isActive = form.sector === sector.id;
             return (
               <button
