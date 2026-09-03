@@ -1,6 +1,8 @@
-import { getFarmerStats } from "@/lib/server/stats";
+"use client";
 
-function StatTable({ title, rows, labelKey = "value" }) {
+import { useAdminStats } from "@/hooks/useAdminStats";
+
+function StatTable({ title, rows = [], labelKey = "value" }) {
   if (rows.length === 0) {
     return (
       <div>
@@ -16,8 +18,8 @@ function StatTable({ title, rows, labelKey = "value" }) {
       <table className="mt-3 w-full text-left text-sm">
         <tbody>
           {rows.map((row) => (
-            <tr key={row.value} className="border-b border-border last:border-0">
-              <td className="py-2 pr-4 text-muted-foreground">{row[labelKey]}</td>
+            <tr key={`${title}-${row.value}`} className="border-b border-border last:border-0">
+              <td className="py-2 pr-4 text-muted-foreground">{row[labelKey] ?? row.value}</td>
               <td className="py-2 font-medium text-brand-navy-dark">{row.count}</td>
             </tr>
           ))}
@@ -27,31 +29,47 @@ function StatTable({ title, rows, labelKey = "value" }) {
   );
 }
 
-export default async function AdminReportsPage() {
-  const stats = await getFarmerStats();
+export default function AdminReportsPage() {
+  const { data: stats, isLoading, isError, error } = useAdminStats();
 
   return (
     <div>
       <h1 className="text-2xl font-semibold text-brand-navy-dark">Reports</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Real registered-farmer counts, replacing estimate-based allocation.
+        Real registered-user counts and service demand summaries from the Node.js backend.
       </p>
 
-      <div className="mt-6 rounded-lg border border-border bg-brand-input/40 p-4 text-sm text-muted-foreground">
-        No per-region breakdown yet — farmer addresses are free text, not a structured
-        region/district field, so a reliable region count isn't available in this data. Verified
-        farmers: <span className="font-semibold text-brand-navy-dark">{stats.totalFarmers}</span>.
-        Service requests logged:{" "}
-        <span className="font-semibold text-brand-navy-dark">{stats.totalRequests}</span>.
-      </div>
+      {isLoading ? (
+        <div className="mt-6 rounded-lg border border-border bg-brand-input/40 p-4 text-sm text-muted-foreground">
+          Loading reports...
+        </div>
+      ) : null}
 
-      <div className="mt-8 grid gap-10 sm:grid-cols-2">
-        <StatTable title="By Sector" rows={stats.bySector} />
-        <StatTable title="By Firm Affiliation (agricultural)" rows={stats.byFirm} labelKey="label" />
-        <StatTable title="By Crop (agricultural)" rows={stats.byCrop} />
-        <StatTable title="Service Requests by Status" rows={stats.byStatus} />
-        <StatTable title="Service Requests by Type" rows={stats.byService} />
-      </div>
+      {isError ? (
+        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          {error.message}
+        </div>
+      ) : null}
+
+      {stats ? (
+        <>
+          <div className="mt-6 rounded-lg border border-border bg-brand-input/40 p-4 text-sm text-muted-foreground">
+            Verified users:{" "}
+            <span className="font-semibold text-brand-navy-dark">{stats.totalUsers}</span>.
+            Service requests logged:{" "}
+            <span className="font-semibold text-brand-navy-dark">{stats.totalRequests}</span>.
+          </div>
+
+          <div className="mt-8 grid gap-10 sm:grid-cols-2">
+            <StatTable title="By Sector" rows={stats.bySector} />
+            <StatTable title="By Country" rows={stats.byCountry} />
+            <StatTable title="By Region" rows={stats.byRegion} />
+            <StatTable title="By Firm Affiliation" rows={stats.byFirm} labelKey="label" />
+            <StatTable title="By Crop" rows={stats.byCrop} />
+            <StatTable title="Service Requests by Status" rows={stats.byStatus} />
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }

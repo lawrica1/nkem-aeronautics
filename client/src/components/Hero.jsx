@@ -38,13 +38,13 @@ export function Hero() {
           Zambia &middot; Sub-Saharan Africa
         </p>
 
-        <div className="max-w-3xl border-l-4 border-brand-gold pl-6">
+        <div className="max-w-3xl border-l-4 border-white/40 pl-6">
           <h1
             className="animate-fade-up text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl"
             style={{ animationDelay: "100ms" }}
           >
             Advanced Aerial Solutions &amp;{" "}
-            <span className="text-brand-gold">Agricultural Innovation</span>
+            <span className="text-white">Agricultural Innovation</span>
           </h1>
 
           <div
@@ -65,7 +65,7 @@ export function Hero() {
               href={returning ? "/login" : "/signup"}
               className={cn(
                 buttonVariants(),
-                "h-auto gap-2 rounded-full bg-brand-gold px-8 py-3 text-base font-semibold text-brand-navy-dark transition-transform hover:scale-105 hover:bg-brand-gold/90",
+                "h-auto gap-2 rounded-full bg-brand-blue px-8 py-3 text-base font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark",
               )}
             >
               {returning ? "Log In to Portal" : "Sign Up — Nkem Aeronautics Portal"}

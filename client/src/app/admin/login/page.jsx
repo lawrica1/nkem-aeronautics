@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { apiRequest, setAdminToken } from "@/lib/api";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -21,21 +22,15 @@ export default function AdminLoginPage() {
     setError(null);
     setIsPending(true);
 
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const data = await res.json().catch(() => null);
-
-    setIsPending(false);
-
-    if (!res.ok) {
-      setError(data?.message ?? "Sign in failed.");
-      return;
+    try {
+      const data = await apiRequest("/admin/login", { method: "POST", body: form });
+      setAdminToken(data.token);
+      router.push("/admin/logbooks");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsPending(false);
     }
-
-    router.push("/admin/logbooks");
   }
 
   return (

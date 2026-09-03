@@ -102,7 +102,7 @@ export function LoginView() {
 
         <div className="relative mt-auto">
           <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Manage your farm operations, <span className="text-brand-gold">in one place.</span>
+            Manage your farm operations, <span className="text-white">in one place.</span>
           </h1>
           <p className="mt-3 max-w-sm text-white/70">
             Registration, logbooks, and service requests unified in a single, secure workspace.

@@ -28,11 +28,11 @@ export function Challenges() {
       <div className="mx-auto w-full max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <Reveal>
-            <p className="mb-4 text-xs font-semibold tracking-widest text-brand-gold uppercase">
+            <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
               The Challenge
             </p>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Struggling with <span className="text-brand-gold">inaccurate distribution</span>,
+              Struggling with <span className="text-white">inaccurate distribution</span>,
               manual spraying limits, or disconnected farm records?
             </h2>
           </Reveal>
@@ -49,8 +49,8 @@ export function Challenges() {
           {CHALLENGES.map(({ icon: Icon, title, description }, index) => (
             <Reveal key={title} delay={index * 120}>
               <div className="h-full rounded-lg border border-white/10 bg-white/5 p-6">
-                <div className="flex size-10 items-center justify-center rounded-md border border-brand-gold/30 bg-brand-gold/10">
-                  <Icon className="size-5 text-brand-gold" />
+                <div className="flex size-10 items-center justify-center rounded-md border border-white/20 bg-white/10">
+                  <Icon className="size-5 text-white/80" />
                 </div>
                 <h3 className="mt-4 font-semibold">{title}</h3>
                 <p className="mt-2 text-sm text-white/60">{description}</p>

@@ -150,7 +150,7 @@ export function SignupView() {
 
         <div className="relative mt-auto">
           <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Join the network, <span className="text-brand-gold">get started today.</span>
+            Join the network, <span className="text-white">get started today.</span>
           </h1>
           <p className="mt-3 max-w-sm text-white/70">
             Register your farm and receive a logbook ID and identification in minutes.

@@ -3,12 +3,48 @@
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { getAdminToken, getApiBaseUrl } from "@/lib/api";
 import { FIRM_OPTIONS } from "@/lib/firms";
 
 export function LogbooksExportView() {
   const [firm, setFirm] = useState("all");
+  const [error, setError] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  async function download(format) {
+    setError("");
+    setIsDownloading(true);
+
+    try {
+      const token = getAdminToken();
+      const response = await fetch(
+        `${getApiBaseUrl()}/admin/logbooks/export?firm=${firm}&format=${format}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.message ?? `Export failed with status ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `nkem-logbooks-${firm}-${new Date().toISOString().slice(0, 10)}.${format}`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (downloadError) {
+      setError(downloadError.message);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   return (
     <div className="max-w-md space-y-6">
@@ -34,19 +70,24 @@ export function LogbooksExportView() {
       </div>
 
       <div className="flex gap-3">
-        <a
-          href={`/api/admin/logbooks/export?firm=${firm}&format=csv`}
-          className={cn(buttonVariants(), "bg-brand-navy text-white hover:bg-brand-navy/90")}
+        <Button
+          type="button"
+          disabled={isDownloading}
+          onClick={() => download("csv")}
+          className="bg-brand-navy text-white hover:bg-brand-navy/90"
         >
           Download CSV
-        </a>
-        <a
-          href={`/api/admin/logbooks/export?firm=${firm}&format=xlsx`}
-          className={buttonVariants({ variant: "outline" })}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isDownloading}
+          onClick={() => download("xlsx")}
         >
           Download Excel
-        </a>
+        </Button>
       </div>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </div>
   );
 }

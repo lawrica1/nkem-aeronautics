@@ -86,11 +86,14 @@
 @theme {
   --color-brand-navy: #0d2440;
   --color-brand-navy-dark: #07182d;
-  --color-brand-gold: #38a8ff;
-  --color-brand-green: #0b84e5;
-  --color-brand-gray-light: #e8f3ff;
-  --color-brand-input: #eef6ff;
-  --color-brand-footer-text: #c8def3;
+  --color-brand-blue: #2d35f5;
+  --color-brand-blue-dark: #2229d6;
+  --color-brand-blue-light: #6b75ff;
+  --color-brand-gold: #2d35f5;
+  --color-brand-green: #2d35f5;
+  --color-brand-gray-light: #eef0ff;
+  --color-brand-input: #f0f1ff;
+  --color-brand-footer-text: #c8d0f8;
 
   --animate-float: float 5s ease-in-out infinite;
   --animate-gradient: gradient-pan 14s ease infinite;

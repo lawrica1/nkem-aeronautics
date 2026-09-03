@@ -13,18 +13,23 @@ import { cn } from "@/lib/utils";
 
 const EMPTY_FORM = {
   sector: "agricultural",
+  country: "CM",
   surname: "",
   name: "",
   sex: "",
   telephone: "",
   email: "",
   address: "",
+  region: "",
+  district: "",
   crop: "",
+  otherCrop: "",
   password: "",
   firm: "",
   otherFirm: "",
   wildlifeOrg: "",
   wildlifeRole: "",
+  realEstatePurpose: "",
 };
 
 export function SignupForm({ onSuccess }) {
@@ -38,6 +43,7 @@ export function SignupForm({ onSuccess }) {
   const { data: firms } = useFirms();
   const isAgricultural = form.sector === "agricultural";
   const isWildlife = form.sector === "wildlife";
+  const isRealEstate = form.sector === "realestate";
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -132,6 +138,17 @@ export function SignupForm({ onSuccess }) {
         <Input id="address" name="address" required value={form.address} onChange={handleChange} />
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="region">Region</Label>
+          <Input id="region" name="region" value={form.region} onChange={handleChange} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="district">District / Division</Label>
+          <Input id="district" name="district" value={form.district} onChange={handleChange} />
+        </div>
+      </div>
+
       {isAgricultural && (
         <>
           <div className="space-y-2">
@@ -197,6 +214,24 @@ export function SignupForm({ onSuccess }) {
             />
           </div>
         </>
+      )}
+
+      {isRealEstate && (
+        <div className="space-y-2">
+          <Label htmlFor="realEstatePurpose">Purpose</Label>
+          <Select
+            value={form.realEstatePurpose}
+            onValueChange={(v) => handleSelect("realEstatePurpose", v)}
+          >
+            <SelectTrigger id="realEstatePurpose" className="w-full">
+              <SelectValue placeholder="Select purpose" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="private">Individual / Private</SelectItem>
+              <SelectItem value="government">Government</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       )}
 
       <div className="space-y-2">

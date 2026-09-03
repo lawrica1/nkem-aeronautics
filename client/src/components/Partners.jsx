@@ -8,7 +8,7 @@ export function Partners() {
       <div className="absolute inset-0 bg-brand-navy-dark/80" />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-4 text-center">
-        <p className="text-xs font-semibold tracking-widest text-brand-gold uppercase">
+        <p className="text-xs font-semibold tracking-widest text-white/60 uppercase">
           In Partnership With
         </p>
         <img

@@ -29,7 +29,7 @@ export function Navbar() {
           />
           <div>
             <p className="text-2xl font-bold tracking-tight">NKEM AERONAUTICS LTD</p>
-            <p className="mt-1 text-sm italic text-brand-gold">
+            <p className="mt-1 text-sm italic text-white/60">
               "Where fate and human glory lead, we are always there."
             </p>
           </div>
