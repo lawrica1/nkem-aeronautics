@@ -8,6 +8,7 @@ import { authRouter } from "./modules/auth/auth.routes.js";
 import { catalogRouter } from "./modules/catalog/catalog.routes.js";
 import { farmerRouter } from "./modules/farmers/farmer.routes.js";
 import { requestRouter } from "./modules/requests/request.routes.js";
+import { storageRouter } from "./modules/storage/storage.routes.js";
 import { errorHandler } from "./shared/middleware/errorHandler.js";
 import { notFound } from "./shared/middleware/notFound.js";
 
@@ -27,6 +28,7 @@ export function createApp() {
   app.use("/api/farmers", farmerRouter);
   app.use("/api/requests", requestRouter);
   app.use("/api/catalog", catalogRouter);
+  app.use("/api/storage", storageRouter);
   app.use("/api/admin", adminRouter);
 
   app.use(notFound);

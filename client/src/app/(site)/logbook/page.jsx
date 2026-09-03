@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell } from "lucide-react";
+import { Bell, ArrowRight } from "lucide-react";
 import { getToken, clearToken } from "@/lib/api";
 import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFarmerServiceRequests } from "@/hooks/useFarmerServiceRequests";
@@ -79,6 +79,19 @@ export default function LogbookPortalPage() {
         />
 
         <div className="space-y-8">
+          {profile.data && !profile.data.isProfileComplete && (
+            <Link
+              href="/onboarding"
+              className="flex items-center justify-between gap-3 rounded-xl border-2 border-brand-blue/30 bg-brand-blue/5 px-4 py-3 text-sm text-brand-navy-dark transition-colors hover:border-brand-blue/60"
+            >
+              <div>
+                <p className="font-semibold">Complete your profile</p>
+                <p className="text-muted-foreground">Add your name, sector, and location to unlock full logbook features.</p>
+              </div>
+              <ArrowRight className="size-5 shrink-0 text-brand-blue" />
+            </Link>
+          )}
+
           <WelcomeBanner name={profile.data?.name} />
 
           <ServiceRequestList

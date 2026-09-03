@@ -17,9 +17,13 @@ export async function signup(body) {
   }
 
   const otp = generateOtp();
-  const passwordHash = await bcrypt.hash(body.password, 10);
+  const passwordHash = body.password ? await bcrypt.hash(body.password, 10) : null;
   const otpHash = await hashOtp(otp);
   const otpExpiresAt = otpExpiryDate();
+
+  // Send OTP to phone if provided, otherwise fall back to email
+  const otpChannel = normalized.telephone ? "sms" : "email";
+  const otpContact = otpChannel === "sms" ? normalized.telephone : normalized.email;
 
   await prisma.user.upsert({
     where: { email: normalized.email },
@@ -28,8 +32,8 @@ export async function signup(body) {
       passwordHash,
       isVerified: false,
       otpHash,
-      otpChannel: "sms",
-      otpContact: normalized.telephone,
+      otpChannel,
+      otpContact,
       otpExpiresAt,
       otpResendCount: 0,
       otpLastSentAt: new Date(),
@@ -39,17 +43,19 @@ export async function signup(body) {
       passwordHash,
       isVerified: false,
       otpHash,
-      otpChannel: "sms",
-      otpContact: normalized.telephone,
+      otpChannel,
+      otpContact,
       otpExpiresAt,
       otpResendCount: 0,
       otpLastSentAt: new Date(),
     },
   });
 
-  sendOtp("sms", normalized.telephone, otp);
+  sendOtp(otpChannel, otpContact, otp);
   return {
     message: "Verification code sent.",
+    otpChannel,
+    otpContact,
     ...(env.nodeEnv !== "production" ? { otpDebug: otp } : {}),
   };
 }
@@ -127,6 +133,10 @@ export async function login({ email, password }) {
     where: { email: email.toLowerCase(), isVerified: true },
   });
   if (!user) throw new HttpError(401, "Invalid email or password.");
+
+  if (!user.passwordHash) {
+    throw new HttpError(400, "This account was created without a password. Please set a password through your profile settings.");
+  }
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) throw new HttpError(401, "Invalid email or password.");

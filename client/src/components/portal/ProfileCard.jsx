@@ -1,6 +1,9 @@
 "use client";
 
-import { UserRound, CheckCircle2, Sprout, Binoculars, Building2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserRound, CheckCircle2, Sprout, Binoculars, Building2, Camera, Loader2 } from "lucide-react";
+import { apiUpload } from "@/lib/api";
 
 const SECTOR_LABELS = {
   agricultural: "Agriculture",
@@ -24,15 +27,75 @@ function SectorBadge({ sector }) {
   );
 }
 
+function Avatar({ photoUrl, name, onPhotoChange }) {
+  const inputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("photo", file);
+      const updated = await apiUpload("/farmers/me/photo", fd);
+      onPhotoChange?.(updated.profilePhotoUrl);
+    } catch {
+      // silently ignore — user can retry
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="relative inline-block">
+      <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-brand-input">
+        {photoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photoUrl} alt={name ?? "Profile"} className="size-full object-cover" />
+        ) : (
+          <UserRound className="size-9 text-brand-navy/50" />
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border-2 border-background bg-brand-blue text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-60"
+        aria-label="Update profile photo"
+      >
+        {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <Camera className="size-3.5" />}
+      </button>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={handleFile}
+      />
+    </div>
+  );
+}
+
 export function ProfileCard({ farmer, onLogout }) {
+  const queryClient = useQueryClient();
   const displayName = farmer ? `${farmer.name} ${farmer.surname}` : "—";
+
+  function handlePhotoChange() {
+    queryClient.invalidateQueries({ queryKey: ["farmer", "me"] });
+  }
 
   return (
     <div className="h-fit rounded-xl border border-border bg-background p-6">
       <div className="flex flex-col items-center text-center">
-        <div className="flex size-20 items-center justify-center rounded-full bg-brand-input">
-          <UserRound className="size-9 text-brand-navy/50" />
-        </div>
+        <Avatar
+          photoUrl={farmer?.profilePhotoUrl}
+          name={displayName}
+          onPhotoChange={handlePhotoChange}
+        />
 
         <p className="mt-3 text-lg font-semibold text-brand-navy-dark">{displayName}</p>
 

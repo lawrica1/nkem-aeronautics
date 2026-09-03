@@ -6,6 +6,7 @@ import { serializeRequest } from "./request.serializer.js";
 export async function listForUser(user) {
   const requests = await prisma.serviceRequest.findMany({
     where: { userId: user.id },
+    include: { files: { orderBy: { createdAt: "asc" } } },
     orderBy: { createdAt: "desc" },
   });
   return requests.map(serializeRequest);
@@ -25,6 +26,13 @@ export async function createForUser(user, body) {
       status: REQUEST_STATUS.SUBMITTED,
     },
   });
+
+  if (Array.isArray(body.fileAssetIds) && body.fileAssetIds.length > 0) {
+    await prisma.fileAsset.updateMany({
+      where: { id: { in: body.fileAssetIds }, ownerId: user.id },
+      data: { serviceRequestId: request.id },
+    });
+  }
 
   return serializeRequest(request);
 }

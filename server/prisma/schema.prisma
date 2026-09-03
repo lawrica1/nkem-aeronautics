@@ -46,15 +46,15 @@ enum RequestStatus {
 model User {
   id                   String           @id @default(cuid())
   role                 Role             @default(farmer)
-  sector               Sector
+  sector               Sector?
   accountType          AccountType      @default(individual)
   country              String           @default("CM")
-  surname              String
-  name                 String
+  surname              String?
+  name                 String?
   sex                  String?
-  telephone            String
+  telephone            String?
   email                String           @unique
-  address              String
+  address              String?
   region               String?
   district             String?
   crop                 String?
@@ -64,8 +64,11 @@ model User {
   wildlifeOrg          String?
   wildlifeRole         String?
   realEstatePurpose    String?
-  passwordHash         String
+  profilePhotoKey      String?
+  profilePhotoUrl      String?
+  passwordHash         String?
   isVerified           Boolean          @default(false)
+  isProfileComplete    Boolean          @default(false)
   identificationNumber String?          @unique
   otpHash              String?
   otpChannel           String?
@@ -74,6 +77,7 @@ model User {
   otpResendCount       Int              @default(0)
   otpLastSentAt        DateTime?
   requests             ServiceRequest[]
+  files                FileAsset[]
   createdAt            DateTime         @default(now())
   updatedAt            DateTime         @updatedAt
 
@@ -92,6 +96,7 @@ model ServiceRequest {
   firm        String?
   status      RequestStatus @default(submitted)
   adminNotes  String        @default("")
+  files       FileAsset[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
@@ -103,4 +108,22 @@ model ServiceRequest {
 model Counter {
   key String @id
   seq Int    @default(0)
+}
+
+model FileAsset {
+  id               String          @id @default(cuid())
+  ownerId          String?
+  owner            User?           @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  serviceRequestId String?
+  serviceRequest   ServiceRequest? @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+  purpose          String          @default("general")
+  originalName     String
+  key              String          @unique
+  url              String
+  mimeType         String
+  size             Int
+  createdAt        DateTime        @default(now())
+
+  @@index([ownerId, purpose])
+  @@index([serviceRequestId])
 }

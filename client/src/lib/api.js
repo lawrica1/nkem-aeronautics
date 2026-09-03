@@ -71,3 +71,24 @@ export async function apiRequest(path, { method = "GET", body, auth = false, adm
 
   return data;
 }
+
+export async function apiUpload(path, formData, { admin = false } = {}) {
+  const headers = {};
+  const token = admin ? getAdminToken() : getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers,
+    credentials: "include",
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok) {
+    throw new Error(data?.message ?? `Upload failed with status ${res.status}`);
+  }
+
+  return data;
+}

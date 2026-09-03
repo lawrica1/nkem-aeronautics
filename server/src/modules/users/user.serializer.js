@@ -25,6 +25,8 @@ export function serializeUser(user) {
     realEstatePurpose: user.realEstatePurpose,
     identificationNumber: user.identificationNumber,
     isVerified: user.isVerified,
+    isProfileComplete: user.isProfileComplete ?? false,
+    profilePhotoUrl: user.profilePhotoUrl ?? null,
     createdAt: user.createdAt?.toISOString?.() ?? user.createdAt,
     updatedAt: user.updatedAt?.toISOString?.() ?? user.updatedAt,
   };

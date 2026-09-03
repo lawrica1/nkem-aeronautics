@@ -12,6 +12,7 @@
     "create-admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1125.0",
     "@prisma/client": "^6.16.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -20,7 +21,8 @@
     "express": "^4.21.2",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "prisma": "^6.16.1"
