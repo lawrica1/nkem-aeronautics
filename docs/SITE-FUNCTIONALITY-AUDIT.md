@@ -1,16 +1,16 @@
 # Nkem Aeronautics Site Functionality Audit
 
 **Date:** 2026-09-02  
-**Scope:** Current `client/` Next.js app, API routes, server helpers, models, docs, and configuration.
+**Scope:** Current `client/` Next.js frontend, separate `server/` Node.js backend, Prisma schema, docs, and configuration.
 
 ## 1. What This Site Is
 
-Nkem Aeronautics is a single full-stack Next.js application. It combines:
+Nkem Aeronautics is now a two-part digital platform. It combines:
 
 - A public marketing website for Nkem Aeronautics Ltd.
 - A farmer registration and logbook system.
 - Farmer signup, OTP verification, and login.
-- A service-request API for verified farmers.
+- A separate Node.js/Express service-request API for verified users.
 - A protected admin area for reports and logbook exports.
 
 The most important purpose is data collection for real farmer counts, firm affiliation, crops, and service needs. This is meant to support better resource allocation instead of relying on estimates.
@@ -135,7 +135,7 @@ Status: built as static frontend data.
 
 Gaps:
 
-- Product data is currently stored in `client/src/lib/catalog.js`.
+- Product data is currently stored in `client/src/lib/catalog.js` and mirrored by the backend catalog module.
 - Product cards support images when image files are added, but the pasted chat images are not present as files in the repo.
 - No pricing is shown.
 - Purchasing is treated as enquiry-based until prices/payment are confirmed.
@@ -149,7 +149,7 @@ Routes/components:
 - `SignupView`
 - `SignupForm`
 - `useSignup`
-- `/api/auth/signup`
+- `server/src/modules/auth`
 
 Signup supports:
 
@@ -203,8 +203,7 @@ Gaps:
 
 Routes/hooks:
 
-- `/api/auth/verify-otp`
-- `/api/auth/resend-otp`
+- `server/src/modules/auth`
 - `useVerifyOtp`
 - `useResendOtp`
 
@@ -226,14 +225,14 @@ Production blocker: no real SMS/email provider is connected.
 
 Files:
 
-- `client/src/lib/server/models/Counter.js`
-- `client/src/lib/server/models/Farmer.js`
+- `server/src/modules/logbooks/counter.model.js`
+- `server/prisma/schema.prisma`
 
 Behavior:
 
 - ID is generated after OTP verification.
 - Format: `NKEM-{year}-{sequence}`.
-- Uses MongoDB atomic `$inc`, so concurrent signups should not receive duplicate IDs.
+- Uses a Prisma-backed PostgreSQL counter update, so concurrent signups should not receive duplicate IDs.
 
 Status: built well.
 
@@ -247,7 +246,7 @@ Routes/components:
 - `LoginView`
 - `LoginForm`
 - `useLogin`
-- `/api/auth/login`
+- `server/src/modules/auth`
 
 Behavior:
 
@@ -279,17 +278,15 @@ Status: frontend shell only.
 
 Gaps:
 
-- No backend token validation before showing the shell.
-- No API route fetches the farmer profile.
-- No API route fetches mission/service history.
-- No real logbook data is displayed.
+- Operation/mission history is not implemented yet.
+- Pilot/drone assignment data is not implemented yet.
 
 ## 9. Farmer Service Request Functionality
 
 Routes/hooks:
 
 - `useServiceRequest`
-- `/api/farmers/service-requests`
+- `server/src/modules/requests`
 
 Backend behavior:
 
@@ -304,7 +301,6 @@ Status: backend exists; frontend UI is missing.
 
 Gaps:
 
-- No service request form exists.
 - No firm dashboard or notification exists.
 - Current "routing" means database classification, not actual delivery to a firm.
 - Unaffiliated farmer handling still needs a business decision.
@@ -313,7 +309,7 @@ Gaps:
 
 ### Admin Account Creation
 
-Script: `client/scripts/create-admin.mjs`
+Script: `server/scripts/create-admin.mjs`
 
 Status: built.
 
@@ -328,7 +324,7 @@ Routes:
 
 Status: built.
 
-Admin sessions use an httpOnly cookie called `nkem_admin`, with JWT audience `admin`, expiring after 12 hours.
+Admin login uses the separate backend and stores a backend-issued JWT in browser storage for the current MVP.
 
 ### Protected Admin Pages
 
@@ -343,7 +339,7 @@ Unauthenticated users are redirected to `/admin/login`.
 
 ### Admin Logbook Export
 
-Route: `/api/admin/logbooks/export`
+Route: `GET /api/admin/logbooks/export` on the separate backend.
 
 Status: built.
 
@@ -377,7 +373,7 @@ Gap: no per-region reporting exists because address is free text, not structured
 
 ## 11. Data Models
 
-### Farmer
+### User
 
 Stores:
 
@@ -424,16 +420,17 @@ Used for atomic farmer ID generation.
 
 Required:
 
-- `MONGODB_URI`
+- `DATABASE_URL`
 - `JWT_SECRET`
+- `CLIENT_ORIGIN`
 
 Optional:
 
-- `NEXT_PUBLIC_API_URL`
+- `NEXT_PUBLIC_API_URL` in `client/.env.local`
 
-`.env.example` is present and matches the current same-origin Next.js API setup.
+`.env.example` files are present for the separated client and server setup.
 
-Issue: `client/README.md` is stale and still says the API defaults to `http://localhost:5000/api`.
+Real database credentials must stay in `server/.env` and must not be committed.
 
 ## 13. Verification Results
 
@@ -475,7 +472,7 @@ Audit result:
 
 ## 15. Overall Assessment
 
-The project is in a solid MVP foundation state. It builds successfully, and the backend is more complete than the older docs suggest. The core architecture is now Next.js full-stack with MongoDB, not Vite plus a separate Express server.
+The project is in a solid MVP foundation state. The core architecture is now the requested split: Next.js frontend plus a separate Node.js/Express backend using Prisma with Neon PostgreSQL.
 
 The main remaining work is connecting real-world workflows:
 

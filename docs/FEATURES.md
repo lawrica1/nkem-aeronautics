@@ -4,7 +4,7 @@ Status tracker for Nkem Aeronautics Ltd.
 
 Legend: done, in progress, not started, blocked/open decision.
 
-_Last synced against actual code: 2026-09-02. See `docs/SITE-FUNCTIONALITY-AUDIT.md` for the fuller functionality audit._
+_Last synced against actual code: 2026-09-03. See `docs/SITE-FUNCTIONALITY-AUDIT.md` for the fuller functionality audit._
 
 ## Branding & Layout
 
@@ -42,18 +42,20 @@ _Last synced against actual code: 2026-09-02. See `docs/SITE-FUNCTIONALITY-AUDIT
 
 ## Logbook & Identification
 
-- done: Collision-safe farmer/logbook ID generation through an atomic MongoDB counter.
+- done: Collision-safe farmer/logbook ID generation through a Prisma-backed PostgreSQL counter.
 - done: Farmer ID is assigned after OTP verification.
-- in progress: Logbook portal page exists and is auth-gated by browser token presence.
-- not started: Logbook portal does not yet fetch/display real farmer profile, request history, operations, results, or pilot reviews.
+- done: Logbook portal page fetches and displays real farmer profile (name, logbook ID, sector, crop, firm, phone).
+- done: `GET /api/farmers/me` endpoint returns authenticated farmer profile from the separate backend.
+- not started: Logbook portal operations history section (requires pilots/drones/ops to be assigned).
+- not started: Pilot reviews.
 
 ## Service Requests & Routing
 
-- done: Authenticated backend route exists for farmer service-request creation.
-- in progress: Requests are stored with status `routed` or `unassigned`.
-- in progress: "Routed" currently means classified in the database, not delivered through a firm dashboard or notification.
-- not started: User-facing service request form.
-- not started: Nkem/admin request review workflow.
+- done: `GET /api/farmers/service-requests` — authenticated list of farmer's own requests.
+- done: `POST /api/farmers/service-requests` — creates request with proper status lifecycle (submitted → under_review → … → completed).
+- done: User-facing service request form in the logbook portal (sector-aware service options).
+- done: Service request status badge rendering with full lifecycle colours.
+- in progress: Nkem/admin request review workflow (admin can view in reports but cannot yet change status).
 - not started: Pilot/drone assignment and operation lifecycle.
 - open decision: Handling for unaffiliated farmers and partner/firm handoff process.
 
@@ -69,9 +71,9 @@ _Last synced against actual code: 2026-09-02. See `docs/SITE-FUNCTIONALITY-AUDIT
 
 ## Admin
 
-- done: Admin creation script exists at `client/scripts/create-admin.mjs`.
+- done: Admin creation script exists at `server/scripts/create-admin.mjs`.
 - done: Admin login route and page exist.
-- done: Admin auth uses an httpOnly cookie with admin JWT audience.
+- done: Admin auth uses a backend-issued JWT stored by the frontend admin gate.
 - done: Protected admin layout redirects unauthenticated users.
 - done: Admin logbook export supports CSV and Excel.
 - done: Export uses an explicit allowlist and excludes password hash/OTP data.
@@ -81,8 +83,8 @@ _Last synced against actual code: 2026-09-02. See `docs/SITE-FUNCTIONALITY-AUDIT
 ## Data Aggregation & Reporting
 
 - done: Admin reports include total verified farmers, total requests, farmers by sector, agricultural farmers by firm/crop, and requests by status/service.
-- not started: Reliable per-region reporting.
-- blocked/open decision: Signup currently stores free-text address, so structured country/region/district fields are needed before accurate regional reports can exist.
+- done: Signup supports structured country, region, and district fields.
+- done: Admin reports include country and region breakdowns.
 
 ## Public Pages
 
@@ -95,13 +97,14 @@ _Last synced against actual code: 2026-09-02. See `docs/SITE-FUNCTIONALITY-AUDIT
 
 ## Infrastructure
 
-- done: Full-stack Next.js App Router app in `client/`.
-- done: API routes live under `client/src/app/api/**`.
-- done: MongoDB connection through Mongoose.
-- done: Server-only code lives under `client/src/lib/server/`.
-- done: `.env.example` documents `MONGODB_URI`, `JWT_SECRET`, and optional `NEXT_PUBLIC_API_URL`.
+- done: Frontend lives in `client/` as a Next.js App Router app.
+- done: Backend lives in `server/` as a separate Node.js/Express API.
+- done: Database access uses Prisma with PostgreSQL/Neon.
+- done: Prisma schema lives at `server/prisma/schema.prisma`.
+- done: `client/.env.example` documents `NEXT_PUBLIC_API_URL`.
+- done: `server/.env.example` documents `DATABASE_URL`, `JWT_SECRET`, `CLIENT_ORIGIN`, and `OTP_PROVIDER`.
 - done: `npm.cmd run build` passes.
 - done: `npm.cmd run lint` passes with warnings only.
-- in progress: `npm audit` reports 2 moderate vulnerabilities through `exceljs -> uuid`.
-- not started: Health check endpoint.
+- in progress: Dependency audit needs to be re-run after the Prisma/Express lockfile refresh.
+- done: Health check endpoint exists at `/health`.
 - not started: Automated tests.
