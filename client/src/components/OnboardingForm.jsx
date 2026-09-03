@@ -2,31 +2,37 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sprout, Binoculars, Building2 } from "lucide-react";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
+import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFirms } from "@/hooks/useFirms";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { Sprout, Binoculars, Building2 } from "lucide-react";
 
-const SECTORS = [
-  { id: "agricultural", label: "Agriculture", Icon: Sprout },
-  { id: "wildlife", label: "Wildlife & Surveillance", Icon: Binoculars },
-  { id: "realestate", label: "Real Estate & Survey", Icon: Building2 },
-];
+const SECTOR_META = {
+  agricultural: { label: "Agriculture", Icon: Sprout },
+  wildlife: { label: "Wildlife & Surveillance", Icon: Binoculars },
+  realestate: { label: "Real Estate & Survey", Icon: Building2 },
+};
 
 export function OnboardingForm() {
   const router = useRouter();
+  const { data: profile } = useFarmerProfile({ enabled: true });
   const update = useUpdateProfile();
   const { data: firms } = useFirms();
+
+  const sector = profile?.sector;
+  const isAgricultural = sector === "agricultural";
+  const isWildlife = sector === "wildlife";
+  const isRealEstate = sector === "realestate";
+  const meta = SECTOR_META[sector];
 
   const [form, setForm] = useState({
     name: "",
     surname: "",
     sex: "",
-    sector: "",
     telephone: "",
     address: "",
     region: "",
@@ -48,10 +54,6 @@ export function OnboardingForm() {
     set(e.target.name, e.target.value);
   }
 
-  const isAgricultural = form.sector === "agricultural";
-  const isWildlife = form.sector === "wildlife";
-  const isRealEstate = form.sector === "realestate";
-
   function handleSubmit(e) {
     e.preventDefault();
     update.mutate(form, {
@@ -61,6 +63,17 @@ export function OnboardingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
+      {/* Show sector badge — already locked in */}
+      {meta && (
+        <div className="flex items-center gap-2 rounded-xl border border-brand-blue/20 bg-brand-blue/5 px-4 py-3">
+          <meta.Icon className="size-5 text-brand-blue" />
+          <div>
+            <p className="text-sm font-semibold text-brand-navy-dark">{meta.label}</p>
+            <p className="text-xs text-muted-foreground">Selected at sign-up — contact support to change</p>
+          </div>
+        </div>
+      )}
+
       {/* Identity */}
       <section className="space-y-4">
         <h2 className="text-base font-semibold text-brand-navy-dark">Who you are</h2>
@@ -88,96 +101,90 @@ export function OnboardingForm() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="telephone">Phone <span className="font-normal text-muted-foreground">(optional if provided at signup)</span></Label>
-            <Input id="telephone" name="telephone" type="tel" value={form.telephone} onChange={handleChange} />
+            <Label htmlFor="telephone">
+              Phone{" "}
+              <span className="font-normal text-muted-foreground">
+                {profile?.telephone ? "(already set)" : "(optional)"}
+              </span>
+            </Label>
+            <Input
+              id="telephone"
+              name="telephone"
+              type="tel"
+              placeholder={profile?.telephone ?? "+237 670 000 000"}
+              value={form.telephone}
+              onChange={handleChange}
+            />
           </div>
         </div>
       </section>
 
-      {/* Sector */}
-      <section className="space-y-4">
-        <h2 className="text-base font-semibold text-brand-navy-dark">
-          What you do <span className="text-destructive">*</span>
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {SECTORS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => set("sector", id)}
-              className={cn(
-                "flex flex-col items-center gap-2 rounded-xl border-2 px-4 py-4 text-sm font-medium transition-all",
-                form.sector === id
-                  ? "border-brand-blue bg-brand-blue/5 text-brand-navy-dark"
-                  : "border-border text-muted-foreground hover:border-brand-blue/40",
-              )}
-            >
-              <Icon className={cn("size-6", form.sector === id ? "text-brand-blue" : "text-muted-foreground")} />
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {isAgricultural && (
-          <div className="space-y-4 rounded-xl border border-border bg-brand-input/40 p-4">
-            <div className="space-y-2">
-              <Label htmlFor="crop">Crop Cultivation <span className="text-destructive">*</span></Label>
-              <Input id="crop" name="crop" required={isAgricultural} value={form.crop} onChange={handleChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="firm">Firm Affiliation <span className="text-destructive">*</span></Label>
-              <Select value={form.firm} onValueChange={(v) => set("firm", v)}>
-                <SelectTrigger id="firm" className="w-full"><SelectValue placeholder="Select firm" /></SelectTrigger>
-                <SelectContent>
-                  {firms?.map((f) => (
-                    <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {form.firm === "other" && (
-              <div className="space-y-2">
-                <Label htmlFor="otherFirm">Firm Name <span className="text-destructive">*</span></Label>
-                <Input id="otherFirm" name="otherFirm" required value={form.otherFirm} onChange={handleChange} />
-              </div>
-            )}
+      {/* Sector-specific fields */}
+      {isAgricultural && (
+        <section className="space-y-4">
+          <h2 className="text-base font-semibold text-brand-navy-dark">Your farm</h2>
+          <div className="space-y-2">
+            <Label htmlFor="crop">Crop Cultivation <span className="text-destructive">*</span></Label>
+            <Input id="crop" name="crop" required value={form.crop} onChange={handleChange} placeholder="e.g. Maize, Cassava, Rubber" />
           </div>
-        )}
-
-        {isWildlife && (
-          <div className="space-y-4 rounded-xl border border-border bg-brand-input/40 p-4">
-            <div className="space-y-2">
-              <Label htmlFor="wildlifeOrg">Organisation / Site <span className="text-destructive">*</span></Label>
-              <Input id="wildlifeOrg" name="wildlifeOrg" required={isWildlife} placeholder="e.g. Kafue National Park" value={form.wildlifeOrg} onChange={handleChange} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="wildlifeRole">Position / Role <span className="text-destructive">*</span></Label>
-              <Input id="wildlifeRole" name="wildlifeRole" required={isWildlife} placeholder="e.g. Forest Warden" value={form.wildlifeRole} onChange={handleChange} />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="firm">Firm Affiliation <span className="text-destructive">*</span></Label>
+            <Select value={form.firm} onValueChange={(v) => set("firm", v)}>
+              <SelectTrigger id="firm" className="w-full"><SelectValue placeholder="Select firm" /></SelectTrigger>
+              <SelectContent>
+                {firms?.map((f) => (
+                  <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        )}
-
-        {isRealEstate && (
-          <div className="rounded-xl border border-border bg-brand-input/40 p-4">
+          {form.firm === "other" && (
             <div className="space-y-2">
-              <Label htmlFor="realEstatePurpose">Purpose <span className="text-destructive">*</span></Label>
-              <Select value={form.realEstatePurpose} onValueChange={(v) => set("realEstatePurpose", v)}>
-                <SelectTrigger id="realEstatePurpose" className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="private">Individual / Private</SelectItem>
-                  <SelectItem value="government">Government</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="otherFirm">Firm Name <span className="text-destructive">*</span></Label>
+              <Input id="otherFirm" name="otherFirm" required value={form.otherFirm} onChange={handleChange} />
             </div>
+          )}
+        </section>
+      )}
+
+      {isWildlife && (
+        <section className="space-y-4">
+          <h2 className="text-base font-semibold text-brand-navy-dark">Your organisation</h2>
+          <div className="space-y-2">
+            <Label htmlFor="wildlifeOrg">Organisation / Site <span className="text-destructive">*</span></Label>
+            <Input id="wildlifeOrg" name="wildlifeOrg" required value={form.wildlifeOrg} onChange={handleChange} placeholder="e.g. Kafue National Park" />
           </div>
-        )}
-      </section>
+          <div className="space-y-2">
+            <Label htmlFor="wildlifeRole">Position / Role <span className="text-destructive">*</span></Label>
+            <Input id="wildlifeRole" name="wildlifeRole" required value={form.wildlifeRole} onChange={handleChange} placeholder="e.g. Forest Warden" />
+          </div>
+        </section>
+      )}
+
+      {isRealEstate && (
+        <section className="space-y-4">
+          <h2 className="text-base font-semibold text-brand-navy-dark">Your purpose</h2>
+          <div className="space-y-2">
+            <Label htmlFor="realEstatePurpose">Purpose <span className="text-destructive">*</span></Label>
+            <Select value={form.realEstatePurpose} onValueChange={(v) => set("realEstatePurpose", v)}>
+              <SelectTrigger id="realEstatePurpose" className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="private">Individual / Private</SelectItem>
+                <SelectItem value="government">Government</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </section>
+      )}
 
       {/* Location */}
       <section className="space-y-4">
         <h2 className="text-base font-semibold text-brand-navy-dark">Where you are</h2>
         <div className="space-y-2">
-          <Label htmlFor="address">{isAgricultural ? "Address / Farm Location" : "Address"} <span className="text-destructive">*</span></Label>
+          <Label htmlFor="address">
+            {isAgricultural ? "Address / Farm Location" : "Address"}{" "}
+            <span className="text-destructive">*</span>
+          </Label>
           <Input id="address" name="address" required value={form.address} onChange={handleChange} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -199,16 +206,12 @@ export function OnboardingForm() {
       <div className="flex gap-3">
         <Button
           type="submit"
-          disabled={update.isPending || !form.name || !form.surname || !form.sector}
+          disabled={update.isPending || !form.name || !form.surname}
           className="flex-1 bg-brand-navy text-white hover:bg-brand-navy/90"
         >
           {update.isPending ? "Saving…" : "Complete Profile & Go to Logbook →"}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.push("/logbook")}
-        >
+        <Button type="button" variant="outline" onClick={() => router.push("/logbook")}>
           Skip for now
         </Button>
       </div>

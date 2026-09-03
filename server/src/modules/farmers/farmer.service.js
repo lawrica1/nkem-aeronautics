@@ -40,9 +40,9 @@ export async function updateProfile(user, body) {
     if (body[key] !== undefined) data[key] = body[key];
   }
 
-  // Mark profile complete when name + surname + sector are all provided
+  // Mark profile complete when name + surname are provided (sector is set at signup)
   const merged = { ...user, ...data };
-  if (merged.name && merged.surname && merged.sector) {
+  if (merged.name && merged.surname) {
     data.isProfileComplete = true;
   }
 

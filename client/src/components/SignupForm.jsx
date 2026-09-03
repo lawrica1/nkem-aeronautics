@@ -1,14 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Sprout, Binoculars, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSignup } from "@/hooks/useSignup";
 import { cn } from "@/lib/utils";
 
+const SECTORS = [
+  {
+    id: "agricultural",
+    label: "Agriculture",
+    description: "Crop farming, plantation management, farm monitoring",
+    Icon: Sprout,
+  },
+  {
+    id: "wildlife",
+    label: "Wildlife & Surveillance",
+    description: "National parks, wildlife reserves, environmental monitoring",
+    Icon: Binoculars,
+  },
+  {
+    id: "realestate",
+    label: "Real Estate & Survey",
+    description: "Land surveys, property mapping, site inspection",
+    Icon: Building2,
+  },
+];
+
 export function SignupForm({ onSuccess }) {
+  const [step, setStep] = useState("sector"); // "sector" | "credentials"
+  const [sector, setSector] = useState(null);
   const [mode, setMode] = useState("password"); // "password" | "otp"
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
@@ -16,20 +40,104 @@ export function SignupForm({ onSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const signup = useSignup();
 
+  function handleSectorNext() {
+    if (sector) setStep("credentials");
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    const body = mode === "otp"
-      ? { email, mode: "otp" }
-      : { email, password, telephone: telephone || undefined };
+    const body =
+      mode === "otp"
+        ? { email, sector, mode: "otp" }
+        : { email, sector, password, telephone: telephone || undefined };
 
     signup.mutate(body, {
       onSuccess: (data) =>
-        onSuccess?.({ email, telephone: telephone || null, otpChannel: data.otpChannel, otpContact: data.otpContact }),
+        onSuccess?.({
+          email,
+          telephone: telephone || null,
+          sector,
+          otpChannel: data.otpChannel,
+          otpContact: data.otpContact,
+        }),
     });
   }
 
+  if (step === "sector") {
+    return (
+      <div className="space-y-6">
+        <div>
+          <p className="text-sm text-muted-foreground">
+            This helps us show you the right services and set up your account correctly.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {SECTORS.map(({ id, label, description, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setSector(id)}
+              className={cn(
+                "flex w-full items-start gap-4 rounded-xl border-2 px-4 py-4 text-left transition-all",
+                sector === id
+                  ? "border-brand-blue bg-brand-blue/5"
+                  : "border-border hover:border-brand-blue/40 hover:bg-brand-input/40",
+              )}
+            >
+              <div
+                className={cn(
+                  "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
+                  sector === id ? "bg-brand-blue text-white" : "bg-brand-input text-muted-foreground",
+                )}
+              >
+                <Icon className="size-5" />
+              </div>
+              <div>
+                <p className={cn("font-semibold", sector === id ? "text-brand-navy-dark" : "text-foreground")}>
+                  {label}
+                </p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <Button
+          type="button"
+          onClick={handleSectorNext}
+          disabled={!sector}
+          className="w-full bg-brand-navy text-white hover:bg-brand-navy/90 disabled:opacity-50"
+        >
+          Continue
+        </Button>
+      </div>
+    );
+  }
+
+  // step === "credentials"
+  const chosen = SECTORS.find((s) => s.id === sector);
+
   return (
     <div className="space-y-6">
+      {/* Sector badge + back */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setStep("sector")}
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Back
+        </button>
+        {chosen && (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-medium text-brand-blue">
+            <chosen.Icon className="size-3.5" />
+            {chosen.label}
+          </span>
+        )}
+      </div>
+
       {/* Mode toggle */}
       <div className="flex rounded-lg border border-border bg-brand-input/60 p-1">
         {[
@@ -68,7 +176,10 @@ export function SignupForm({ onSuccess }) {
         {mode === "password" && (
           <>
             <div className="space-y-2">
-              <Label htmlFor="telephone">Phone Number <span className="font-normal text-muted-foreground">(optional)</span></Label>
+              <Label htmlFor="telephone">
+                Phone Number{" "}
+                <span className="font-normal text-muted-foreground">(optional)</span>
+              </Label>
               <Input
                 id="telephone"
                 type="tel"
@@ -78,7 +189,7 @@ export function SignupForm({ onSuccess }) {
                 onChange={(e) => setTelephone(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                If provided, we&apos;ll send your verification code by SMS. Otherwise we&apos;ll use your email.
+                If provided, your verification code will be sent by SMS. Otherwise we use email.
               </p>
             </div>
 
@@ -109,7 +220,8 @@ export function SignupForm({ onSuccess }) {
 
         {mode === "otp" && (
           <p className="rounded-lg bg-brand-input/60 px-3 py-2 text-sm text-muted-foreground">
-            We&apos;ll send a one-time code to your email to verify your account. You can set a password and fill in your profile details after signing in.
+            We&apos;ll send a one-time code to your email. You can set a password and complete your
+            profile details after signing in.
           </p>
         )}
 

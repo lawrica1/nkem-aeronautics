@@ -107,8 +107,8 @@ export function SignupView() {
             <p className="text-xs text-muted-foreground">Getting started</p>
             <ul className="mt-2 space-y-2 text-sm text-brand-navy-dark">
               {[
-                { icon: ShieldCheck, text: "Verify your email" },
-                { icon: UserRoundCheck, text: "Complete your profile" },
+                { icon: UserRoundCheck, text: "Choose your sector" },
+                { icon: ShieldCheck, text: "Verify your account" },
                 { icon: NotebookPen, text: "Logbook ID issued" },
               ].map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-center gap-2">
