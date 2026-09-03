@@ -1,13 +1,21 @@
-# Nkem Aeronautics — Frontend
+# Nkem Aeronautics Frontend
 
-Next.js (App Router) frontend for the Nkem Aeronautics marketing site and farmer logbook portal.
+Next.js frontend for the Nkem Aeronautics public website and portals.
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
+npm run dev
 npm run build
 npm run start
-npm run lint    # oxlint
+npm run lint
 ```
 
-Env: `MONGODB_URI` and `JWT_SECRET` are required for API routes. `NEXT_PUBLIC_API_URL` is optional and defaults to same-origin `/api`.
+Local frontend URL: `http://localhost:3000`
+
+Environment:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+The backend is a separate Node.js service in `../server`.

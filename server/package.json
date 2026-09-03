@@ -1,0 +1,28 @@
+{
+  "name": "nkem-aeronautics-server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "lint": "node --check src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "create-admin": "node scripts/create-admin.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.1",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.1"
+  }
+}

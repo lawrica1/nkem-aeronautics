@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  customer
+  farmer
+  organization
+  government
+  pilot
+  admin
+  partner
+}
+
+enum Sector {
+  agricultural
+  wildlife
+  realestate
+  survey_pipelines
+  mining
+}
+
+enum AccountType {
+  individual
+  organization
+  government
+}
+
+enum RequestStatus {
+  submitted
+  under_review
+  processing
+  assigned
+  in_progress
+  completed
+  rejected
+  cancelled
+  requires_info
+}
+
+model User {
+  id                   String           @id @default(cuid())
+  role                 Role             @default(farmer)
+  sector               Sector
+  accountType          AccountType      @default(individual)
+  country              String           @default("CM")
+  surname              String
+  name                 String
+  sex                  String?
+  telephone            String
+  email                String           @unique
+  address              String
+  region               String?
+  district             String?
+  crop                 String?
+  otherCrop            String?
+  firm                 String?
+  otherFirm            String?
+  wildlifeOrg          String?
+  wildlifeRole         String?
+  realEstatePurpose    String?
+  passwordHash         String
+  isVerified           Boolean          @default(false)
+  identificationNumber String?          @unique
+  otpHash              String?
+  otpChannel           String?
+  otpContact           String?
+  otpExpiresAt         DateTime?
+  otpResendCount       Int              @default(0)
+  otpLastSentAt        DateTime?
+  requests             ServiceRequest[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([role, sector])
+  @@index([country, region, district])
+}
+
+model ServiceRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service     String
+  description String        @default("")
+  location    String        @default("")
+  region      String        @default("")
+  firm        String?
+  status      RequestStatus @default(submitted)
+  adminNotes  String        @default("")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([firm, createdAt])
+}
+
+model Counter {
+  key String @id
+  seq Int    @default(0)
+}
