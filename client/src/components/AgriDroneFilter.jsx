@@ -11,6 +11,7 @@ const CROP_OPTIONS = [
 const SERVICE_OPTIONS = [
   { value: "spraying", label: "Spraying Only" },
   { value: "both", label: "Spraying & Multispectral Monitoring" },
+  { value: "machines", label: "Machines" },
 ];
 
 export function AgriDroneFilter({ crop, service, onCropChange, onServiceChange }) {

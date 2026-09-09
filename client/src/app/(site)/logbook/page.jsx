@@ -10,6 +10,13 @@ import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFarmerServiceRequests } from "@/hooks/useFarmerServiceRequests";
 import { ProfileCard } from "@/components/portal/ProfileCard";
 import { ServiceRequestList } from "@/components/portal/ServiceRequestList";
+import { ShopSection } from "@/components/portal/ShopSection";
+import { OrdersList } from "@/components/portal/OrdersList";
+import { PartRequestSection } from "@/components/portal/PartRequestSection";
+import { DroneRecommendation } from "@/components/portal/DroneRecommendation";
+import { MediaGallery } from "@/components/portal/MediaGallery";
+
+const MEDIA_SECTORS = ["wildlife", "realestate"];
 
 function GuestView() {
   return (
@@ -101,6 +108,17 @@ export default function LogbookPortalPage() {
             sector={profile.data?.sector}
             onRefresh={handleRefreshRequests}
           />
+
+          {MEDIA_SECTORS.includes(profile.data?.sector) && (
+            <>
+              <MediaGallery requests={serviceRequests.data} />
+              <DroneRecommendation sector={profile.data?.sector} />
+            </>
+          )}
+
+          <OrdersList />
+          <ShopSection />
+          <PartRequestSection />
         </div>
       </div>
     </main>

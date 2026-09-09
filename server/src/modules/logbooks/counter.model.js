@@ -9,3 +9,13 @@ export async function nextLogbookId() {
 
   return `NKEM-${new Date().getFullYear()}-${String(counter.seq).padStart(6, "0")}`;
 }
+
+export async function nextReceiptNumber() {
+  const counter = await prisma.counter.upsert({
+    where: { key: "receiptNumber" },
+    update: { seq: { increment: 1 } },
+    create: { key: "receiptNumber", seq: 1 },
+  });
+
+  return `RCT-${new Date().getFullYear()}-${String(counter.seq).padStart(6, "0")}`;
+}

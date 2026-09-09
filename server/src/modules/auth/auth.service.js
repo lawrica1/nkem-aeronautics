@@ -6,6 +6,7 @@ import { signUserToken } from "../../shared/middleware/auth.js";
 import { generateOtp, hashOtp, otpExpiryDate, sendOtp, verifyOtp } from "./otp.service.js";
 import { normalizeSignup, validateSignup } from "./auth.validators.js";
 import { env } from "../../config/env.js";
+import { notify } from "../notifications/notification.service.js";
 
 export async function signup(body) {
   validateSignup(body);
@@ -51,7 +52,7 @@ export async function signup(body) {
     },
   });
 
-  sendOtp(otpChannel, otpContact, otp);
+  await sendOtp(otpChannel, otpContact, otp);
   return {
     message: "Verification code sent.",
     otpChannel,
@@ -89,6 +90,18 @@ export async function verifySignupOtp({ channel, contact, otp }) {
     },
   });
 
+  await notify(
+    verifiedUser.id,
+    {
+      type: "account_verified",
+      title: "Welcome to Nkem Aeronautics",
+      body: `Your account is verified. Your Logbook ID is ${verifiedUser.identificationNumber}.`,
+      link: "/logbook",
+    },
+    "Welcome to Nkem Aeronautics — your account is verified",
+    `<p>Your account is verified.</p><p>Your Logbook ID is <strong>${verifiedUser.identificationNumber}</strong>.</p><p><a href="${env.clientOrigin}/logbook">Go to your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+  );
+
   return {
     token: signUserToken(verifiedUser),
     identificationNumber: verifiedUser.identificationNumber,
@@ -119,7 +132,7 @@ export async function resendSignupOtp({ channel, contact }) {
     },
   });
 
-  sendOtp(channel, contact, otp);
+  await sendOtp(channel, contact, otp);
   return {
     message: "Verification code resent.",
     ...(env.nodeEnv !== "production" ? { otpDebug: otp } : {}),
@@ -141,5 +154,5 @@ export async function login({ email, password }) {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) throw new HttpError(401, "Invalid email or password.");
 
-  return { token: signUserToken(user) };
+  return { token: signUserToken(user), role: user.role };
 }

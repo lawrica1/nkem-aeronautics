@@ -11,6 +11,15 @@ export const env = {
   r2AccessKeyId: process.env.R2_ACCESS_KEY_ID,
   r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
   r2PublicBaseUrl: process.env.R2_PUBLIC_BASE_URL,
+  termiiApiKey: process.env.TERMII_API_KEY,
+  termiiSenderId: process.env.TERMII_SENDER_ID || "N-Alert",
+  termiiChannel: process.env.TERMII_CHANNEL || "generic",
+  smtpHost: process.env.SMTP_HOST || "smtp.gmail.com",
+  smtpPort: Number(process.env.SMTP_PORT) || 465,
+  smtpUser: process.env.SMTP_USER || "nkemaeronautics@gmail.com",
+  smtpPass: process.env.SMTP_PASS,
+  flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
+  flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
 };
 
 export function requireEnv(name, value) {

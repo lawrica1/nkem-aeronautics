@@ -1,12 +1,10 @@
 import { HttpError } from "../../shared/errors/HttpError.js";
-import { DEFAULT_COUNTRY } from "../platform/platform.constants.js";
-
-const VALID_SECTORS = ["agricultural", "wildlife", "realestate"];
+import { ACTIVE_REGISTRATION_SECTORS, DEFAULT_COUNTRY } from "../platform/platform.constants.js";
 
 export function validateSignup(body) {
   if (!body.email) throw new HttpError(400, "email is required.");
-  if (!body.sector || !VALID_SECTORS.includes(body.sector)) {
-    throw new HttpError(400, "Please select a valid sector (agricultural, wildlife, or realestate).");
+  if (!body.sector || !ACTIVE_REGISTRATION_SECTORS.includes(body.sector)) {
+    throw new HttpError(400, `Please select a valid sector (${ACTIVE_REGISTRATION_SECTORS.join(", ")}).`);
   }
 
   // OTP-only mode: no password needed
@@ -26,8 +24,7 @@ export function normalizeSignup(body) {
 }
 
 export function validateProfileUpdate(body) {
-  const VALID_SECTORS = ["agricultural", "wildlife", "realestate"];
-  if (body.sector && !VALID_SECTORS.includes(body.sector)) {
+  if (body.sector && !ACTIVE_REGISTRATION_SECTORS.includes(body.sector)) {
     throw new HttpError(400, "Invalid sector.");
   }
 }

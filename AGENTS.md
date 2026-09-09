@@ -60,6 +60,15 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST/neondb?sslmode=require
 JWT_SECRET=replace-with-a-long-random-string
 CLIENT_ORIGIN=http://localhost:3000
 OTP_PROVIDER=console
+TERMII_API_KEY=replace-with-termii-api-key
+TERMII_SENDER_ID=N-Alert
+TERMII_CHANNEL=generic
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=nkemaeronautics@gmail.com
+SMTP_PASS=replace-with-a-gmail-app-password
+FLUTTERWAVE_SECRET_KEY=replace-with-flutterwave-secret-key
+FLUTTERWAVE_WEBHOOK_HASH=replace-with-a-random-webhook-secret
 ```
 
 Never commit real `.env` files, database URLs, JWT secrets, API keys, OTP credentials, or other secrets.
@@ -102,14 +111,21 @@ npm run create-admin -- --email admin@example.com --password "change-me" --name 
 - `server/src/modules/auth`: signup, OTP verification, resend OTP, login.
 - `server/src/modules/farmers`: authenticated profile and own requests.
 - `server/src/modules/requests`: service request create/list/update.
-- `server/src/modules/admin`: admin login, stats, logbook export.
-- `server/src/modules/catalog`: public catalog data.
-- `server/src/modules/logbooks`: collision-safe logbook counter.
+- `server/src/modules/admin`: admin login, stats, logbook export, user search/role/verify management.
+- `server/src/modules/catalog`: public catalog data (marketing display only — see `products` for the sellable catalogue).
+- `server/src/modules/logbooks`: collision-safe logbook counter and receipt-number counter.
+- `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.
+- `server/src/modules/operations`: pilot/drone assignment against a service request, results, farmer reviews.
+- `server/src/modules/products`, `server/src/modules/orders`: sellable catalogue, orders, manually-recorded payments, auto-issued receipts.
+- `server/src/modules/payments`: Flutterwave online checkout (card/MTN MoMo/Orange Money), server-side transaction verification, webhook handling — feeds into the same `recordPayment` as manual admin-confirmed payments.
+- `server/src/modules/partRequests`: customer part-identification requests with photo/video attachments.
+- `server/src/modules/notifications`: outbound email (Gmail SMTP), currently used for receipt emails.
 
 ## Known Production Gaps
 
-- OTP delivery is currently console/debug based.
-- Payment/order/fulfillment workflows are not implemented.
-- Pilot, drone assignment, and operation lifecycle are not implemented.
-- Firm dashboard/notifications are not implemented.
+- OTP delivery uses Termii SMS when `TERMII_API_KEY` is set; falls back to console logging otherwise (dev/testing) or if a send fails.
+- Receipt emails use Gmail SMTP (`SMTP_PASS`) with the same console-log fallback; no other email/notification types are wired yet (request-status changes, operation completed, etc.) and there's no in-portal notification list.
+- Online checkout is live via Flutterwave (card/MTN MoMo/Orange Money) alongside the existing admin-confirmed methods (cash, bank transfer). `FLUTTERWAVE_SECRET_KEY`/`FLUTTERWAVE_WEBHOOK_HASH` need real (sandbox or live) values before checkout will actually work — until then, starting a checkout fails loudly rather than pretending to succeed.
+- Pilot accounts are profile records only, not login accounts — no pilot self-service portal yet.
+- Firm dashboard is not implemented.
 - Product media files for the pasted eVTOL images still need to be added to the repo.

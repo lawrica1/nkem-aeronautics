@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import ExcelJS from "exceljs";
 import { prisma } from "../../config/prisma.js";
-import { ROLES, SECTORS } from "../platform/platform.constants.js";
+import { ROLES, ROLE_VALUES, SECTORS } from "../platform/platform.constants.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { signUserToken } from "../../shared/middleware/auth.js";
 import { serializeUser } from "../users/user.serializer.js";
@@ -70,6 +70,45 @@ export async function getStats() {
     byFirm: byFirm.map((row) => ({ value: row.firm || "(none)", count: row._count._all })),
     byStatus: byStatus.map((row) => ({ value: row.status, count: row._count._all })),
   };
+}
+
+export async function listUsers({ search, role, sector, country } = {}) {
+  const users = await prisma.user.findMany({
+    where: {
+      ...(role && { role }),
+      ...(sector && { sector }),
+      ...(country && { country }),
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { surname: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { identificationNumber: { contains: search, mode: "insensitive" } },
+        ],
+      }),
+    },
+    orderBy: { createdAt: "desc" },
+    take: 200,
+    include: { organization: { select: { name: true } } },
+  });
+
+  return users.map(serializeUser);
+}
+
+export async function updateUser(id, body) {
+  const data = {};
+  if (body.role !== undefined) {
+    if (!ROLE_VALUES.includes(body.role)) throw new HttpError(400, "A valid role is required.");
+    data.role = body.role;
+  }
+  if (body.isVerified !== undefined) data.isVerified = !!body.isVerified;
+  if (body.organizationId !== undefined) data.organizationId = body.organizationId || null;
+
+  const user = await prisma.user
+    .update({ where: { id }, data, include: { organization: { select: { name: true } } } })
+    .catch(() => null);
+  if (!user) throw new HttpError(404, "User not found.");
+  return serializeUser(user);
 }
 
 export async function exportLogbooks({ firm = "all", format = "csv" }) {

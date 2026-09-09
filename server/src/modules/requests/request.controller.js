@@ -15,3 +15,11 @@ export async function listAdmin(req, res) {
 export async function updateAdminStatus(req, res) {
   res.json(await requestService.updateStatus(req.params.id, req.body));
 }
+
+export async function assignPartner(req, res) {
+  res.json(await requestService.assignPartner(req.params.id, req.body));
+}
+
+export async function listAsPartner(req, res) {
+  res.json(await requestService.listForPartner(req.user));
+}

@@ -20,7 +20,9 @@ export function ProductCarousel({ sector, cropFilter = "all", serviceFilter }) {
     products = products.filter((product) => {
       const cropMatch = cropFilter === "all" || product.crops?.includes(cropFilter);
       const serviceMatch =
-        !serviceFilter || product.service === serviceFilter || product.service === "both";
+        !serviceFilter ||
+        product.service === serviceFilter ||
+        (product.service === "both" && serviceFilter !== "machines");
       return cropMatch && serviceMatch;
     });
   }

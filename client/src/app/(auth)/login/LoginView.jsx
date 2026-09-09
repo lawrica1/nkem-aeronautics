@@ -130,7 +130,13 @@ export function LoginView() {
           </p>
 
           <div className="mt-8">
-            <LoginForm onSuccess={() => router.push("/logbook")} />
+            <LoginForm
+              onSuccess={(data) =>
+                router.push(
+                  { pilot: "/pilot", partner: "/partner" }[data?.role] ?? "/logbook",
+                )
+              }
+            />
           </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">

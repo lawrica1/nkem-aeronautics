@@ -9,13 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sprout, Binoculars, Building2 } from "lucide-react";
+import { getRegionOptions, getDivisionOptions } from "@/lib/locations";
+import { Sprout, Binoculars, Building2, Pickaxe } from "lucide-react";
 
 const SECTOR_META = {
   agricultural: { label: "Agriculture", Icon: Sprout },
   wildlife: { label: "Wildlife & Surveillance", Icon: Binoculars },
   realestate: { label: "Real Estate & Survey", Icon: Building2 },
+  mining: { label: "Mining", Icon: Pickaxe },
 };
+
+const CROP_OPTIONS = [
+  "Maize", "Cassava", "Rice", "Sorghum", "Banana / Plantain", "Oil Palm",
+  "Cocoa", "Coffee", "Rubber", "Groundnuts", "Tomatoes", "Vegetables (other)",
+];
 
 export function OnboardingForm() {
   const router = useRouter();
@@ -28,6 +35,7 @@ export function OnboardingForm() {
   const isWildlife = sector === "wildlife";
   const isRealEstate = sector === "realestate";
   const meta = SECTOR_META[sector];
+  const country = profile?.country || "CM";
 
   const [form, setForm] = useState({
     name: "",
@@ -44,11 +52,20 @@ export function OnboardingForm() {
     wildlifeOrg: "",
     wildlifeRole: "",
     realEstatePurpose: "",
+    govAgencyName: "",
+    govAuthorizingOfficer: "",
   });
 
   function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
+
+  function setRegion(value) {
+    setForm((prev) => ({ ...prev, region: value, district: "" }));
+  }
+
+  const regionOptions = getRegionOptions(country);
+  const divisionOptions = getDivisionOptions(country, form.region);
 
   function handleChange(e) {
     set(e.target.name, e.target.value);
@@ -125,8 +142,22 @@ export function OnboardingForm() {
           <h2 className="text-base font-semibold text-brand-navy-dark">Your farm</h2>
           <div className="space-y-2">
             <Label htmlFor="crop">Crop Cultivation <span className="text-destructive">*</span></Label>
-            <Input id="crop" name="crop" required value={form.crop} onChange={handleChange} placeholder="e.g. Maize, Cassava, Rubber" />
+            <Select value={form.crop} onValueChange={(v) => set("crop", v)}>
+              <SelectTrigger id="crop" className="w-full"><SelectValue placeholder="Select crop" /></SelectTrigger>
+              <SelectContent>
+                {CROP_OPTIONS.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+          {form.crop === "other" && (
+            <div className="space-y-2">
+              <Label htmlFor="otherCrop">Specify Crop <span className="text-destructive">*</span></Label>
+              <Input id="otherCrop" name="otherCrop" required value={form.otherCrop} onChange={handleChange} />
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="firm">Firm Affiliation <span className="text-destructive">*</span></Label>
             <Select value={form.firm} onValueChange={(v) => set("firm", v)}>
@@ -174,6 +205,19 @@ export function OnboardingForm() {
               </SelectContent>
             </Select>
           </div>
+
+          {form.realEstatePurpose === "government" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="govAgencyName">Government Agency / Department <span className="text-destructive">*</span></Label>
+                <Input id="govAgencyName" name="govAgencyName" required value={form.govAgencyName} onChange={handleChange} placeholder="e.g. Ministry of Lands" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="govAuthorizingOfficer">Authorizing Officer <span className="text-destructive">*</span></Label>
+                <Input id="govAuthorizingOfficer" name="govAuthorizingOfficer" required value={form.govAuthorizingOfficer} onChange={handleChange} placeholder="Name of the officer authorizing this request" />
+              </div>
+            </>
+          )}
         </section>
       )}
 
@@ -190,11 +234,27 @@ export function OnboardingForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="region">Region <span className="font-normal text-muted-foreground">(optional)</span></Label>
-            <Input id="region" name="region" value={form.region} onChange={handleChange} />
+            <Select value={form.region} onValueChange={setRegion}>
+              <SelectTrigger id="region" className="w-full"><SelectValue placeholder="Select region" /></SelectTrigger>
+              <SelectContent>
+                {regionOptions.map((r) => (
+                  <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="district">District / Division <span className="font-normal text-muted-foreground">(optional)</span></Label>
-            <Input id="district" name="district" value={form.district} onChange={handleChange} />
+            <Select value={form.district} onValueChange={(v) => set("district", v)} disabled={!form.region}>
+              <SelectTrigger id="district" className="w-full">
+                <SelectValue placeholder={form.region ? "Select district" : "Select a region first"} />
+              </SelectTrigger>
+              <SelectContent>
+                {divisionOptions.map((d) => (
+                  <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </section>

@@ -8,11 +8,11 @@ export function getProfile(user) {
 }
 
 export async function getLogbook(user) {
+  const requests = await listForUser(user);
   return {
     farmer: serializeUser(user),
-    requests: await listForUser(user),
-    operations: [],
-    reviews: [],
+    requests,
+    operations: requests.map((r) => r.operation).filter(Boolean),
   };
 }
 
@@ -32,7 +32,7 @@ export async function updateProfile(user, body) {
     "sector", "accountType", "name", "surname", "sex",
     "telephone", "address", "country", "region", "district",
     "crop", "otherCrop", "firm", "otherFirm",
-    "wildlifeOrg", "wildlifeRole", "realEstatePurpose",
+    "wildlifeOrg", "wildlifeRole", "realEstatePurpose", "govAgencyName", "govAuthorizingOfficer",
   ];
 
   const data = {};

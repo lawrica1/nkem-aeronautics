@@ -9,7 +9,8 @@
     "lint": "node --check src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "create-admin": "node scripts/create-admin.mjs"
+    "create-admin": "node scripts/create-admin.mjs",
+    "seed-drones": "node scripts/seed-drones.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1125.0",
@@ -22,7 +23,8 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "nodemailer": "^10.0.0"
   },
   "devDependencies": {
     "prisma": "^6.16.1"

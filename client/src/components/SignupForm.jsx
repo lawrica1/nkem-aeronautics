@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { Sprout, Binoculars, Building2 } from "lucide-react";
+import { Sprout, Binoculars, Building2, Pickaxe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,12 @@ const SECTORS = [
     label: "Real Estate & Survey",
     description: "Land surveys, property mapping, site inspection",
     Icon: Building2,
+  },
+  {
+    id: "mining",
+    label: "Mining",
+    description: "Site monitoring and drone-related mining operations",
+    Icon: Pickaxe,
   },
 ];
 

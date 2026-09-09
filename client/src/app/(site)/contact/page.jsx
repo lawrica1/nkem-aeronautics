@@ -65,7 +65,7 @@ const FAQS = [
   },
   {
     q: "Which areas do you currently serve?",
-    a: "We operate across Zambia and the broader Sub-Saharan Africa region. Our current primary focus is agricultural and wildlife operations. Contact us to confirm availability in your area.",
+    a: "We operate across Zambia and the broader Africa region. Our current primary focus is agricultural and wildlife operations. Contact us to confirm availability in your area.",
   },
   {
     q: "Can I purchase a drone directly?",

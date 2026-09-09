@@ -5,6 +5,7 @@ import { ServicesOverview } from "@/components/ServicesOverview";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { ManufacturingProcess, ProjectLifecycle } from "@/components/ProjectLifecycle";
+import { NewsSection } from "@/components/NewsSection";
 import { CatalogSection } from "./CatalogSection";
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function HomePage() {
       <ManufacturingProcess />
       <HowItWorks />
       <WhyChooseUs />
+      <NewsSection />
     </main>
   );
 }

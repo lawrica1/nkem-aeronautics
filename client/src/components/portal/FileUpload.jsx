@@ -27,7 +27,7 @@ function FilePreview({ file, onRemove }) {
   );
 }
 
-export function FileUpload({ value = [], onChange, accept = "image/*,video/*", maxFiles = 5, purpose = "general" }) {
+export function FileUpload({ value = [], onChange, accept = "image/*,video/*", maxFiles = 5, purpose = "general", admin = false }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -50,7 +50,7 @@ export function FileUpload({ value = [], onChange, accept = "image/*,video/*", m
       fd.append("file", file);
       fd.append("purpose", purpose);
       try {
-        const asset = await apiUpload("/storage/uploads", fd);
+        const asset = await apiUpload("/storage/uploads", fd, { admin });
         results.push({ id: asset.id, url: asset.url, mimeType: asset.mimeType, originalName: asset.originalName ?? file.name });
       } catch (err) {
         setError(err.message ?? "Upload failed");

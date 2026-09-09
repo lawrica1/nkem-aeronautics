@@ -20,6 +20,7 @@ export const metadata = {
 
 const SERVICES = [
   {
+    slug: "agricultural",
     icon: Sprout,
     title: "Agricultural Drone Services",
     description:
@@ -36,6 +37,7 @@ const SERVICES = [
     primary: true,
   },
   {
+    slug: "wildlife",
     icon: Binoculars,
     title: "Wildlife & Surveillance",
     description:
@@ -52,6 +54,7 @@ const SERVICES = [
     primary: false,
   },
   {
+    slug: "real-estate",
     icon: Building2,
     title: "Real Estate & Property Survey",
     description:
@@ -68,11 +71,12 @@ const SERVICES = [
     primary: false,
   },
   {
+    slug: "pipeline",
     icon: Workflow,
     title: "Pipeline & Infrastructure Inspection",
     description:
       "Rapid, cost-effective drone inspections of oil, gas, and water pipelines — reducing downtime and manual risk for operators.",
-    image: null,
+    image: "/images/services/pipeline-infrastructure.jpg",
     features: [
       "Pipeline leak detection",
       "Infrastructure condition assessment",
@@ -84,11 +88,12 @@ const SERVICES = [
     primary: false,
   },
   {
+    slug: "survey-mapping",
     icon: Ruler,
     title: "Survey & Mapping",
     description:
       "High-accuracy topographic surveys, volumetric measurements, and digital elevation models for engineering and government projects.",
-    image: null,
+    image: "/images/services/survey-mapping.jpg",
     features: [
       "Topographic & cadastral surveys",
       "Volumetric & stockpile measurement",
@@ -100,11 +105,12 @@ const SERVICES = [
     primary: false,
   },
   {
+    slug: "evtol",
     icon: Zap,
     title: "eVTOL & Heavy-Lift Operations",
     description:
       "Specialised heavy-lift VTOL fixed-wing drone missions for cargo, emergency supply, and large-scale field operations.",
-    image: null,
+    image: "/images/services/evtol-heavy-lift.jpg",
     features: [
       "Heavy-lift payload delivery",
       "Emergency supply drops",
@@ -141,7 +147,10 @@ const HOW_IT_WORKS = [
 function ServiceCard({ service }) {
   const Icon = service.icon;
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-shadow hover:shadow-md">
+    <div
+      id={service.slug}
+      className="flex scroll-mt-24 flex-col overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-shadow hover:shadow-md"
+    >
       {service.image ? (
         <div className="relative h-48 w-full overflow-hidden bg-brand-navy">
           <Image
