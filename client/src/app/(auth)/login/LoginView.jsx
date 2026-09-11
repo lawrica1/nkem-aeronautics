@@ -121,7 +121,7 @@ export function LoginView() {
               height={36}
               className="size-9 shrink-0 rounded-full"
             />
-            NKEM AERONAUTICS LTD
+            NKEM AERONAUTICS
           </Link>
 
           <h2 className="mt-8 text-2xl font-bold text-brand-navy-dark">Welcome back</h2>
@@ -147,7 +147,7 @@ export function LoginView() {
           </p>
 
           <p className="mt-10 text-center text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Nkem Aeronautics Ltd. All rights reserved.
+            &copy; {new Date().getFullYear()} Nkem Aeronautics. All rights reserved.
           </p>
         </div>
       </div>

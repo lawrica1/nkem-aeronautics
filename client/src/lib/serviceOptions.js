@@ -22,6 +22,13 @@ export const SERVICE_OPTIONS = {
     "Construction Progress Monitoring",
     "Other",
   ],
+  mining: [
+    "Site Monitoring & Surveillance",
+    "Stockpile Volume Survey",
+    "Mine Mapping & Topographic Survey",
+    "Blast Site Inspection",
+    "Other",
+  ],
 };
 
 export function getServiceOptions(sector) {

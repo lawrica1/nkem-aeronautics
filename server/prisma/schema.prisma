@@ -328,6 +328,8 @@ model User {
   realEstatePurpose    String?
   govAgencyName        String?
   govAuthorizingOfficer String?
+  miningOrg            String?
+  miningRole           String?
   profilePhotoKey      String?
   profilePhotoUrl      String?
   passwordHash         String?
@@ -418,7 +420,7 @@ model QuoteRequest {
   email             String
   whatsapp          String?
   company           String?
-  targetCountry     String
+  targetCountry     String?
   interestedProduct String?
   interestedIn      String?
   message           String

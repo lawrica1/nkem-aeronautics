@@ -14,7 +14,7 @@ export function Footer() {
                 height={32}
                 className="size-8 shrink-0 rounded-full"
               />
-              <p className="font-semibold text-white">NKEM AERONAUTICS LTD</p>
+              <p className="font-semibold text-white">NKEM AERONAUTICS</p>
             </div>
             <p className="mt-3 text-sm text-brand-footer-text">
               Leading aerial technological solutions for agriculture, land preparation, and
@@ -36,7 +36,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-4 text-center text-xs text-brand-footer-text/70">
-        &copy; {new Date().getFullYear()} Nkem Aeronautics LTD. All rights reserved.
+        &copy; {new Date().getFullYear()} Nkem Aeronautics. All rights reserved.
       </div>
     </footer>
   );

@@ -9,7 +9,7 @@ const LIFECYCLE_STEPS = [
   },
   {
     icon: Network,
-    title: "Design & R&D",
+    title: "Design R & D",
     description: "Develop system architecture and engineering solutions.",
   },
   {

@@ -34,6 +34,7 @@ export function OnboardingForm() {
   const isAgricultural = sector === "agricultural";
   const isWildlife = sector === "wildlife";
   const isRealEstate = sector === "realestate";
+  const isMining = sector === "mining";
   const meta = SECTOR_META[sector];
   const country = profile?.country || "CM";
 
@@ -54,6 +55,8 @@ export function OnboardingForm() {
     realEstatePurpose: "",
     govAgencyName: "",
     govAuthorizingOfficer: "",
+    miningOrg: "",
+    miningRole: "",
   });
 
   function set(field, value) {
@@ -218,6 +221,20 @@ export function OnboardingForm() {
               </div>
             </>
           )}
+        </section>
+      )}
+
+      {isMining && (
+        <section className="space-y-4">
+          <h2 className="text-base font-semibold text-brand-navy-dark">Your operation</h2>
+          <div className="space-y-2">
+            <Label htmlFor="miningOrg">Mining Company / Site <span className="text-destructive">*</span></Label>
+            <Input id="miningOrg" name="miningOrg" required value={form.miningOrg} onChange={handleChange} placeholder="e.g. Kansanshi Mine" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="miningRole">Position / Role <span className="text-destructive">*</span></Label>
+            <Input id="miningRole" name="miningRole" required value={form.miningRole} onChange={handleChange} placeholder="e.g. Site Surveyor" />
+          </div>
         </section>
       )}
 

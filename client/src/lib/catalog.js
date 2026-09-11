@@ -2,6 +2,7 @@ export const CATALOG_SECTORS = [
   { id: "agricultural", label: "Agricultural Operations" },
   { id: "wildlife", label: "Wildlife & Surveillance" },
   { id: "realestate", label: "Real Estate & Surveillance" },
+  { id: "mining", label: "Mining" },
   { id: "evtol", label: "eVTOL" },
 ];
 

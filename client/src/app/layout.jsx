@@ -2,9 +2,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata = {
-  title: "Nkem Aeronautics Ltd",
+  title: "Nkem Aeronautics",
   description:
-    "Advanced aerial UAV solutions for agriculture, wildlife & surveillance, and real estate across Zambia and Sub-Saharan Africa.",
+    "Advanced aerial UAV solutions for agriculture, wildlife & surveillance, and real estate across Zambia and Africa.",
   icons: {
     icon: "/favicon.png",
   },

@@ -54,7 +54,7 @@ export function Navbar() {
             className="size-9 shrink-0 rounded-full sm:size-11"
           />
           <div className="min-w-0">
-            <p className="truncate text-base font-bold tracking-tight sm:text-2xl">NKEM AERONAUTICS LTD</p>
+            <p className="truncate text-base font-bold tracking-tight sm:text-2xl">NKEM AERONAUTICS</p>
             <p className="mt-1 hidden text-sm italic text-white/60 sm:block">
               "Where fate and human glory lead, we are always there."
             </p>

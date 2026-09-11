@@ -149,6 +149,13 @@ export function ProfileCard({ farmer, onLogout }) {
           </div>
         )}
 
+        {farmer?.sector === "mining" && farmer?.miningOrg && (
+          <div>
+            <p className="text-xs text-muted-foreground">Mining Company / Site</p>
+            <p className="mt-0.5 text-brand-navy-dark">{farmer.miningOrg}</p>
+          </div>
+        )}
+
         {farmer?.telephone && (
           <div>
             <p className="text-xs text-muted-foreground">Phone</p>

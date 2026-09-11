@@ -1,7 +1,7 @@
 import { LoginView } from "./LoginView";
 
 export const metadata = {
-  title: "Log In — Nkem Aeronautics Ltd",
+  title: "Log In — Nkem Aeronautics",
   description: "Sign in to your Nkem Aeronautics farmer workspace.",
 };
 

@@ -49,7 +49,7 @@ export function ReceiptView({ orderId }) {
       <div className="rounded-2xl border border-border p-8">
         <div className="flex items-start justify-between border-b border-border pb-6">
           <div>
-            <p className="text-lg font-bold text-brand-navy-dark">Nkem Aeronautics Ltd</p>
+            <p className="text-lg font-bold text-brand-navy-dark">Nkem Aeronautics</p>
             <p className="text-sm text-muted-foreground">Official Receipt</p>
           </div>
           <div className="text-right text-sm">

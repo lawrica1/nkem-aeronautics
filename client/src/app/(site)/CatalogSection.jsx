@@ -22,6 +22,10 @@ const CATALOG_COPY = {
     heading: "Real Estate & Surveillance Drone Catalog",
     subtitle: "Aerial imaging equipment for property and site documentation.",
   },
+  mining: {
+    heading: "Mining Drone & Site Monitoring Catalog",
+    subtitle: "Aerial equipment for stockpile surveys, mapping, and mine site monitoring.",
+  },
 };
 
 export function CatalogSection() {

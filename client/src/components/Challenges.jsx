@@ -32,8 +32,8 @@ export function Challenges() {
               The Challenge
             </p>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Struggling with <span className="text-white">inaccurate distribution</span>,
-              manual spraying limits, or disconnected farm records?
+              Struggling with inaccurate survey, mapping, security, delivery, distribution,
+              manual spraying limits, or disconnected farms with data?
             </h2>
           </Reveal>
           <Reveal delay={100} className="flex items-center">

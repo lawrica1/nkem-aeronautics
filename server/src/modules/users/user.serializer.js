@@ -25,6 +25,8 @@ export function serializeUser(user) {
     realEstatePurpose: user.realEstatePurpose,
     govAgencyName: user.govAgencyName,
     govAuthorizingOfficer: user.govAuthorizingOfficer,
+    miningOrg: user.miningOrg,
+    miningRole: user.miningRole,
     organizationId: user.organizationId,
     organizationName: user.organization?.name ?? null,
     identificationNumber: user.identificationNumber,

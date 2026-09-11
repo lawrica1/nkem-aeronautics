@@ -5,7 +5,7 @@ const REASONS = [
   {
     icon: MapPin,
     title: "Regional Coverage",
-    description: "Operating across Zambia and Sub-Saharan Africa.",
+    description: "Operating across Zambia and Africa.",
   },
   {
     icon: BarChart3,

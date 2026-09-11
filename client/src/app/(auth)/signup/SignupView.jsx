@@ -25,10 +25,19 @@ function BrandHeader() {
         height={36}
         className="size-9 shrink-0 rounded-full"
       />
-      NKEM AERONAUTICS LTD
+      NKEM AERONAUTICS
     </Link>
   );
 }
+
+const SECTOR_BACKGROUNDS = {
+  agricultural: "/images/services/agricultural-spraying.jpg",
+  wildlife: "/images/services/wildlife-surveillance.jpg",
+  realestate: "/images/services/real-estate.jpg",
+  // ponytail: placeholder (aerial site survey, not an actual mine) until a real mining-site photo is supplied
+  mining: "/images/services/survey-mapping.jpg",
+};
+const DEFAULT_BACKGROUND = "/images/services/real-estate.jpg";
 
 function maskContact(value) {
   if (!value) return null;
@@ -43,6 +52,7 @@ function maskContact(value) {
 export function SignupView() {
   const router = useRouter();
   const [step, setStep] = useState("form"); // "form" | "otp"
+  const [sector, setSector] = useState(null);
   const [signupData, setSignupData] = useState(null);
   const [channel, setChannel] = useState("sms");
   const [contact, setContact] = useState(null);
@@ -87,8 +97,8 @@ export function SignupView() {
       {/* Left panel */}
       <div className="relative hidden overflow-hidden bg-brand-navy px-10 py-12 lg:flex lg:flex-col lg:justify-between">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-85"
-          style={{ backgroundImage: "url('/images/services/real-estate.jpg')" }}
+          className="absolute inset-0 bg-cover bg-center opacity-85 transition-[background-image] duration-500"
+          style={{ backgroundImage: `url('${SECTOR_BACKGROUNDS[sector] ?? DEFAULT_BACKGROUND}')` }}
         />
         <div className="absolute inset-0 bg-brand-navy/40" />
         <div
@@ -217,7 +227,7 @@ export function SignupView() {
             </p>
 
             <div className="mt-8">
-              <SignupForm onSuccess={handleSignupSuccess} />
+              <SignupForm onSuccess={handleSignupSuccess} onSectorChange={setSector} />
             </div>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
@@ -228,7 +238,7 @@ export function SignupView() {
             </p>
 
             <p className="mt-10 text-center text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} Nkem Aeronautics Ltd. All rights reserved.
+              &copy; {new Date().getFullYear()} Nkem Aeronautics. All rights reserved.
             </p>
           </div>
         )}

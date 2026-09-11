@@ -33,6 +33,7 @@ export async function updateProfile(user, body) {
     "telephone", "address", "country", "region", "district",
     "crop", "otherCrop", "firm", "otherFirm",
     "wildlifeOrg", "wildlifeRole", "realEstatePurpose", "govAgencyName", "govAuthorizingOfficer",
+    "miningOrg", "miningRole",
   ];
 
   const data = {};

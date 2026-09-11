@@ -4,7 +4,7 @@ Instructions for AI coding agents working in this repository.
 
 ## What This Project Is
 
-Nkem Aeronautics Ltd is a drone company platform for Zambia and Sub-Saharan Africa. It combines:
+Nkem Aeronautics Ltd is a drone company platform for Zambia and Africa. It combines:
 
 - A public marketing website.
 - A farmer/customer registration and logbook system.

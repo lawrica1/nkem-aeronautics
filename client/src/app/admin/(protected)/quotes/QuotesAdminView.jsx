@@ -19,6 +19,7 @@ const SECTOR_LABELS = {
   wildlife: "Wildlife & Surveillance",
   realestate: "Real Estate & Surveillance",
   evtol: "eVTOL",
+  general: "General / Customer Service",
 };
 
 function formatDate(iso) {
@@ -67,10 +68,12 @@ function QuoteRow({ quote }) {
             <dd className="text-brand-navy-dark">{quote.company}</dd>
           </div>
         )}
-        <div className="flex gap-2">
-          <dt className="text-muted-foreground">Target Country/Region:</dt>
-          <dd className="text-brand-navy-dark">{quote.targetCountry}</dd>
-        </div>
+        {quote.targetCountry && (
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground">Target Country/Region:</dt>
+            <dd className="text-brand-navy-dark">{quote.targetCountry}</dd>
+          </div>
+        )}
         {quote.interestedProduct && (
           <div className="flex gap-2">
             <dt className="text-muted-foreground">Interested Product:</dt>

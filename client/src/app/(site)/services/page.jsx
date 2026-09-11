@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Services — Nkem Aeronautics Ltd",
+  title: "Services — Nkem Aeronautics",
   description:
-    "Agricultural drone spraying, wildlife surveillance, real estate survey, pipeline inspection, and eVTOL services across Zambia and Sub-Saharan Africa.",
+    "Agricultural drone spraying, wildlife surveillance, real estate survey, pipeline inspection, and eVTOL services across Zambia and Africa.",
 };
 
 const SERVICES = [
@@ -90,7 +90,7 @@ const SERVICES = [
   {
     slug: "survey-mapping",
     icon: Ruler,
-    title: "Survey & Mapping",
+    title: "Aerial & Survey Mapping",
     description:
       "High-accuracy topographic surveys, volumetric measurements, and digital elevation models for engineering and government projects.",
     image: "/images/services/survey-mapping.jpg",
@@ -213,8 +213,7 @@ export default function ServicesPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">
             From precision agricultural spraying to wildlife surveillance and infrastructure
-            inspection — Nkem Aeronautics delivers UAV solutions across Zambia and Sub-Saharan
-            Africa.
+            inspection — Nkem Aeronautics delivers UAV solutions across Zambia and Africa.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link

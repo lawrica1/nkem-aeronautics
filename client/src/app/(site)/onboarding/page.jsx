@@ -23,7 +23,7 @@ export default function OnboardingPage() {
           className="inline-flex items-center gap-2 text-sm font-bold tracking-tight text-brand-navy-dark"
         >
           <Image src="/images/logo.png" alt="Nkem Aeronautics" width={28} height={28} className="size-7 rounded-full" />
-          NKEM AERONAUTICS LTD
+          NKEM AERONAUTICS
         </Link>
 
         <div className="mt-8">

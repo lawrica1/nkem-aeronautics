@@ -35,7 +35,7 @@ export function Hero() {
 
       <div className="relative mx-auto w-full max-w-6xl -translate-y-16 sm:-translate-y-20">
         <p className="animate-fade-up mb-4 inline-block rounded-full border border-white/25 px-4 py-1 text-xs font-semibold tracking-widest text-white/70 uppercase">
-          Zambia &middot; Sub-Saharan Africa
+          Zambia &middot; Africa
         </p>
 
         <div className="max-w-3xl border-l-4 border-white/40 pl-6">
@@ -53,7 +53,7 @@ export function Hero() {
           >
             <p className="text-lg text-white/80">
               Providing cutting-edge UAV technology, site preparation equipment, and autonomous
-              surveillance operations tailored across Zambia and Sub-Saharan Africa.
+              surveillance operations tailored across Zambia and Africa.
             </p>
           </div>
 

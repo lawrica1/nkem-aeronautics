@@ -36,7 +36,7 @@ const SECTORS = [
   },
 ];
 
-export function SignupForm({ onSuccess }) {
+export function SignupForm({ onSuccess, onSectorChange }) {
   const [step, setStep] = useState("sector"); // "sector" | "credentials"
   const [sector, setSector] = useState(null);
   const [mode, setMode] = useState("password"); // "password" | "otp"
@@ -83,7 +83,10 @@ export function SignupForm({ onSuccess }) {
             <button
               key={id}
               type="button"
-              onClick={() => setSector(id)}
+              onClick={() => {
+                setSector(id);
+                onSectorChange?.(id);
+              }}
               className={cn(
                 "flex w-full items-start gap-4 rounded-xl border-2 px-4 py-4 text-left transition-all",
                 sector === id

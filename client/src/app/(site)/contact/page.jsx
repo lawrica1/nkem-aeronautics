@@ -7,12 +7,13 @@ import {
   MessageCircle,
   Clock,
   ArrowRight,
+  Headphones,
 } from "lucide-react";
 
 export const metadata = {
-  title: "Contact — Nkem Aeronautics Ltd",
+  title: "Contact — Nkem Aeronautics",
   description:
-    "Get in touch with Nkem Aeronautics Ltd. Find our address, phone, WhatsApp, and email details.",
+    "Get in touch with Nkem Aeronautics. Find our address, phone, WhatsApp, and email details.",
 };
 
 const WHATSAPP_NUMBER = "237670439117";
@@ -65,7 +66,7 @@ const FAQS = [
   },
   {
     q: "Which areas do you currently serve?",
-    a: "We operate across Zambia and the broader Africa region. Our current primary focus is agricultural and wildlife operations. Contact us to confirm availability in your area.",
+    a: "We operate across Zambia and the broader Africa region. Our current primary focus is the mining, agricultural, wildlife & surveillance, real estate, and military operations sectors. Contact us to confirm availability in your area.",
   },
   {
     q: "Can I purchase a drone directly?",
@@ -138,6 +139,14 @@ export default function ContactPage() {
                 Reach us through any of the channels below. WhatsApp is usually the fastest way
                 to get a response.
               </p>
+
+              <Link
+                href="/customer-service"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-navy px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-navy/90"
+              >
+                <Headphones className="size-4" />
+                Customer Service
+              </Link>
 
               <div className="mt-8 space-y-4">
                 {CONTACT_DETAILS.map((d) => (
