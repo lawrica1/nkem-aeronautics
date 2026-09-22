@@ -127,13 +127,19 @@ function CompanyTab() {
       {!isLoading && posts?.length > 0 && (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.id} className="h-full rounded-xl border border-border bg-background p-5">
-              <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-medium capitalize text-brand-blue">
-                {post.category}
-              </span>
-              <h3 className="mt-3 font-semibold text-brand-navy-dark">{post.title}</h3>
-              {post.summary && <p className="mt-2 text-sm text-muted-foreground">{post.summary}</p>}
-              <p className="mt-3 text-xs text-muted-foreground">{formatDate(post.publishedAt)}</p>
+            <article key={post.id} className="h-full overflow-hidden rounded-xl border border-border bg-background">
+              {post.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={post.imageUrl} alt={post.title} className="w-full" />
+              )}
+              <div className="p-5">
+                <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-medium capitalize text-brand-blue">
+                  {post.category}
+                </span>
+                <h3 className="mt-3 font-semibold text-brand-navy-dark">{post.title}</h3>
+                {post.summary && <p className="mt-2 text-sm text-muted-foreground">{post.summary}</p>}
+                <p className="mt-3 text-xs text-muted-foreground">{formatDate(post.publishedAt)}</p>
+              </div>
             </article>
           ))}
         </div>

@@ -16,7 +16,7 @@ import { PartRequestSection } from "@/components/portal/PartRequestSection";
 import { DroneRecommendation } from "@/components/portal/DroneRecommendation";
 import { MediaGallery } from "@/components/portal/MediaGallery";
 
-const MEDIA_SECTORS = ["wildlife", "realestate"];
+const MEDIA_SECTORS = ["wildlife"];
 
 function GuestView() {
   return (

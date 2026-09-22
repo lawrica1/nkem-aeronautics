@@ -13,7 +13,6 @@ export const ROLE_OPTIONS = [
 export const SECTOR_OPTIONS = [
   { value: "agricultural", label: "Agriculture" },
   { value: "wildlife", label: "Wildlife & Surveillance" },
-  { value: "realestate", label: "Real Estate, Survey & Pipelines" },
   { value: "mining", label: "Mining" },
 ];
 

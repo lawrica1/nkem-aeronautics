@@ -15,13 +15,6 @@ export const SERVICE_OPTIONS = {
     "Anti-Poaching Patrol",
     "Other",
   ],
-  realestate: [
-    "Property Survey",
-    "Pipeline Inspection",
-    "Area Mapping & Survey",
-    "Construction Progress Monitoring",
-    "Other",
-  ],
   mining: [
     "Site Monitoring & Surveillance",
     "Stockpile Volume Survey",

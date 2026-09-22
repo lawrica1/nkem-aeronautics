@@ -10,12 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getRegionOptions, getDivisionOptions } from "@/lib/locations";
-import { Sprout, Binoculars, Building2, Pickaxe } from "lucide-react";
+import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 
 const SECTOR_META = {
   agricultural: { label: "Agriculture", Icon: Sprout },
   wildlife: { label: "Wildlife & Surveillance", Icon: Binoculars },
-  realestate: { label: "Real Estate & Survey", Icon: Building2 },
   mining: { label: "Mining", Icon: Pickaxe },
 };
 
@@ -33,7 +32,6 @@ export function OnboardingForm() {
   const sector = profile?.sector;
   const isAgricultural = sector === "agricultural";
   const isWildlife = sector === "wildlife";
-  const isRealEstate = sector === "realestate";
   const isMining = sector === "mining";
   const meta = SECTOR_META[sector];
   const country = profile?.country || "CM";
@@ -52,9 +50,6 @@ export function OnboardingForm() {
     otherFirm: "",
     wildlifeOrg: "",
     wildlifeRole: "",
-    realEstatePurpose: "",
-    govAgencyName: "",
-    govAuthorizingOfficer: "",
     miningOrg: "",
     miningRole: "",
   });
@@ -192,35 +187,6 @@ export function OnboardingForm() {
             <Label htmlFor="wildlifeRole">Position / Role <span className="text-destructive">*</span></Label>
             <Input id="wildlifeRole" name="wildlifeRole" required value={form.wildlifeRole} onChange={handleChange} placeholder="e.g. Forest Warden" />
           </div>
-        </section>
-      )}
-
-      {isRealEstate && (
-        <section className="space-y-4">
-          <h2 className="text-base font-semibold text-brand-navy-dark">Your purpose</h2>
-          <div className="space-y-2">
-            <Label htmlFor="realEstatePurpose">Purpose <span className="text-destructive">*</span></Label>
-            <Select value={form.realEstatePurpose} onValueChange={(v) => set("realEstatePurpose", v)}>
-              <SelectTrigger id="realEstatePurpose" className="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="private">Individual / Private</SelectItem>
-                <SelectItem value="government">Government</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {form.realEstatePurpose === "government" && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="govAgencyName">Government Agency / Department <span className="text-destructive">*</span></Label>
-                <Input id="govAgencyName" name="govAgencyName" required value={form.govAgencyName} onChange={handleChange} placeholder="e.g. Ministry of Lands" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="govAuthorizingOfficer">Authorizing Officer <span className="text-destructive">*</span></Label>
-                <Input id="govAuthorizingOfficer" name="govAuthorizingOfficer" required value={form.govAuthorizingOfficer} onChange={handleChange} placeholder="Name of the officer authorizing this request" />
-              </div>
-            </>
-          )}
         </section>
       )}
 

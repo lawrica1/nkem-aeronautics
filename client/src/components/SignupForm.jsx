@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { Sprout, Binoculars, Building2, Pickaxe } from "lucide-react";
+import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,12 +23,6 @@ const SECTORS = [
     Icon: Binoculars,
   },
   {
-    id: "realestate",
-    label: "Real Estate & Survey",
-    description: "Land surveys, property mapping, site inspection",
-    Icon: Building2,
-  },
-  {
     id: "mining",
     label: "Mining",
     description: "Site monitoring and drone-related mining operations",
@@ -36,15 +30,28 @@ const SECTORS = [
   },
 ];
 
-export function SignupForm({ onSuccess, onSectorChange }) {
-  const [step, setStep] = useState("sector"); // "sector" | "credentials"
-  const [sector, setSector] = useState(null);
+const SECTOR_IDS = SECTORS.map((s) => s.id);
+
+export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
+  const validInitialSector = SECTOR_IDS.includes(initialSector) ? initialSector : null;
+  const [step, setStep] = useState(validInitialSector ? "credentials" : "sector"); // "sector" | "credentials"
+  const [sector, setSector] = useState(validInitialSector);
   const [mode, setMode] = useState("password"); // "password" | "otp"
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const signup = useSignup();
+
+  // initialSector can arrive after mount (parent reads it from the URL in an
+  // effect), so react to it changing instead of only using it as the useState
+  // seed above — otherwise a later update never advances past the picker.
+  useEffect(() => {
+    if (SECTOR_IDS.includes(initialSector)) {
+      setSector(initialSector);
+      setStep("credentials");
+    }
+  }, [initialSector]);
 
   function handleSectorNext() {
     if (sector) setStep("credentials");

@@ -1,17 +1,14 @@
-import { Phone, Mail, MessageCircle } from "lucide-react";
+import { Phone, Mail } from "lucide-react";
 import { ContactMessageForm } from "@/components/ContactMessageForm";
 
 export const metadata = {
   title: "Customer Service — Nkem Aeronautics",
-  description: "Get help from Nkem Aeronautics customer service — call, WhatsApp, email, or send us a message.",
+  description: "Get help from Nkem Aeronautics customer service — call or email us.",
 };
 
-const WHATSAPP_NUMBER = "237670439117";
-
 const QUICK_CONTACTS = [
-  { icon: Phone, label: "Telephone", value: "+237 670 439 117", href: "tel:+237670439117" },
-  { icon: MessageCircle, label: "WhatsApp", value: "+237 670 439 117", href: `https://wa.me/${WHATSAPP_NUMBER}`, external: true },
   { icon: Mail, label: "Email", value: "nkem@aeronautics.com", href: "mailto:nkem@aeronautics.com" },
+  { icon: Phone, label: "MTN Number", value: "+237 670 439 117", href: "tel:+237670439117" },
 ];
 
 export default function CustomerServicePage() {

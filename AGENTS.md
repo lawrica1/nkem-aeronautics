@@ -10,7 +10,7 @@ Nkem Aeronautics Ltd is a drone company platform for Zambia and Africa. It combi
 - A farmer/customer registration and logbook system.
 - Service request workflows.
 - Admin reporting and exports.
-- A catalog for agricultural, surveillance, real estate, and eVTOL drones.
+- A catalog for agricultural, surveillance, mining, and eVTOL drones.
 
 The system is intended to collect real user, location, crop, affiliation, and service-demand data so resource allocation can rely on registered platform data instead of estimates.
 

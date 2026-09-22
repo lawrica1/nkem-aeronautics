@@ -23,7 +23,6 @@ _Last synced against actual code: 2026-09-03. See `docs/SITE-FUNCTIONALITY-AUDIT
 
 - done: Agricultural Operations catalog tab with crop/service filtering.
 - done: Wildlife & Surveillance catalog tab.
-- in progress: Real Estate & Surveillance catalog tab exists, but still shows a coming-soon state.
 - done: eVTOL catalog tab added.
 - done: eVTOL entries added: ZAM13E, ZAM2001, ZAM201, ZAM112, ZAM237, ZAM223/AW1749, and AW1338.
 - deferred: Military is not built and remains a future phase.
@@ -32,7 +31,7 @@ _Last synced against actual code: 2026-09-03. See `docs/SITE-FUNCTIONALITY-AUDIT
 
 - done: Login page and `LoginForm`.
 - done: Signup page and `SignupForm`.
-- done: Sector-aware signup fields for Agriculture, Wildlife & Surveillance, and Real Estate & Surveillance.
+- done: Sector-aware signup fields for Agriculture, Wildlife & Surveillance, and Mining.
 - done: Confirmed agricultural firm dropdown sourced from `client/src/lib/firms.js`.
 - done: OTP verification step after signup.
 - done: JWT issued after login and after successful OTP verification.

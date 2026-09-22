@@ -9,9 +9,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
 import { PRODUCTS } from "@/lib/catalog";
 
-const COMING_SOON_IMAGES = {
-  realestate: "/images/services/real-estate.jpg",
-};
+const COMING_SOON_IMAGES = {};
 
 export function ProductCarousel({ sector, cropFilter = "all", serviceFilter }) {
   let products = PRODUCTS.filter((product) => product.sector === sector);

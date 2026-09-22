@@ -299,9 +299,8 @@ function PartnerShare({ request, partners }) {
 }
 
 export function RequestsAdminView() {
-  const [purpose, setPurpose] = useState("");
   const [country, setCountry] = useState("");
-  const { data: requests, isLoading, isError, error } = useAdminRequests({ purpose, country });
+  const { data: requests, isLoading, isError, error } = useAdminRequests({ country });
   const { data: pilots } = usePilots();
   const { data: drones } = useDrones();
   const { data: partners } = usePartners();
@@ -310,14 +309,6 @@ export function RequestsAdminView() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Label htmlFor="purpose-filter" className="text-xs">Real Estate purpose</Label>
-          <select id="purpose-filter" className={fieldClass} style={{ width: "auto" }} value={purpose} onChange={(e) => setPurpose(e.target.value)}>
-            <option value="">All</option>
-            <option value="private">Private / Individual</option>
-            <option value="government">Government</option>
-          </select>
-        </div>
         <div className="flex items-center gap-2">
           <Label htmlFor="country-filter" className="text-xs">Country</Label>
           <select id="country-filter" className={fieldClass} style={{ width: "auto" }} value={country} onChange={(e) => setCountry(e.target.value)}>
@@ -345,11 +336,6 @@ export function RequestsAdminView() {
               <div>
                 <p className="flex items-center gap-2 font-medium text-brand-navy-dark">
                   {request.user?.name ? `${request.user.name} ${request.user.surname ?? ""}` : "Unnamed"} — {request.service}
-                  {request.user?.realEstatePurpose === "government" && (
-                    <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium text-indigo-700 border border-indigo-200">
-                      Government{request.user.govAgencyName ? ` · ${request.user.govAgencyName}` : ""}
-                    </span>
-                  )}
                   {request.partner && (
                     <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 border border-amber-200">
                       Shared · {request.partner.name}

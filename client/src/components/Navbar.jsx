@@ -11,7 +11,6 @@ import { NotificationBell } from "@/components/NotificationBell";
 const SERVICE_LINKS = [
   { label: "Agricultural Drone Services", slug: "agricultural" },
   { label: "Wildlife & Surveillance", slug: "wildlife" },
-  { label: "Real Estate & Property Survey", slug: "real-estate" },
   { label: "Pipeline & Infrastructure Inspection", slug: "pipeline" },
   { label: "Survey & Mapping", slug: "survey-mapping" },
   { label: "eVTOL & Heavy-Lift Operations", slug: "evtol" },

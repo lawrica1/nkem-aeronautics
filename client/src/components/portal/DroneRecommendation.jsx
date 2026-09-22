@@ -7,7 +7,6 @@ import { ProductRow } from "@/components/portal/ProductRow";
 
 const PRESETS_BY_SECTOR = {
   wildlife: ["Thermal", "Long Range", "Tethered", "GPS"],
-  realestate: ["Mapping", "Survey", "4K", "Long Range"],
 };
 
 export function DroneRecommendation({ sector }) {

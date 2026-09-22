@@ -33,7 +33,8 @@ export function WhyChooseUs() {
             Why Nkem Aeronautics
           </p>
           <h2 className="text-3xl font-bold tracking-tight text-brand-navy-dark sm:text-4xl">
-            Built for Real Farmers, Real Regions
+            Built for Agriculture, Wildlife Conservation and Surveillance Challenges Across Every
+            Region and Country
           </h2>
         </Reveal>
 

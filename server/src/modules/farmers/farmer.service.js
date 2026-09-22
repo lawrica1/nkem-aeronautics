@@ -32,7 +32,7 @@ export async function updateProfile(user, body) {
     "sector", "accountType", "name", "surname", "sex",
     "telephone", "address", "country", "region", "district",
     "crop", "otherCrop", "firm", "otherFirm",
-    "wildlifeOrg", "wildlifeRole", "realEstatePurpose", "govAgencyName", "govAuthorizingOfficer",
+    "wildlifeOrg", "wildlifeRole",
     "miningOrg", "miningRole",
   ];
 

@@ -20,8 +20,6 @@ enum Role {
 enum Sector {
   agricultural
   wildlife
-  realestate
-  survey_pipelines
   mining
 }
 
@@ -325,9 +323,6 @@ model User {
   otherFirm            String?
   wildlifeOrg          String?
   wildlifeRole         String?
-  realEstatePurpose    String?
-  govAgencyName        String?
-  govAuthorizingOfficer String?
   miningOrg            String?
   miningRole           String?
   profilePhotoKey      String?

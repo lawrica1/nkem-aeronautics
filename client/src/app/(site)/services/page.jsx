@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   Sprout,
   Binoculars,
-  Building2,
   Ruler,
   Workflow,
   Zap,
@@ -15,7 +14,7 @@ import {
 export const metadata = {
   title: "Services — Nkem Aeronautics",
   description:
-    "Agricultural drone spraying, wildlife surveillance, real estate survey, pipeline inspection, and eVTOL services across Zambia and Africa.",
+    "Agricultural drone spraying, wildlife surveillance, pipeline inspection, and eVTOL services across Zambia and Africa.",
 };
 
 const SERVICES = [
@@ -48,23 +47,6 @@ const SERVICES = [
       "Anti-poaching patrol operations",
       "GPS tracking & geo-fencing",
       "High-resolution photo & video capture",
-    ],
-    cta: "Get in Touch",
-    ctaHref: "/contact",
-    primary: false,
-  },
-  {
-    slug: "real-estate",
-    icon: Building2,
-    title: "Real Estate & Property Survey",
-    description:
-      "Aerial photography, 3D mapping, and property survey services for developers, agencies, and government bodies.",
-    image: "/images/services/real-estate.jpg",
-    features: [
-      "Aerial property photography",
-      "3D mapping & terrain modelling",
-      "Construction progress monitoring",
-      "Land boundary demarcation",
     ],
     cta: "Get in Touch",
     ctaHref: "/contact",

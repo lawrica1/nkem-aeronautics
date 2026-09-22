@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 const INTEREST_OPTIONS = [
   { value: "purchase", label: "Purchasing a product" },
@@ -72,81 +73,91 @@ export function QuoteRequestForm({ sector }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-4 rounded-xl border border-border bg-background p-6 sm:p-8">
-      <h3 className="text-center text-2xl font-bold text-brand-navy-dark">Request A Quote</h3>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-name`}>Name</Label>
-        <Input id={`${sector}-quote-name`} value={form.name} onChange={(e) => set("name", e.target.value)} />
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl space-y-5 rounded-2xl border border-border bg-background p-6 shadow-sm sm:p-10"
+    >
+      <div className="text-center">
+        <h3 className="text-2xl font-bold text-brand-navy-dark">Request A Quote</h3>
+        <p className="mt-1.5 text-sm text-muted-foreground">
+          Tell us what you need and our team will get back to you with pricing and availability.
+        </p>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-email`}>
-          Your Email <span className="text-destructive">*</span>
-        </Label>
-        <Input
-          id={`${sector}-quote-email`}
-          type="email"
-          required
-          value={form.email}
-          onChange={(e) => set("email", e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-whatsapp`}>WhatsApp</Label>
-        <Input id={`${sector}-quote-whatsapp`} value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-company`}>Company</Label>
-        <Input id={`${sector}-quote-company`} value={form.company} onChange={(e) => set("company", e.target.value)} />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-country`}>
-          Targeted Country/Region <span className="text-destructive">*</span>
-        </Label>
-        <Input
-          id={`${sector}-quote-country`}
-          required
-          value={form.targetCountry}
-          onChange={(e) => set("targetCountry", e.target.value)}
-        />
-      </div>
-
-      {productOptions.length > 0 && (
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor={`${sector}-quote-product`}>Interested Products</Label>
-          <Select value={form.interestedProduct} onValueChange={(v) => set("interestedProduct", v)}>
-            <SelectTrigger id={`${sector}-quote-product`} className="w-full">
-              <SelectValue placeholder="Select a product" />
+          <Label htmlFor={`${sector}-quote-name`}>Name</Label>
+          <Input id={`${sector}-quote-name`} value={form.name} onChange={(e) => set("name", e.target.value)} />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor={`${sector}-quote-email`}>
+            Your Email <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id={`${sector}-quote-email`}
+            type="email"
+            required
+            value={form.email}
+            onChange={(e) => set("email", e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor={`${sector}-quote-whatsapp`}>WhatsApp</Label>
+          <Input id={`${sector}-quote-whatsapp`} value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor={`${sector}-quote-company`}>Company</Label>
+          <Input id={`${sector}-quote-company`} value={form.company} onChange={(e) => set("company", e.target.value)} />
+        </div>
+
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label htmlFor={`${sector}-quote-country`}>
+            Targeted Country/Region <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id={`${sector}-quote-country`}
+            required
+            value={form.targetCountry}
+            onChange={(e) => set("targetCountry", e.target.value)}
+          />
+        </div>
+
+        {productOptions.length > 0 && (
+          <div className="space-y-1.5">
+            <Label htmlFor={`${sector}-quote-product`}>Interested Products</Label>
+            <Select value={form.interestedProduct} onValueChange={(v) => set("interestedProduct", v)}>
+              <SelectTrigger id={`${sector}-quote-product`} className="w-full">
+                <SelectValue placeholder="Select a product" />
+              </SelectTrigger>
+              <SelectContent>
+                {productOptions.map((p) => (
+                  <SelectItem key={p.id} value={p.name}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div className={cn("space-y-1.5", productOptions.length === 0 && "sm:col-span-2")}>
+          <Label htmlFor={`${sector}-quote-interest`}>I am interested in</Label>
+          <Select value={form.interestedIn} onValueChange={(v) => set("interestedIn", v)}>
+            <SelectTrigger id={`${sector}-quote-interest`} className="w-full">
+              <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
-              {productOptions.map((p) => (
-                <SelectItem key={p.id} value={p.name}>
-                  {p.name}
+              {INTEREST_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-      )}
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-interest`}>I am interested in</Label>
-        <Select value={form.interestedIn} onValueChange={(v) => set("interestedIn", v)}>
-          <SelectTrigger id={`${sector}-quote-interest`} className="w-full">
-            <SelectValue placeholder="Select an option" />
-          </SelectTrigger>
-          <SelectContent>
-            {INTEREST_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       <div className="space-y-1.5">

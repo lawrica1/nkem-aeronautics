@@ -1,5 +1,6 @@
-import { Sprout, Binoculars, Building2, NotebookPen, Route } from "lucide-react";
+import { Sprout, Binoculars, NotebookPen, Route } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { cn } from "@/lib/utils";
 
 const SERVICES = [
   {
@@ -15,34 +16,34 @@ const SERVICES = [
     image: "/images/services/wildlife-surveillance.jpg",
   },
   {
-    icon: Building2,
-    title: "Real Estate Imaging",
-    description: "Aerial photography for property and site documentation.",
-    image: "/images/services/real-estate.jpg",
-    comingSoon: true,
-  },
-  {
     icon: NotebookPen,
     title: "Farmer Registration & Logbook",
     description: "Digital sign-up with a unique ID and operation logbook for every farmer.",
+    image: "/images/services/farmer-registration-logbook.jpg",
+    fit: "contain",
   },
   {
     icon: Route,
     title: "Firm Routing & Distribution",
     description: "Service requests routed to affiliated firms for accurate resource allocation.",
+    image: "/images/services/firm-routing-distribution.jpg",
+    overlayClass: "bg-gradient-to-t from-brand-navy-dark/55 via-transparent to-transparent",
   },
 ];
 
-function ServiceCard({ icon: Icon, title, description, image, comingSoon }) {
+function ServiceCard({ icon: Icon, title, description, image, comingSoon, fit, overlayClass }) {
   if (image) {
     return (
-      <div className="group relative h-64 overflow-hidden rounded-lg">
+      <div className="group relative h-64 overflow-hidden rounded-lg bg-brand-gray-light">
         <img
           src={image}
           alt=""
-          className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className={cn(
+            "absolute inset-0 size-full transition-transform duration-500 group-hover:scale-105",
+            fit === "contain" ? "object-contain p-8" : "object-cover",
+          )}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-navy-dark/90 via-brand-navy-dark/20 to-transparent" />
+        <div className={cn("absolute inset-0", overlayClass ?? "bg-gradient-to-t from-brand-navy-dark/90 via-brand-navy-dark/20 to-transparent")} />
         {comingSoon && (
           <span className="absolute top-4 right-4 rounded-full bg-brand-gray-light px-2.5 py-1 text-xs font-medium text-neutral-700">
             Coming Soon

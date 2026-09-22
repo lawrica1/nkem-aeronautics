@@ -50,9 +50,8 @@ export async function createForUser(user, body) {
   return serializeRequest(request);
 }
 
-export async function listForAdmin({ status, firm, purpose, country } = {}) {
+export async function listForAdmin({ status, firm, country } = {}) {
   const userFilter = {
-    ...(purpose && { realEstatePurpose: purpose }),
     ...(country && { country }),
   };
 
@@ -74,8 +73,6 @@ export async function listForAdmin({ status, firm, purpose, country } = {}) {
           sector: true,
           crop: true,
           firm: true,
-          realEstatePurpose: true,
-          govAgencyName: true,
           country: true,
         },
       },

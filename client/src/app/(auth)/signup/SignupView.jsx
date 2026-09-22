@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,11 +33,9 @@ function BrandHeader() {
 const SECTOR_BACKGROUNDS = {
   agricultural: "/images/services/agricultural-spraying.jpg",
   wildlife: "/images/services/wildlife-surveillance.jpg",
-  realestate: "/images/services/real-estate.jpg",
-  // ponytail: placeholder (aerial site survey, not an actual mine) until a real mining-site photo is supplied
-  mining: "/images/services/survey-mapping.jpg",
+  mining: "/images/services/mining-signup.jpg",
 };
-const DEFAULT_BACKGROUND = "/images/services/real-estate.jpg";
+const DEFAULT_BACKGROUND = "/images/services/agricultural-spraying.jpg";
 
 function maskContact(value) {
   if (!value) return null;
@@ -54,6 +52,12 @@ export function SignupView() {
   const [step, setStep] = useState("form"); // "form" | "otp"
   const [sector, setSector] = useState(null);
   const [signupData, setSignupData] = useState(null);
+
+  // Lets links like "/signup?sector=wildlife" preselect the sector step.
+  useEffect(() => {
+    const urlSector = new URLSearchParams(window.location.search).get("sector");
+    if (urlSector) setSector(urlSector);
+  }, []);
   const [channel, setChannel] = useState("sms");
   const [contact, setContact] = useState(null);
   const [otp, setOtp] = useState("");
@@ -227,7 +231,7 @@ export function SignupView() {
             </p>
 
             <div className="mt-8">
-              <SignupForm onSuccess={handleSignupSuccess} onSectorChange={setSector} />
+              <SignupForm onSuccess={handleSignupSuccess} onSectorChange={setSector} initialSector={sector} />
             </div>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">

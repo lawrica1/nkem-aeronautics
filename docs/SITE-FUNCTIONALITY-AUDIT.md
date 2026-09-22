@@ -102,7 +102,7 @@ Current sectors:
 
 - Agricultural Operations
 - Wildlife & Surveillance
-- Real Estate & Surveillance
+- Mining
 - eVTOL
 
 Agricultural products:
@@ -116,10 +116,6 @@ Wildlife/surveillance products:
 - Nkem AW1749 Gasoline VTOL Fixed-Wing
 - Nkem AWV2555 Tethered Security Unit
 - Nkem AW1338 HD Mapping Remote UAV
-
-Real estate:
-
-- Coming-soon state only.
 
 eVTOL products:
 
@@ -155,7 +151,7 @@ Signup supports:
 
 - Agricultural
 - Wildlife & Surveillance
-- Real Estate & Surveillance
+- Mining
 
 Common fields:
 
@@ -197,7 +193,6 @@ Gaps:
 
 - Profile photo is not uploaded to the backend.
 - OTP delivery is not real; it only logs the code server-side.
-- Real estate signup has no extra sector-specific fields.
 
 ## 5. OTP Verification Functionality
 

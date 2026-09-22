@@ -3,7 +3,7 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 
 // Mirrors the client's catalogue tabs (client/src/lib/catalog.js CATALOG_SECTORS), plus
 // "general" for customer-service messages submitted from the Contact page (no catalogue tab).
-const QUOTE_SECTORS = ["agricultural", "wildlife", "realestate", "evtol", "general"];
+const QUOTE_SECTORS = ["agricultural", "wildlife", "evtol", "general"];
 
 export async function create(body) {
   if (!body.sector || !QUOTE_SECTORS.includes(body.sector)) {

@@ -20,10 +20,15 @@ export function Hero() {
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-brand-navy px-6 py-24 text-white">
-      {/* Real hero photo (crop-spraying aircraft) with a navy wash so white text stays legible. */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero/hero-crop-spray.jpg')" }}
+      {/* Background video, with the old hero photo as a poster/fallback until it loads. */}
+      <video
+        className="absolute inset-0 size-full object-cover"
+        src="/videos/hero-background.mp4"
+        poster="/images/hero/hero-crop-spray.jpg"
+        autoPlay
+        loop
+        muted
+        playsInline
       />
       <div
         className="absolute inset-0"

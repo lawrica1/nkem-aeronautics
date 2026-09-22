@@ -17,7 +17,6 @@ const STATUS_OPTIONS = [
 const SECTOR_LABELS = {
   agricultural: "Agricultural",
   wildlife: "Wildlife & Surveillance",
-  realestate: "Real Estate & Surveillance",
   evtol: "eVTOL",
   general: "General / Customer Service",
 };

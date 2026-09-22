@@ -66,7 +66,7 @@ const FAQS = [
   },
   {
     q: "Which areas do you currently serve?",
-    a: "We operate across Zambia and the broader Africa region. Our current primary focus is the mining, agricultural, wildlife & surveillance, real estate, and military operations sectors. Contact us to confirm availability in your area.",
+    a: "We operate across Zambia and the broader Africa region. Our current primary focus is the mining, agricultural, wildlife & surveillance, and military operations sectors. Contact us to confirm availability in your area.",
   },
   {
     q: "Can I purchase a drone directly?",
@@ -75,6 +75,10 @@ const FAQS = [
   {
     q: "Do you work with government agencies?",
     a: "Yes. We support government-related surveying, pipeline inspection, and wildlife surveillance operations. Please contact us directly to discuss your requirements.",
+  },
+  {
+    q: "Are you working/planning to become a manufacturer or retailer in drone technology?",
+    a: "Yes, we do offer services and special mentorship.",
   },
 ];
 

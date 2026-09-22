@@ -2,19 +2,17 @@
 
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserRound, CheckCircle2, Sprout, Binoculars, Building2, Camera, Loader2 } from "lucide-react";
+import { UserRound, CheckCircle2, Sprout, Binoculars, Camera, Loader2 } from "lucide-react";
 import { apiUpload } from "@/lib/api";
 
 const SECTOR_LABELS = {
   agricultural: "Agriculture",
   wildlife: "Wildlife & Surveillance",
-  realestate: "Real Estate & Survey",
 };
 
 const SECTOR_ICONS = {
   agricultural: Sprout,
   wildlife: Binoculars,
-  realestate: Building2,
 };
 
 function SectorBadge({ sector }) {
