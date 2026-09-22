@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets } from "lucide-react";
+import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare } from "lucide-react";
 import { SectorTabs } from "@/components/SectorTabs";
 import { AgriDroneFilter } from "@/components/AgriDroneFilter";
 import { ProductCarousel } from "@/components/ProductCarousel";
@@ -146,6 +146,7 @@ const CATALOG_COPY = {
           icon: Siren,
           title: "Emergency response coordination",
           text: "On-demand aerial dispatch provides incident commanders with immediate situational awareness to assess hazards before committing responders.",
+          image: "/images/hero/mining-emergency-response.jpg",
         },
         {
           icon: Flame,
@@ -167,6 +168,12 @@ const CATALOG_COPY = {
           icon: Layers,
           title: "Stockpile boundary mapping",
           text: "Generate precise stockpile boundaries from aerial imagery, enabling accurate volume calculations and inventory tracking without manual surveying.",
+        },
+        {
+          icon: GitCompare,
+          title: "Structural change detection",
+          text: "Compare aerial imagery over time, identifying slope movement, settlement, erosion patterns, and infrastructure degradation critical for monitoring.",
+          image: "/images/hero/mining-change-detection.jpg",
         },
       ],
     },
