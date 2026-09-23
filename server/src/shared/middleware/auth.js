@@ -3,9 +3,10 @@ import { env, requireEnv } from "../../config/env.js";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../errors/HttpError.js";
 
+// `tv` is the user's tokenVersion at sign-in; bumping the column ends every session issued before it.
 export function signUserToken(user) {
   return jwt.sign(
-    { sub: user.id, role: user.role, sector: user.sector },
+    { sub: user.id, role: user.role, sector: user.sector, tv: user.tokenVersion ?? 0 },
     requireEnv("JWT_SECRET", env.jwtSecret),
     { expiresIn: "30d" },
   );
@@ -13,14 +14,28 @@ export function signUserToken(user) {
 
 export function signAdminToken(admin) {
   return jwt.sign(
-    { sub: admin.id, role: "admin", aud: "admin" },
+    { sub: admin.id, role: "admin", aud: "admin", tv: admin.tokenVersion ?? 0 },
     requireEnv("JWT_SECRET", env.jwtSecret),
     { expiresIn: "12h" },
   );
 }
 
+// Per-user, not per-device: signing out ends the session on every device at once.
+export async function signOutEverywhere(userId) {
+  await prisma.user.update({ where: { id: userId }, data: { tokenVersion: { increment: 1 } } });
+}
+
+export async function logout(req, res, next) {
+  try {
+    await signOutEverywhere(req.user.id);
+    res.json({ message: "Signed out." });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export function verifyToken(token) {
-  return jwt.verify(token, requireEnv("JWT_SECRET", env.jwtSecret));
+  return jwt.verify(token, requireEnv("JWT_SECRET", env.jwtSecret), { algorithms: ["HS256"] });
 }
 
 export async function requireUser(req, _res, next) {
@@ -37,6 +52,9 @@ export async function requireUser(req, _res, next) {
 
     if (!user || !user.isVerified) {
       throw new HttpError(401, "Account not found or not verified.");
+    }
+    if ((payload.tv ?? 0) !== (user.tokenVersion ?? 0)) {
+      throw new HttpError(401, "This session has ended. Please sign in again.");
     }
 
     req.user = user;

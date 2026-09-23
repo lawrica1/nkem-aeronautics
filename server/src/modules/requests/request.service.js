@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
+import { escapeHtml } from "../../shared/utils/html.js";
 import { notify } from "../notifications/notification.service.js";
 import { ROLES } from "../platform/platform.constants.js";
 import { REQUEST_STATUS, REQUEST_STATUS_VALUES, REQUEST_STATUS_LABELS } from "./request.constants.js";
@@ -166,7 +167,7 @@ export async function updateStatus(id, body) {
       link: "/logbook",
     },
     `Update on your ${request.service} request`,
-    `<p>Your request for <strong>${request.service}</strong> is now <strong>${statusLabel}</strong>.</p>${request.adminNotes ? `<p>${request.adminNotes}</p>` : ""}<p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+    `<p>Your request for <strong>${escapeHtml(request.service)}</strong> is now <strong>${statusLabel}</strong>.</p>${request.adminNotes ? `<p>${escapeHtml(request.adminNotes)}</p>` : ""}<p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
   );
 
   return serializeRequest(request);

@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
+import { escapeHtml } from "../../shared/utils/html.js";
 import { notify } from "../notifications/notification.service.js";
 import { ROLES } from "../platform/platform.constants.js";
 import { REQUEST_STATUS, REQUEST_STATUS_VALUES, REQUEST_STATUS_LABELS } from "../requests/request.constants.js";
@@ -80,7 +81,7 @@ export async function update(id, body) {
           link: "/logbook",
         },
         `Your ${updatedRequest.service} operation is complete`,
-        `<p>Your <strong>${updatedRequest.service}</strong> operation${operation.pilot ? ` with pilot ${operation.pilot.name}` : ""} is complete.</p>${operation.results ? `<p><strong>Results:</strong> ${operation.results}</p>` : ""}<p>You can now leave a review for the pilot from your Logbook.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+        `<p>Your <strong>${escapeHtml(updatedRequest.service)}</strong> operation${operation.pilot ? ` with pilot ${escapeHtml(operation.pilot.name)}` : ""} is complete.</p>${operation.results ? `<p><strong>Results:</strong> ${escapeHtml(operation.results)}</p>` : ""}<p>You can now leave a review for the pilot from your Logbook.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
       );
     } else {
       const statusLabel = REQUEST_STATUS_LABELS[updatedRequest.status] || updatedRequest.status;
@@ -92,7 +93,7 @@ export async function update(id, body) {
           link: "/logbook",
         },
         `Update on your ${updatedRequest.service} request`,
-        `<p>Your request for <strong>${updatedRequest.service}</strong> is now <strong>${statusLabel}</strong>.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+        `<p>Your request for <strong>${escapeHtml(updatedRequest.service)}</strong> is now <strong>${statusLabel}</strong>.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
       );
     }
   }
@@ -117,15 +118,18 @@ export async function attachMedia(id, user, body) {
   let operation;
   if (user.role === ROLES.PILOT) {
     operation = await requirePilotOwnership(id, user);
-  } else {
+  } else if (user.role === ROLES.ADMIN) {
     operation = await prisma.operation.findUnique({ where: { id } });
     if (!operation) throw new HttpError(404, "Operation not found.");
+  } else {
+    throw new HttpError(403, "You do not have permission to attach media to this operation.");
   }
 
-  await prisma.fileAsset.updateMany({
-    where: { id: { in: body.fileAssetIds } },
+  const { count } = await prisma.fileAsset.updateMany({
+    where: { id: { in: body.fileAssetIds }, ownerId: user.id },
     data: { operationId: operation.id },
   });
+  if (count === 0) throw new HttpError(400, "None of those files were uploaded by you.");
 
   const updated = await prisma.operation.findUnique({ where: { id: operation.id }, include: OPERATION_INCLUDE });
   return serializeOperation(updated);

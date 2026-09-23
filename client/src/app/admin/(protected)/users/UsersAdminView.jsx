@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import { useAdminUsers, useUpdateAdminUser } from "@/hooks/useAdminUsers";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import { ROLE_OPTIONS, SECTOR_OPTIONS, COUNTRY_OPTIONS } from "@/lib/adminOptions";
+import { getAdminToken } from "@/lib/api";
+
+// UI hint only — the server enforces the real rule.
+function currentAdminId() {
+  try {
+    const payload = getAdminToken()?.split(".")[1];
+    return payload ? JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/"))).sub : null;
+  } catch {
+    return null;
+  }
+}
 
 const fieldClass =
   "rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
@@ -27,6 +38,25 @@ export function UsersAdminView() {
   const { data: users, isLoading, isError, error } = useAdminUsers({ search, role, sector, country });
   const { data: organizations } = useOrganizations();
   const update = useUpdateAdminUser();
+  const [myId, setMyId] = useState(null);
+  useEffect(() => setMyId(currentAdminId()), []);
+
+  function changeRole(user, nextRole) {
+    const label = ROLE_OPTIONS.find((r) => r.value === nextRole)?.label ?? nextRole;
+    if (!window.confirm(`Change ${user.email}'s role to ${label}?`)) return;
+    update.mutate({ id: user.id, role: nextRole });
+  }
+
+  function revokeSessions(user) {
+    if (!window.confirm(`Sign ${user.email} out on every device? They'll need to sign in again.`)) return;
+    update.mutate({ id: user.id, revokeSessions: true });
+  }
+
+  function toggleVerified(user) {
+    const action = user.isVerified ? "Unverify (this blocks their sign-in)" : "Verify";
+    if (!window.confirm(`${action} ${user.email}?`)) return;
+    update.mutate({ id: user.id, isVerified: !user.isVerified });
+  }
 
   return (
     <div className="space-y-4">
@@ -57,6 +87,7 @@ export function UsersAdminView() {
         </select>
       </div>
 
+      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
       {isLoading && <p className="text-sm text-muted-foreground">Loading users…</p>}
       {isError && <p className="text-sm text-destructive">{error.message}</p>}
 
@@ -66,7 +97,7 @@ export function UsersAdminView() {
             <p className="px-4 py-10 text-center text-sm text-muted-foreground">No users match.</p>
           ) : (
             <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-left text-sm">
               <thead className="bg-brand-input/50 text-xs text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
@@ -76,6 +107,7 @@ export function UsersAdminView() {
                   <th className="px-4 py-3 font-medium">Role</th>
                   <th className="px-4 py-3 font-medium">Organization</th>
                   <th className="px-4 py-3 font-medium">Verified</th>
+                  <th className="px-4 py-3 font-medium">Sessions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -83,6 +115,7 @@ export function UsersAdminView() {
                   <tr key={user.id} className="hover:bg-muted/30">
                     <td className="px-4 py-3 font-medium text-brand-navy-dark">
                       {user.name ? `${user.name} ${user.surname ?? ""}` : "—"}
+                      {user.id === myId && <span className="ml-2 text-xs font-normal text-muted-foreground">(you)</span>}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                     <td className="px-4 py-3 text-muted-foreground">{user.country ?? "—"}</td>
@@ -91,7 +124,9 @@ export function UsersAdminView() {
                       <select
                         className={fieldClass}
                         value={user.role}
-                        onChange={(e) => update.mutate({ id: user.id, role: e.target.value })}
+                        disabled={user.id === myId}
+                        title={user.id === myId ? "You can't change your own role" : undefined}
+                        onChange={(e) => changeRole(user, e.target.value)}
                       >
                         {ROLE_OPTIONS.map((r) => (
                           <option key={r.value} value={r.value}>{r.label}</option>
@@ -113,7 +148,8 @@ export function UsersAdminView() {
                     <td className="px-4 py-3">
                       <button
                         type="button"
-                        onClick={() => update.mutate({ id: user.id, isVerified: !user.isVerified })}
+                        disabled={user.id === myId}
+                        onClick={() => toggleVerified(user)}
                         className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                           user.isVerified
                             ? "bg-green-50 text-green-700 border border-green-200"
@@ -122,6 +158,17 @@ export function UsersAdminView() {
                       >
                         {user.isVerified ? "Verified" : "Unverified"}
                       </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.id !== myId && (
+                        <button
+                          type="button"
+                          onClick={() => revokeSessions(user)}
+                          className="text-xs font-medium text-muted-foreground hover:text-destructive hover:underline"
+                        >
+                          Sign out everywhere
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

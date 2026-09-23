@@ -12,5 +12,5 @@ operationRouter.post("/", requireRole(ROLES.ADMIN), asyncHandler(controller.assi
 operationRouter.patch("/:id", requireRole(ROLES.ADMIN), asyncHandler(controller.update));
 operationRouter.patch("/:id/pilot-update", requireRole(ROLES.PILOT), asyncHandler(controller.updateAsPilot));
 // Admin or the assigned pilot — ownership for pilots is enforced in the service layer.
-operationRouter.post("/:id/media", asyncHandler(controller.attachMedia));
+operationRouter.post("/:id/media", requireRole(ROLES.PILOT, ROLES.ADMIN), asyncHandler(controller.attachMedia));
 operationRouter.post("/:id/review", asyncHandler(controller.addReview));

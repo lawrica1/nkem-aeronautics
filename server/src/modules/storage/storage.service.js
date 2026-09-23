@@ -35,7 +35,7 @@ export function publicUrlForKey(key) {
   return `${requireEnv("R2_PUBLIC_BASE_URL", env.r2PublicBaseUrl).replace(/\/$/, "")}/${key}`;
 }
 
-export async function uploadFileToStorage(file, { ownerId, serviceRequestId, purpose = "general" } = {}) {
+export async function uploadFileToStorage(file, { ownerId, purpose = "general" } = {}) {
   if (!file) throw new HttpError(400, "A file is required.");
 
   const safePurpose = String(purpose || "general").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
@@ -53,7 +53,6 @@ export async function uploadFileToStorage(file, { ownerId, serviceRequestId, pur
   const asset = await prisma.fileAsset.create({
     data: {
       ownerId,
-      serviceRequestId,
       purpose: safePurpose,
       originalName: file.originalname || key,
       key,

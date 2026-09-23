@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getToken, clearToken } from "@/lib/api";
+import { getToken, signOut } from "@/lib/api";
 import { useMyPilotOperations, useUpdatePilotOperation, useAttachPilotOperationMedia } from "@/hooks/usePilotOperations";
 import { FileUpload } from "@/components/portal/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -129,7 +129,7 @@ export default function PilotPortalPage() {
           </Link>
           <button
             type="button"
-            onClick={() => { clearToken(); window.location.href = "/"; }}
+            onClick={async () => { await signOut(); window.location.href = "/"; }}
             className="text-sm text-muted-foreground hover:text-brand-navy-dark"
           >
             Log out

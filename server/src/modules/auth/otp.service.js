@@ -1,9 +1,35 @@
 import bcrypt from "bcryptjs";
 import { env } from "../../config/env.js";
+import { enforce, hit, reset } from "../../shared/utils/rateLimit.js";
 
 const OTP_TTL_MS = 10 * 60 * 1000;
 const OTP_SALT_ROUNDS = 8;
 const TERMII_SEND_URL = "https://api.ng.termii.com/api/sms/send";
+export const OTP_MAX_FAILED_ATTEMPTS = 5;
+
+// Keyed by the destination, not the caller: the harm (SMS spend, harassment, guessing)
+// lands on the number/inbox, and "+237 670…" and "237670…" must share one bucket.
+function destinationKey(channel, contact) {
+  const value = channel === "sms" ? String(contact).replace(/\D/g, "") : String(contact).trim().toLowerCase();
+  return `${channel}:${value}`;
+}
+
+// Call before writing a new code to the DB, so a refused send never invalidates the current code.
+export function limitOtpSend(channel, contact) {
+  const key = destinationKey(channel, contact);
+  enforce(`otp-cooldown:${key}`, { limit: 1, windowMs: 60_000 }, "A code was just sent to this contact.");
+  enforce(`otp-hourly:${key}`, { limit: 5, windowMs: 60 * 60_000 }, "Too many codes sent to this contact.");
+  reset(`otp-fail:${key}`);
+}
+
+// Returns true once this code has taken too many wrong guesses and must be discarded.
+export function recordOtpFailure(channel, contact) {
+  return hit(`otp-fail:${destinationKey(channel, contact)}`, { limit: OTP_MAX_FAILED_ATTEMPTS, windowMs: OTP_TTL_MS }).count >= OTP_MAX_FAILED_ATTEMPTS;
+}
+
+export function clearOtpFailures(channel, contact) {
+  reset(`otp-fail:${destinationKey(channel, contact)}`);
+}
 
 export function generateOtp() {
   return String(Math.floor(100000 + Math.random() * 900000));

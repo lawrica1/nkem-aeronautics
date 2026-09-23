@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { clearAdminToken } from "@/lib/api";
+import { signOut } from "@/lib/api";
 
 export function AdminLogoutButton() {
   const router = useRouter();
 
   async function handleLogout() {
-    clearAdminToken();
+    await signOut({ admin: true });
     router.push("/admin/login");
   }
 

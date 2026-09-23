@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { env, requireEnv } from "../../config/env.js";
 
 const BASE_URL = "https://api.flutterwave.com/v3";
@@ -51,7 +52,10 @@ export async function verifyTransaction(transactionId) {
 }
 
 // Flutterwave's webhook signature is a static shared secret you set once in the dashboard
-// (Settings -> Webhooks) and mirror here — a plain string compare, not an HMAC over the body.
+// (Settings -> Webhooks) and mirror here — not an HMAC over the body. Both sides are hashed
+// first so timingSafeEqual gets equal-length buffers and the secret's length isn't leaked either.
 export function isWebhookSignatureValid(receivedHash) {
-  return !!env.flutterwaveWebhookHash && receivedHash === env.flutterwaveWebhookHash;
+  if (!env.flutterwaveWebhookHash || typeof receivedHash !== "string") return false;
+  const digest = (value) => crypto.createHash("sha256").update(value).digest();
+  return crypto.timingSafeEqual(digest(receivedHash), digest(env.flutterwaveWebhookHash));
 }

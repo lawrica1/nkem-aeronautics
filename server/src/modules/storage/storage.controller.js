@@ -1,9 +1,9 @@
 import { uploadFileToStorage } from "./storage.service.js";
 
 export async function upload(req, res) {
+  // Uploads are always unattached; linking to a request happens in request.service, scoped to the owner.
   const asset = await uploadFileToStorage(req.file, {
     ownerId: req.user.id,
-    serviceRequestId: req.body.serviceRequestId || undefined,
     purpose: req.body.purpose || "general",
   });
 

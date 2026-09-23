@@ -34,11 +34,18 @@ export async function startCheckout(orderId, user) {
 // arrives first wins the atomic claim below; the other becomes a no-op. Amount and
 // currency are re-checked against Flutterwave's own verify response, never trusted
 // from a redirect query string or webhook payload.
-export async function confirmByTransactionId(transactionId) {
+// `user` is the signed-in customer on the browser path; the webhook passes none (it's trusted via verif-hash).
+export async function confirmByTransactionId(transactionId, user) {
+  // Flutterwave ids are numeric; anything else would be spliced into its API path with our secret key.
+  if (!/^\d+$/.test(String(transactionId))) throw new HttpError(400, "Invalid transaction id.");
   const verified = await verifyTransaction(transactionId);
 
   const attempt = await prisma.paymentAttempt.findUnique({ where: { txRef: verified.tx_ref } });
   if (!attempt) throw new HttpError(404, "No matching payment attempt found for this transaction.");
+  if (user) {
+    const order = await prisma.order.findUnique({ where: { id: attempt.orderId }, select: { userId: true } });
+    if (order?.userId !== user.id) throw new HttpError(404, "No matching payment attempt found for this transaction.");
+  }
   if (attempt.status === "successful") return { ok: true, orderId: attempt.orderId, alreadyProcessed: true };
 
   if (verified.status !== "successful") {

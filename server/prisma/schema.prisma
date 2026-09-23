@@ -328,6 +328,7 @@ model User {
   profilePhotoKey      String?
   profilePhotoUrl      String?
   passwordHash         String?
+  tokenVersion         Int              @default(0) // bump to sign the user out of every device
   isVerified           Boolean          @default(false)
   isProfileComplete    Boolean          @default(false)
   identificationNumber String?          @unique

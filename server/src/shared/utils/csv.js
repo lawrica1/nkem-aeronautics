@@ -1,6 +1,13 @@
-function escapeCell(value) {
-  const str = value === null || value === undefined ? "" : String(value);
-  if (/[",\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+// Spreadsheet apps evaluate a cell starting with = + - @ (or tab/CR) as a formula.
+// Digits/spaces/+-(). alone can only compute arithmetic — no functions, links, or DDE —
+// so phone numbers like "+237 670 000 000" are left untouched.
+const FORMULA_TRIGGER = /^[=+\-@\t\r]/;
+const PLAIN_NUMBER = /^[+-]?[\d\s().-]*$/;
+
+export function escapeCell(value) {
+  let str = value === null || value === undefined ? "" : String(value);
+  if (FORMULA_TRIGGER.test(str) && !PLAIN_NUMBER.test(str)) str = `'${str}`;
+  if (/[",\r\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
   return str;
 }
 

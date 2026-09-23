@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { Bell, ArrowRight } from "lucide-react";
-import { getToken, clearToken } from "@/lib/api";
+import { getToken, signOut } from "@/lib/api";
 import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFarmerServiceRequests } from "@/hooks/useFarmerServiceRequests";
 import { ProfileCard } from "@/components/portal/ProfileCard";
@@ -63,8 +63,8 @@ export default function LogbookPortalPage() {
   const profile = useFarmerProfile({ enabled: isLoggedIn });
   const serviceRequests = useFarmerServiceRequests({ enabled: isLoggedIn });
 
-  function handleLogout() {
-    clearToken();
+  async function handleLogout() {
+    await signOut();
     queryClient.clear();
     router.push("/");
   }

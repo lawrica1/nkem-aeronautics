@@ -9,7 +9,7 @@ export async function confirm(req, res) {
   if (!transaction_id || status === "cancelled") {
     return res.json({ ok: false, reason: status || "missing_transaction_id" });
   }
-  res.json(await paymentService.confirmByTransactionId(transaction_id));
+  res.json(await paymentService.confirmByTransactionId(transaction_id, req.user));
 }
 
 export async function webhook(req, res) {

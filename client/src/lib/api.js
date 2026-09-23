@@ -38,6 +38,14 @@ export function clearAdminToken() {
   localStorage.removeItem(ADMIN_TOKEN_KEY);
 }
 
+// Admin tokens expire after 12h; send the admin back to sign in instead of showing errors.
+function handleExpiredAdmin(res, admin) {
+  if (admin && res.status === 401 && typeof window !== "undefined") {
+    clearAdminToken();
+    window.location.assign("/admin/login");
+  }
+}
+
 export function hasAccount() {
   if (typeof window === "undefined") return false;
   return localStorage.getItem(ACCOUNT_KEY) === "true";
@@ -66,10 +74,18 @@ export async function apiRequest(path, { method = "GET", body, auth = false, adm
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
+    handleExpiredAdmin(res, admin);
     throw new Error(data?.message ?? `Request failed with status ${res.status}`);
   }
 
   return data;
+}
+
+// Ends the session server-side (on every device), then clears it here even if that call fails.
+export async function signOut({ admin = false } = {}) {
+  await apiRequest(admin ? "/admin/logout" : "/auth/logout", { method: "POST", auth: !admin, admin }).catch(() => {});
+  if (admin) clearAdminToken();
+  else clearToken();
 }
 
 export async function apiUpload(path, formData, { admin = false } = {}) {
@@ -87,6 +103,7 @@ export async function apiUpload(path, formData, { admin = false } = {}) {
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
+    handleExpiredAdmin(res, admin);
     throw new Error(data?.message ?? `Upload failed with status ${res.status}`);
   }
 

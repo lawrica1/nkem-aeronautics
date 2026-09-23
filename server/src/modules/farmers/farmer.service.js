@@ -2,6 +2,8 @@ import { serializeUser } from "../users/user.serializer.js";
 import { listForUser } from "../requests/request.service.js";
 import { uploadFileToStorage } from "../storage/storage.service.js";
 import { prisma } from "../../config/prisma.js";
+import { HttpError } from "../../shared/errors/HttpError.js";
+import { FIRM_VALUES } from "../firms/firms.constants.js";
 
 export function getProfile(user) {
   return serializeUser(user);
@@ -39,6 +41,9 @@ export async function updateProfile(user, body) {
   const data = {};
   for (const key of ALLOWED) {
     if (body[key] !== undefined) data[key] = body[key];
+  }
+  if (data.firm && !FIRM_VALUES.includes(data.firm)) {
+    throw new HttpError(400, "Choose a firm affiliation from the list.");
   }
 
   // Mark profile complete when name + surname are provided (sector is set at signup)

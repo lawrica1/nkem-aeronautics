@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
+import { escapeHtml } from "../../shared/utils/html.js";
 import { nextReceiptNumber } from "../logbooks/counter.model.js";
 import { sendEmail } from "../notifications/email.service.js";
 import { createNotification } from "../notifications/notification.service.js";
@@ -149,11 +150,11 @@ async function sendReceiptEmail(user, order, receipt) {
   const items = await prisma.orderItem.findMany({ where: { orderId: order.id }, include: { product: true } });
   const format = (amount) => `${amount.toLocaleString("fr-CM")} XAF`;
   const rows = items
-    .map((item) => `<tr><td>${item.product.name} &times; ${item.quantity}</td><td style="text-align:right">${format(item.unitPrice * item.quantity)}</td></tr>`)
+    .map((item) => `<tr><td>${escapeHtml(item.product.name)} &times; ${item.quantity}</td><td style="text-align:right">${format(item.unitPrice * item.quantity)}</td></tr>`)
     .join("");
 
   const html = `
-    <p>Hi ${user.name || "there"},</p>
+    <p>Hi ${escapeHtml(user.name || "there")},</p>
     <p>Thanks for your order. Receipt <strong>${receipt.receiptNumber}</strong> for <strong>${format(order.totalAmount)}</strong> is confirmed.</p>
     <table cellpadding="6" style="border-collapse:collapse;width:100%;max-width:480px">${rows}</table>
     <p><a href="${env.clientOrigin}/receipts/${order.id}">View and print your receipt</a></p>

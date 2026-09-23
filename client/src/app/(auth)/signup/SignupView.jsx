@@ -218,6 +218,9 @@ export function SignupView() {
                 <MessageCircle className="size-3.5" /> Code resent.
               </p>
             )}
+            {resendOtp.isError && (
+              <p className="mt-2 text-center text-xs text-destructive">{resendOtp.error.message}</p>
+            )}
           </div>
         )}
 

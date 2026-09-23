@@ -13,7 +13,7 @@ export async function listUsers(req, res) {
 }
 
 export async function updateUser(req, res) {
-  res.json(await adminService.updateUser(req.params.id, req.body));
+  res.json(await adminService.updateUser(req.params.id, req.body, req.user));
 }
 
 export async function exportLogbooks(req, res) {

@@ -1,11 +1,11 @@
-import bcrypt from "bcryptjs";
 import ExcelJS from "exceljs";
 import { prisma } from "../../config/prisma.js";
 import { ROLES, ROLE_VALUES, SECTORS } from "../platform/platform.constants.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
-import { signUserToken } from "../../shared/middleware/auth.js";
+import { signAdminToken } from "../../shared/middleware/auth.js";
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
+import { checkPassword } from "../../shared/utils/loginGuard.js";
 
 const EXPORT_COLUMNS = [
   { key: "identificationNumber", header: "Logbook ID" },
@@ -30,12 +30,10 @@ export async function login({ email, password }) {
   const admin = await prisma.user.findFirst({
     where: { email: email.toLowerCase(), role: ROLES.ADMIN, isVerified: true },
   });
-  if (!admin) throw new HttpError(401, "Invalid email or password.");
 
-  const valid = await bcrypt.compare(password, admin.passwordHash);
-  if (!valid) throw new HttpError(401, "Invalid email or password.");
-
-  return { token: signUserToken(admin) };
+  await checkPassword("admin", email, admin?.passwordHash, password);
+  // 12h instead of the 30-day user token: a leaked admin token is the most damaging one.
+  return { token: signAdminToken(admin) };
 }
 
 export async function getStats() {
@@ -95,7 +93,7 @@ export async function listUsers({ search, role, sector, country } = {}) {
   return users.map(serializeUser);
 }
 
-export async function updateUser(id, body) {
+export async function updateUser(id, body, actor) {
   const data = {};
   if (body.role !== undefined) {
     if (!ROLE_VALUES.includes(body.role)) throw new HttpError(400, "A valid role is required.");
@@ -103,11 +101,33 @@ export async function updateUser(id, body) {
   }
   if (body.isVerified !== undefined) data.isVerified = !!body.isVerified;
   if (body.organizationId !== undefined) data.organizationId = body.organizationId || null;
+  if (body.revokeSessions === true) data.tokenVersion = { increment: 1 };
 
-  const user = await prisma.user
-    .update({ where: { id }, data, include: { organization: { select: { name: true } } } })
-    .catch(() => null);
-  if (!user) throw new HttpError(404, "User not found.");
+  // ponytail: count-then-update isn't serializable; two admins demoting each other at the same instant could both pass. Use a SERIALIZABLE transaction if that ever matters.
+  const user = await prisma.$transaction(async (tx) => {
+    const target = await tx.user.findUnique({ where: { id } });
+    if (!target) throw new HttpError(404, "User not found.");
+
+    const isAdminNow = target.role === ROLES.ADMIN && target.isVerified;
+    const staysAdmin = (data.role ?? target.role) === ROLES.ADMIN && (data.isVerified ?? target.isVerified);
+
+    if (isAdminNow && !staysAdmin) {
+      if (target.id === actor.id) {
+        throw new HttpError(400, "You can't remove your own admin access. Ask another admin to do it.");
+      }
+      const otherAdmins = await tx.user.count({
+        where: { role: ROLES.ADMIN, isVerified: true, id: { not: target.id } },
+      });
+      if (otherAdmins === 0) throw new HttpError(400, "At least one admin account must remain.");
+    }
+
+    return tx.user.update({ where: { id }, data, include: { organization: { select: { name: true } } } });
+  });
+
+  if (data.role !== undefined || data.isVerified !== undefined || data.tokenVersion) {
+    const change = { role: data.role, isVerified: data.isVerified, revokedSessions: !!data.tokenVersion };
+    console.info(`[audit] admin ${actor.id} updated user ${id}: ${JSON.stringify(change)}`);
+  }
   return serializeUser(user);
 }
 
