@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare } from "lucide-react";
+import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare, ScanSearch } from "lucide-react";
 import { SectorTabs } from "@/components/SectorTabs";
 import { AgriDroneFilter } from "@/components/AgriDroneFilter";
 import { ProductCarousel } from "@/components/ProductCarousel";
@@ -174,6 +174,12 @@ const CATALOG_COPY = {
           title: "Structural change detection",
           text: "Compare aerial imagery over time, identifying slope movement, settlement, erosion patterns, and infrastructure degradation critical for monitoring.",
           image: "/images/hero/mining-change-detection.jpg",
+        },
+        {
+          icon: ScanSearch,
+          title: "Equipment wear detection",
+          text: "Identify structural cracks, component damage, belt wear, and mechanical failures on conveyors, crushers, and trucks, enabling preventive maintenance.",
+          image: "/images/hero/mining-wear-detection.jpg",
         },
       ],
     },
