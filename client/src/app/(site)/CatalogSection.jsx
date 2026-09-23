@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare, ScanSearch } from "lucide-react";
+import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare, ScanSearch, Route, Bomb, TrendingUp, Sparkles, ShieldCheck, Globe, Cpu, Headphones } from "lucide-react";
 import { SectorTabs } from "@/components/SectorTabs";
 import { AgriDroneFilter } from "@/components/AgriDroneFilter";
 import { ProductCarousel } from "@/components/ProductCarousel";
@@ -152,6 +152,7 @@ const CATALOG_COPY = {
           icon: Flame,
           title: "Thermal anomaly identification",
           text: "Detect overheating motors, bearing failures, electrical hotspots, and equipment malfunctions before catastrophic failure and production loss.",
+          image: "/images/hero/mining-thermal.jpg",
         },
         {
           icon: Droplets,
@@ -163,11 +164,13 @@ const CATALOG_COPY = {
           icon: Cog,
           title: "Conveyor condition analysis",
           text: "Analyze belt alignment, roller condition, material spillage, and structure integrity, automating routine inspection documentation and prioritizing repairs.",
+          image: "/images/hero/mining-conveyor.jpg",
         },
         {
           icon: Layers,
           title: "Stockpile boundary mapping",
           text: "Generate precise stockpile boundaries from aerial imagery, enabling accurate volume calculations and inventory tracking without manual surveying.",
+          image: "/images/hero/mining-stockpile.jpg",
         },
         {
           icon: GitCompare,
@@ -181,7 +184,72 @@ const CATALOG_COPY = {
           text: "Identify structural cracks, component damage, belt wear, and mechanical failures on conveyors, crushers, and trucks, enabling preventive maintenance.",
           image: "/images/hero/mining-wear-detection.jpg",
         },
+        {
+          icon: Route,
+          title: "Haul road surface assessment",
+          text: "Identify potholes, washouts, debris accumulation, and drainage issues, enabling proactive road maintenance before equipment damage or delays.",
+          image: "/images/hero/mining-haul-road.jpg",
+        },
+        {
+          icon: Bomb,
+          title: "Blast zone hazard identification",
+          text: "Analyze post-blast areas, identifying misfires, unstable ground, debris hazards, and access obstructions before personnel clearance and re-entry.",
+          image: "/images/hero/mining-blast-zone.jpg",
+        },
       ],
+    },
+    integration: {
+      heading: "Designed to work with your mining operations stack",
+      subtitle:
+        "Built to integrate into mining operations across hardware, software, and regulatory environments without disrupting existing dispatch, safety, or planning systems.",
+      hardware: {
+        title: "Supported Hardware",
+        text: "Support 24/7 autonomous operations with enterprise-grade drones, weatherproof docking stations, and mission-specific payloads — thermal cameras, zoom lenses, spotlights, loudspeakers, and more — orchestrated across diverse environments through one autonomy platform.",
+        image: "/images/hero/mining-supported-hardware.jpg",
+      },
+    },
+    platform: {
+      heading: "One platform for enterprise-scale mining drone autonomy",
+      subtitle:
+        "Nkem Aeronautics provides the reliability, intelligence, and operational maturity required to run autonomous drone programs at scale across mining sites and infrastructure.",
+      items: [
+        {
+          icon: TrendingUp,
+          title: "Proven at scale",
+          text: "Operate 5 autonomous drone deployments with proven uptime and production-grade reliability across mining environments.",
+        },
+        {
+          icon: Sparkles,
+          title: "AI-first architecture",
+          text: "Apply computer vision and analytics designed from the ground up for mining operations, not generic retrofitted capabilities.",
+        },
+        {
+          icon: ShieldCheck,
+          title: "Enterprise-grade security and compliance",
+          text: "Meet stringent security requirements with encrypted transmission, and flexible deployment models.",
+        },
+        {
+          icon: Globe,
+          title: "Local product and data sovereignty",
+          text: "Support in-country data residency, regional compliance needs, and local language requirements for multinational mining operations.",
+        },
+        {
+          icon: Cpu,
+          title: "True autonomy",
+          text: "Run 24/7 unattended dock-based operations across pits, processing plants, and remote sites without manual piloting or increased operator workload.",
+        },
+        {
+          icon: Headphones,
+          title: "Dedicated enterprise support",
+          text: "Rely on deployment assistance, training, and responsive support teams experienced in mining workflows.",
+        },
+      ],
+      cta: {
+        heading: "Deploy autonomous aerial intelligence at your mining operation",
+        description:
+          "Connect with our mining autonomy experts to enable safer operations and continuous visibility across your site.",
+        buttonLabel: "Schedule Demo",
+      },
     },
   },
 };
@@ -191,7 +259,7 @@ export function CatalogSection() {
   const [crop, setCrop] = useState("all");
   const [service, setService] = useState("spraying");
   const [showGetInTouch, setShowGetInTouch] = useState(false);
-  const [openTransformation, setOpenTransformation] = useState(0);
+  const [openTransformation, setOpenTransformation] = useState(null);
   const isEvtol = activeSector === "evtol";
   const copy = CATALOG_COPY[activeSector];
 
@@ -424,11 +492,19 @@ export function CatalogSection() {
                     {copy.capabilities.items.map(({ icon: Icon, title, text, image }) => (
                       <div
                         key={title}
-                        className="h-full overflow-hidden rounded-lg border border-border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                        className="group h-full overflow-hidden rounded-xl border border-border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-green/30 hover:shadow-xl"
                       >
-                        {image && <img src={image} alt={title} className="h-44 w-full object-cover" />}
+                        {image && (
+                          <div className="h-44 w-full overflow-hidden">
+                            <img
+                              src={image}
+                              alt={title}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                          </div>
+                        )}
                         <div className="p-6">
-                          <div className="flex size-10 items-center justify-center rounded-md bg-brand-green/10">
+                          <div className="flex size-10 items-center justify-center rounded-full bg-brand-green/10 transition-colors group-hover:bg-brand-green/20">
                             <Icon className="size-5 text-brand-green" />
                           </div>
                           <h4 className="mt-4 font-semibold text-brand-navy-dark">{title}</h4>
@@ -436,6 +512,70 @@ export function CatalogSection() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {copy.integration && (
+                <div className="mt-16">
+                  <h3 className="text-2xl font-bold tracking-tight text-brand-navy-dark sm:text-3xl">
+                    {copy.integration.heading}
+                  </h3>
+                  <p className="mt-2 max-w-3xl text-muted-foreground">{copy.integration.subtitle}</p>
+                  <div className="mt-8 overflow-hidden rounded-xl border border-border bg-white shadow-sm transition-all duration-300 hover:shadow-xl sm:flex">
+                    <img
+                      src={copy.integration.hardware.image}
+                      alt={copy.integration.hardware.title}
+                      className="h-56 w-full object-cover sm:h-auto sm:w-80"
+                    />
+                    <div className="flex flex-col justify-center p-8">
+                      <p className="text-xs font-semibold tracking-widest text-brand-green uppercase">
+                        Hardware
+                      </p>
+                      <h4 className="mt-2 text-lg font-semibold text-brand-navy-dark">
+                        {copy.integration.hardware.title}
+                      </h4>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy.integration.hardware.text}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {copy.platform && (
+                <div className="relative mt-16 overflow-hidden rounded-xl bg-brand-navy-dark p-8 text-white sm:p-10">
+                  <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-brand-blue/20 blur-3xl" />
+                  <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-brand-green/10 blur-3xl" />
+
+                  <div className="relative">
+                    <h3 className="max-w-2xl text-2xl font-bold tracking-tight sm:text-3xl">{copy.platform.heading}</h3>
+                    <p className="mt-4 max-w-3xl leading-7 text-white/80">{copy.platform.subtitle}</p>
+
+                    <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {copy.platform.items.map(({ icon: Icon, title, text }) => (
+                        <div
+                          key={title}
+                          className="rounded-lg border border-white/15 bg-white/5 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brand-blue/40 hover:bg-white/10"
+                        >
+                          <div className="flex size-10 items-center justify-center rounded-full bg-brand-blue/15">
+                            <Icon className="size-5 text-brand-blue" />
+                          </div>
+                          <h4 className="mt-4 font-semibold text-white">{title}</h4>
+                          <p className="mt-2 text-sm leading-6 text-white/70">{text}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-10 rounded-lg border border-white/10 bg-gradient-to-br from-white/10 to-white/[0.02] p-8 text-center">
+                      <h4 className="text-xl font-bold tracking-tight sm:text-2xl">{copy.platform.cta.heading}</h4>
+                      <p className="mt-3 text-white/80">{copy.platform.cta.description}</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowGetInTouch(true)}
+                        className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-blue px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
+                      >
+                        {copy.platform.cta.buttonLabel}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -451,7 +591,7 @@ export function CatalogSection() {
                 </div>
               )}
 
-              {activeSector !== "wildlife" && (
+              {activeSector !== "wildlife" && activeSector !== "mining" && (
                 <div className="mt-8">
                   <ProductCarousel sector={activeSector} cropFilter={crop} serviceFilter={service} />
                 </div>

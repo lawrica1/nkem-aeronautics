@@ -49,7 +49,7 @@ export function Hero() {
             style={{ animationDelay: "100ms" }}
           >
             Advanced Aerial Solutions &amp;{" "}
-            <span className="text-white">Agricultural Innovation</span>
+            <span className="text-white">Unmanned Aerial Vehicles Manufacturer</span>
           </h1>
 
           <div
