@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 
@@ -55,7 +56,10 @@ export async function update(id, body) {
     data.price = body.price === "" || body.price === null ? null : Number(body.price);
   }
 
-  const product = await prisma.product.update({ where: { id }, data }).catch(() => null);
+  const product = await prisma.product.update({ where: { id }, data }).catch((err) => {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+    throw err;
+  });
   if (!product) throw new HttpError(404, "Product not found.");
   return product;
 }

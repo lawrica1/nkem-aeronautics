@@ -117,6 +117,9 @@ export function PilotsAdminView() {
               </tbody>
             </table>
           )}
+          {updatePilot.isError && (
+            <p className="mt-2 text-sm text-destructive">{updatePilot.error.message}</p>
+          )}
         </div>
       )}
     </div>

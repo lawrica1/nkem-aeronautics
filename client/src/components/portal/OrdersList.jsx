@@ -37,7 +37,11 @@ function PayOnlineButton({ orderId }) {
 export function OrdersList() {
   const { data: orders, isLoading, isError } = useMyOrders();
 
-  if (isLoading || isError || !orders?.length) return null;
+  if (isLoading) return null;
+  if (isError) return (
+    <p className="text-sm text-destructive">Could not load your orders. Please refresh to try again.</p>
+  );
+  if (!orders?.length) return null;
 
   return (
     <div>

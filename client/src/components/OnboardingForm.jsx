@@ -25,7 +25,7 @@ const CROP_OPTIONS = [
 
 export function OnboardingForm() {
   const router = useRouter();
-  const { data: profile } = useFarmerProfile({ enabled: true });
+  const { data: profile, isLoading: profileLoading, isError: profileError } = useFarmerProfile({ enabled: true });
   const update = useUpdateProfile();
   const { data: firms } = useFirms();
 
@@ -74,6 +74,18 @@ export function OnboardingForm() {
     update.mutate(form, {
       onSuccess: () => router.push("/logbook"),
     });
+  }
+
+  if (profileLoading) {
+    return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
+  }
+
+  if (profileError) {
+    return (
+      <p className="text-sm text-destructive">
+        Could not load your profile. Please refresh the page and try again.
+      </p>
+    );
   }
 
   return (

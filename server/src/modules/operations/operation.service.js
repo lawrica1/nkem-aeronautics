@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
@@ -32,7 +33,12 @@ export async function assign(body) {
         userId: request.userId,
         pilotId: body.pilotId || null,
         droneId: body.droneId || null,
-        scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
+        scheduledAt: (() => {
+          if (!body.scheduledAt) return null;
+          const d = new Date(body.scheduledAt);
+          if (isNaN(d.getTime())) throw new HttpError(400, "scheduledAt must be a valid date.");
+          return d;
+        })(),
         chemical: body.chemical || "",
         region: body.region || request.region || "",
         comments: body.comments || "",
@@ -54,12 +60,21 @@ export async function update(id, body) {
     if (body[key] !== undefined) data[key] = body[key];
   }
   if (body.scheduledAt !== undefined) {
-    data.scheduledAt = body.scheduledAt ? new Date(body.scheduledAt) : null;
+    if (body.scheduledAt) {
+      const d = new Date(body.scheduledAt);
+      if (isNaN(d.getTime())) throw new HttpError(400, "scheduledAt must be a valid date.");
+      data.scheduledAt = d;
+    } else {
+      data.scheduledAt = null;
+    }
   }
 
   const operation = await prisma.operation
     .update({ where: { id }, data, include: OPERATION_INCLUDE })
-    .catch(() => null);
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+      throw err;
+    });
   if (!operation) throw new HttpError(404, "Operation not found.");
 
   if (body.status !== undefined) {
@@ -71,8 +86,9 @@ export async function update(id, body) {
       data: { status: body.status },
     });
 
+    // Fire-and-forget — notification failure must not roll back the committed status change.
     if (body.status === REQUEST_STATUS.COMPLETED) {
-      await notify(
+      notify(
         updatedRequest.userId,
         {
           type: "operation_completed",
@@ -82,10 +98,10 @@ export async function update(id, body) {
         },
         `Your ${updatedRequest.service} operation is complete`,
         `<p>Your <strong>${escapeHtml(updatedRequest.service)}</strong> operation${operation.pilot ? ` with pilot ${escapeHtml(operation.pilot.name)}` : ""} is complete.</p>${operation.results ? `<p><strong>Results:</strong> ${escapeHtml(operation.results)}</p>` : ""}<p>You can now leave a review for the pilot from your Logbook.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
-      );
+      ).catch((err) => console.error("[notify:operation_completed]", err.message));
     } else {
       const statusLabel = REQUEST_STATUS_LABELS[updatedRequest.status] || updatedRequest.status;
-      await notify(
+      notify(
         updatedRequest.userId,
         {
           type: "request_status",
@@ -94,7 +110,7 @@ export async function update(id, body) {
         },
         `Update on your ${updatedRequest.service} request`,
         `<p>Your request for <strong>${escapeHtml(updatedRequest.service)}</strong> is now <strong>${statusLabel}</strong>.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
-      );
+      ).catch((err) => console.error("[notify:request_status]", err.message));
     }
   }
 

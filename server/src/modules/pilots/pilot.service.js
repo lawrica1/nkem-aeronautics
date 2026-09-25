@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { ROLES } from "../platform/platform.constants.js";
@@ -25,7 +26,10 @@ export async function create(body) {
           isProfileComplete: true,
         },
       })
-      .catch(() => null);
+      .catch((err) => {
+        if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") return null;
+        throw err;
+      });
     if (!user) throw new HttpError(409, "An account with this email already exists.");
     userId = user.id;
   }
@@ -47,7 +51,10 @@ export async function update(id, body) {
     if (body[key] !== undefined) data[key] = body[key];
   }
 
-  const pilot = await prisma.pilot.update({ where: { id }, data }).catch(() => null);
+  const pilot = await prisma.pilot.update({ where: { id }, data }).catch((err) => {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+    throw err;
+  });
   if (!pilot) throw new HttpError(404, "Pilot not found.");
   return pilot;
 }

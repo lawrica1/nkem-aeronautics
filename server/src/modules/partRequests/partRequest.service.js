@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { PART_REQUEST_STATUS_VALUES } from "./partRequest.constants.js";
@@ -51,7 +52,10 @@ export async function update(id, body) {
   if (body.status !== undefined) data.status = body.status;
   if (body.adminNotes !== undefined) data.adminNotes = body.adminNotes;
 
-  const request = await prisma.partRequest.update({ where: { id }, data, include: INCLUDE }).catch(() => null);
+  const request = await prisma.partRequest.update({ where: { id }, data, include: INCLUDE }).catch((err) => {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+    throw err;
+  });
   if (!request) throw new HttpError(404, "Part request not found.");
   return serializePartRequest(request);
 }

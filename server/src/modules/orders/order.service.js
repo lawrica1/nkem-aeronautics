@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
@@ -98,7 +99,10 @@ export async function updateStatus(id, body) {
 
   const order = await prisma.order
     .update({ where: { id }, data: { status: body.status }, include: ORDER_INCLUDE })
-    .catch(() => null);
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+      throw err;
+    });
   if (!order) throw new HttpError(404, "Order not found.");
   return serializeOrder(order);
 }

@@ -7,7 +7,7 @@ import * as controller from "./farmer.controller.js";
 export const farmerRouter = Router();
 
 farmerRouter.use(requireUser);
-farmerRouter.get("/me", controller.me);
+farmerRouter.get("/me", asyncHandler(controller.me));
 farmerRouter.patch("/me", asyncHandler(controller.updateProfile));
 farmerRouter.get("/logbook", asyncHandler(controller.logbook));
 farmerRouter.patch("/me/photo", uploadProfilePhoto, asyncHandler(controller.updatePhoto));

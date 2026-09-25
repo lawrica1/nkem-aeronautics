@@ -105,6 +105,9 @@ export function ProductsAdminView() {
               </tbody>
             </table>
           )}
+          {updateProduct.isError && (
+            <p className="mt-2 text-sm text-destructive">{updateProduct.error.message}</p>
+          )}
         </div>
       )}
     </div>

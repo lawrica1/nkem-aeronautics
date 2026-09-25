@@ -86,6 +86,13 @@ export default function LogbookPortalPage() {
         />
 
         <div className="space-y-8">
+          {profile.isError && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+              Could not load your profile. Please refresh the page or{" "}
+              <button type="button" onClick={handleLogout} className="underline">log in again</button>.
+            </div>
+          )}
+
           {profile.data && !profile.data.isProfileComplete && (
             <Link
               href="/onboarding"

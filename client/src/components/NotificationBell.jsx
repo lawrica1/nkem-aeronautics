@@ -12,7 +12,7 @@ function formatDate(iso) {
 export function NotificationBell() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: notifications } = useNotifications();
+  const { data: notifications, isError: notificationsError } = useNotifications();
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
@@ -51,7 +51,10 @@ export function NotificationBell() {
             )}
           </div>
           <div className="max-h-80 overflow-y-auto">
-            {!notifications?.length && (
+            {notificationsError && (
+              <p className="px-4 py-3 text-center text-xs text-destructive">Could not load notifications.</p>
+            )}
+            {!notificationsError && !notifications?.length && (
               <p className="px-4 py-6 text-center text-sm text-muted-foreground">No notifications yet.</p>
             )}
             {notifications?.map((n) => (

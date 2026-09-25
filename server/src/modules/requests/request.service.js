@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
@@ -105,7 +106,10 @@ export async function assignPartner(id, body) {
       data: { partnerId },
       include: { partner: { select: { id: true, name: true, email: true } } },
     })
-    .catch(() => null);
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+      throw err;
+    });
   if (!request) throw new HttpError(404, "Service request not found.");
 
   return { ...serializeRequest(request), partner: request.partner };
@@ -153,12 +157,16 @@ export async function updateStatus(id, body) {
       where: { id },
       data: { status: body.status, adminNotes: body.adminNotes || "" },
     })
-    .catch(() => null);
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+      throw err;
+    });
 
   if (!request) throw new HttpError(404, "Service request not found.");
 
   const statusLabel = REQUEST_STATUS_LABELS[request.status] || request.status;
-  await notify(
+  // Fire-and-forget — a notification failure must not roll back the committed status change.
+  notify(
     request.userId,
     {
       type: "request_status",
@@ -168,7 +176,7 @@ export async function updateStatus(id, body) {
     },
     `Update on your ${request.service} request`,
     `<p>Your request for <strong>${escapeHtml(request.service)}</strong> is now <strong>${statusLabel}</strong>.</p>${request.adminNotes ? `<p>${escapeHtml(request.adminNotes)}</p>` : ""}<p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
-  );
+  ).catch((err) => console.error("[notify:request_status]", err.message));
 
   return serializeRequest(request);
 }

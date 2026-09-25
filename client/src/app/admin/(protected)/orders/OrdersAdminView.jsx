@@ -212,6 +212,9 @@ function OrderRow({ order }) {
               </select>
             </div>
           </div>
+          {updateStatus.isError && (
+            <p className="text-sm text-destructive">{updateStatus.error.message}</p>
+          )}
         </div>
       )}
     </div>

@@ -82,6 +82,7 @@ export function NewsAdminView() {
       {!isLoading && !isError && (
         <div className="space-y-2">
           {deleteNews.isError && <p className="text-sm text-destructive">{deleteNews.error.message}</p>}
+          {updateNews.isError && <p className="text-sm text-destructive">{updateNews.error.message}</p>}
           {posts?.length === 0 && <p className="text-sm text-muted-foreground">No posts yet — publish one above.</p>}
           {posts?.map((post) => (
             <div key={post.id} className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">

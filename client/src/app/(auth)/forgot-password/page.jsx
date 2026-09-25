@@ -147,8 +147,9 @@ export default function ForgotPasswordPage() {
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" disabled={otp.length < 6} className="w-full bg-brand-navy text-white hover:bg-brand-navy/90">
-            Verify code
+            Continue
           </Button>
+          <p className="text-center text-xs text-muted-foreground">Your code will be verified when you submit the new password.</p>
 
           <button
             type="button"

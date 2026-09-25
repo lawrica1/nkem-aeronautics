@@ -56,18 +56,20 @@ function SectorBadge({ sector }) {
 function Avatar({ photoUrl, name, onPhotoChange }) {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
+    setUploadError(null);
     try {
       const fd = new FormData();
       fd.append("photo", file);
       const updated = await apiUpload("/farmers/me/photo", fd);
       onPhotoChange?.(updated.profilePhotoUrl);
-    } catch {
-      // silently ignore — user can retry
+    } catch (err) {
+      setUploadError(err.message || "Photo upload failed. Please try again.");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -102,6 +104,11 @@ function Avatar({ photoUrl, name, onPhotoChange }) {
         className="sr-only"
         onChange={handleFile}
       />
+      {uploadError && (
+        <p className="absolute -bottom-5 left-1/2 w-40 -translate-x-1/2 text-center text-[10px] text-destructive">
+          {uploadError}
+        </p>
+      )}
     </div>
   );
 }

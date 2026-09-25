@@ -104,6 +104,7 @@ function QuoteRow({ quote }) {
           Save
         </Button>
       </div>
+      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
     </div>
   );
 }

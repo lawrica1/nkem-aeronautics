@@ -12,7 +12,7 @@ function formatDate(iso) {
 }
 
 export function PartRequestSection() {
-  const { data: requests } = useMyPartRequests();
+  const { data: requests, isLoading: requestsLoading, isError: requestsError } = useMyPartRequests();
   const createRequest = useCreatePartRequest();
   const [showForm, setShowForm] = useState(false);
   const [description, setDescription] = useState("");
@@ -66,6 +66,15 @@ export function PartRequestSection() {
         </form>
       )}
 
+      {requestsLoading && (
+        <p className="mt-4 text-sm text-muted-foreground">Loading part requests…</p>
+      )}
+      {requestsError && (
+        <p className="mt-4 text-sm text-destructive">Could not load your part requests. Please refresh.</p>
+      )}
+      {!requestsLoading && !requestsError && requests?.length === 0 && (
+        <p className="mt-4 text-sm text-muted-foreground">No part requests yet.</p>
+      )}
       {requests?.length > 0 && (
         <ul className="mt-4 space-y-2">
           {requests.map((request) => (

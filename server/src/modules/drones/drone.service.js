@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 
@@ -43,7 +44,10 @@ export async function update(id, body) {
   if (body.specList !== undefined) data.specList = cleanSpecList(body.specList);
   if (body.images !== undefined) data.images = cleanImages(body.images);
 
-  const drone = await prisma.drone.update({ where: { id }, data }).catch(() => null);
+  const drone = await prisma.drone.update({ where: { id }, data }).catch((err) => {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
+    throw err;
+  });
   if (!drone) throw new HttpError(404, "Drone not found.");
   return drone;
 }

@@ -69,6 +69,7 @@ function PartRequestRow({ request }) {
           Save
         </Button>
       </div>
+      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
     </div>
   );
 }
