@@ -9,4 +9,6 @@ authRouter.post("/signup", asyncHandler(controller.signup));
 authRouter.post("/verify-otp", asyncHandler(controller.verifyOtp));
 authRouter.post("/resend-otp", asyncHandler(controller.resendOtp));
 authRouter.post("/login", asyncHandler(controller.login));
+authRouter.post("/forgot-password", asyncHandler(controller.forgotPassword));
+authRouter.post("/reset-password", asyncHandler(controller.resetPassword));
 authRouter.post("/logout", requireUser, logout);

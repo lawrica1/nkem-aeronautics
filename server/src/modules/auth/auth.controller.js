@@ -15,3 +15,11 @@ export async function resendOtp(req, res) {
 export async function login(req, res) {
   res.json(await authService.login(req.body));
 }
+
+export async function forgotPassword(req, res) {
+  res.json(await authService.forgotPassword(req.body));
+}
+
+export async function resetPassword(req, res) {
+  res.json(await authService.resetPassword(req.body));
+}

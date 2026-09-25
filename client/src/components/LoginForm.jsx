@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/hooks/useLogin";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export function LoginForm({ onSuccess }) {
   const [method, setMethod] = useState("email"); // "email" | "phone"
@@ -98,9 +99,9 @@ export function LoginForm({ onSuccess }) {
       </div>
 
       <div className="text-right">
-        <a href="#" className="text-sm text-muted-foreground hover:text-brand-navy-dark">
+        <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-brand-navy-dark">
           Forgot password?
-        </a>
+        </Link>
       </div>
 
       {login.isError && <p className="text-sm text-destructive">{login.error.message}</p>}

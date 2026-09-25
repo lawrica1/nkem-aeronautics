@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Users2, ClipboardCheck, MapPin } from "lucide-react";
@@ -8,6 +8,8 @@ import { LoginForm } from "@/components/LoginForm";
 
 export function LoginView() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const passwordReset = searchParams.get("reset") === "1";
 
   return (
     <main className="grid min-h-screen w-full lg:grid-cols-2">
@@ -128,6 +130,12 @@ export function LoginView() {
           <p className="mt-1 text-sm text-muted-foreground">
             Sign in to your Nkem Aeronautics workspace.
           </p>
+
+          {passwordReset && (
+            <div className="mt-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+              Password updated successfully. You can now sign in.
+            </div>
+          )}
 
           <div className="mt-8">
             <LoginForm
