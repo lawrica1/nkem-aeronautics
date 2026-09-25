@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ShieldAlert, Truck, Zap, Siren, Flame, Cog, Layers, ChevronDown, BarChart3, Users2, Wrench, Droplets, GitCompare, ScanSearch, Route, Bomb, TrendingUp, Sparkles, ShieldCheck, Globe, Cpu, Headphones } from "lucide-react";
-import { SectorTabs } from "@/components/SectorTabs";
 import { AgriDroneFilter } from "@/components/AgriDroneFilter";
 import { ProductCarousel } from "@/components/ProductCarousel";
 import { EvtolSeries } from "@/components/EvtolSeries";
@@ -254,8 +253,7 @@ const CATALOG_COPY = {
   },
 };
 
-export function CatalogSection() {
-  const [activeSector, setActiveSector] = useState("agricultural");
+export function CatalogSection({ sector: activeSector }) {
   const [crop, setCrop] = useState("all");
   const [service, setService] = useState("spraying");
   const [showGetInTouch, setShowGetInTouch] = useState(false);
@@ -266,20 +264,14 @@ export function CatalogSection() {
   // Starts false to match the server render, then syncs after mount — see Hero.jsx.
   const [returning, setReturning] = useState(false);
 
-  // Lets links like "/?sector=evtol#catalog" (e.g. the drone detail page's back link)
-  // land directly on the right tab instead of always resetting to Agriculture.
   useEffect(() => {
-    const sector = new URLSearchParams(window.location.search).get("sector");
-    if (sector) setActiveSector(sector);
     setReturning(hasAccount());
   }, []);
 
   return (
     <section id="catalog" className="relative border-t border-border">
       <div className="mx-auto w-full max-w-6xl px-6 py-16">
-        <SectorTabs active={activeSector} onChange={setActiveSector} />
-
-        <div className="mt-10">
+        <div>
           {isEvtol ? (
             <EvtolSeries />
           ) : (

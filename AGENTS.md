@@ -25,75 +25,16 @@ The project now follows the supplied system-design prompt:
 
 Do not reintroduce Next.js API routes or MongoDB/Mongoose backend code unless the user explicitly requests a new architecture change.
 
-## Tech Stack
-
-Frontend:
-
-- Next.js App Router
-- React
-- Tailwind CSS
-- shadcn/ui-style components
-- React Query
-
-Backend:
-
-- Node.js
-- Express
-- Prisma
-- PostgreSQL/Neon
-- JWT authentication
-- bcrypt password and OTP hashing
-
 ## Environment
 
-Client:
-
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
-
-Server:
-
-```bash
-PORT=5000
-DATABASE_URL=postgresql://USER:PASSWORD@HOST/neondb?sslmode=require
-JWT_SECRET=replace-with-a-long-random-string
-CLIENT_ORIGIN=http://localhost:3000
-OTP_PROVIDER=console
-TERMII_API_KEY=replace-with-termii-api-key
-TERMII_SENDER_ID=N-Alert
-TERMII_CHANNEL=generic
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=nkemaeronautics@gmail.com
-SMTP_PASS=replace-with-a-gmail-app-password
-FLUTTERWAVE_SECRET_KEY=replace-with-flutterwave-secret-key
-FLUTTERWAVE_WEBHOOK_HASH=replace-with-a-random-webhook-secret
-```
+Variables are listed in `client/.env.example` and `server/.env.example`.
 
 Never commit real `.env` files, database URLs, JWT secrets, API keys, OTP credentials, or other secrets.
 
-## Dev Commands
-
-Frontend:
+## Admin Account
 
 ```bash
-cd client
-npm install
-npm run dev
-npm run build
-npm run lint
-```
-
-Backend:
-
-```bash
-cd server
-npm install
-npm run prisma:generate
-npm run prisma:push
-npm run dev
-npm run create-admin -- --email admin@example.com --password "change-me" --name "Admin"
+cd server && npm run create-admin -- --email admin@example.com --password "change-me" --name "Admin"
 ```
 
 ## Domain Rules

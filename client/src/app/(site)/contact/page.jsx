@@ -1,10 +1,9 @@
 import Link from "next/link";
 import {
   MapPin,
-  Phone,
+  MessageCircle,
   Mail,
   Globe,
-  MessageCircle,
   Clock,
   ArrowRight,
   Headphones,
@@ -12,8 +11,7 @@ import {
 
 export const metadata = {
   title: "Contact — Nkem Aeronautics",
-  description:
-    "Get in touch with Nkem Aeronautics. Find our address, phone, WhatsApp, and email details.",
+  description: "Get in touch with Nkem Aeronautics. Find our address, WhatsApp, and email details.",
 };
 
 const WHATSAPP_NUMBER = "237670439117";
@@ -24,19 +22,6 @@ const CONTACT_DETAILS = [
     label: "Headquarters",
     value: "Junction of Cairo Road and Independence Avenue\nLusaka 10101, Zambia",
     multiline: true,
-  },
-  {
-    icon: Phone,
-    label: "Telephone",
-    value: "+237 670 439 117",
-    href: "tel:+237670439117",
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: "+237 670 439 117",
-    href: `https://wa.me/${WHATSAPP_NUMBER}`,
-    external: true,
   },
   {
     icon: Mail,
@@ -79,6 +64,18 @@ const FAQS = [
   {
     q: "Are you working/planning to become a manufacturer or retailer in drone technology?",
     a: "Yes, we do offer services and special mentorship.",
+  },
+  {
+    q: "What does Nkem Aeronautics do?",
+    a: "For pipeline operators, Nkem Aeronautics provides aerial drone inspection for oil, gas, water, and industrial pipelines — capturing high-resolution imagery and thermal data along the right-of-way to help identify surface corrosion, leaks, encroachments, and other visible integrity risks for maintenance planning and regulatory compliance.",
+  },
+  {
+    q: "Which industries does Nkem Aeronautics serve?",
+    a: "We support operators of oil and gas pipelines, water transmission networks, and industrial pipeline systems who need reliable aerial condition data for maintenance planning, risk reduction, and long-term asset monitoring.",
+  },
+  {
+    q: "Where does Nkem Aeronautics operate?",
+    a: "Nkem Aeronautics is based in Zambia and operates across the broader Africa region. We don't currently have offices outside Africa — contact us to confirm availability for a specific location.",
   },
 ];
 
@@ -140,8 +137,7 @@ export default function ContactPage() {
             <div>
               <h2 className="text-2xl font-bold text-brand-navy-dark">Our Details</h2>
               <p className="mt-2 text-muted-foreground">
-                Reach us through any of the channels below. WhatsApp is usually the fastest way
-                to get a response.
+                Reach us through any of the channels below.
               </p>
 
               <Link

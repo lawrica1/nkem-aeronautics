@@ -16,7 +16,7 @@ export function DroneDetailView({ slug }) {
     return (
       <main className="mx-auto max-w-4xl px-6 py-16 text-center">
         <p className="text-sm text-destructive">{error.message}</p>
-        <Link href="/?sector=evtol#catalog" className="mt-4 inline-block text-sm text-brand-blue underline">← Back to catalogue</Link>
+        <Link href="/services/evtol" className="mt-4 inline-block text-sm text-brand-blue underline">← Back to eVTOL</Link>
       </main>
     );
   }
@@ -25,7 +25,7 @@ export function DroneDetailView({ slug }) {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
-      <Link href="/?sector=evtol#catalog" className="text-sm text-brand-blue underline">← Back to catalogue</Link>
+      <Link href="/services/evtol" className="text-sm text-brand-blue underline">← Back to eVTOL</Link>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <div>

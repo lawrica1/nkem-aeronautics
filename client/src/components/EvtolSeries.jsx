@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { APPLICATIONS } from "@/lib/applications";
 import { formatXAF } from "@/lib/currency";
@@ -28,6 +29,21 @@ function ApplicationCard({ application, active, onClick }) {
   );
 }
 
+const FAQS = [
+  {
+    q: "What does Nkem Aeronautics do?",
+    a: "For pipeline operators, Nkem Aeronautics provides aerial drone inspection for oil, gas, water, and industrial pipelines — capturing high-resolution imagery and thermal data along the right-of-way to help identify surface corrosion, leaks, encroachments, and other visible integrity risks for maintenance planning and regulatory compliance.",
+  },
+  {
+    q: "Which industries does Nkem Aeronautics serve?",
+    a: "We support operators of oil and gas pipelines, water transmission networks, and industrial pipeline systems who need reliable aerial condition data for maintenance planning, risk reduction, and long-term asset monitoring.",
+  },
+  {
+    q: "Where does Nkem Aeronautics operate?",
+    a: "Nkem Aeronautics is based in Zambia and operates across the broader Africa region. We don't currently have offices outside Africa — contact us to confirm availability for a specific location.",
+  },
+];
+
 function DroneCard({ product }) {
   return (
     <Link href={`/drones/${product.slug}`} className="group block overflow-hidden rounded-lg border border-border">
@@ -53,6 +69,7 @@ function DroneCard({ product }) {
 
 export function EvtolSeries() {
   const [activeApplication, setActiveApplication] = useState(null);
+  const [openFaq, setOpenFaq] = useState(0);
   const { data: products, isLoading } = useProducts("evtol", undefined, activeApplication);
 
   return (
@@ -108,6 +125,49 @@ export function EvtolSeries() {
           </div>
         )}
       </div>
+
+      {/* FAQs */}
+      <Reveal className="mt-16">
+        <div className="mx-auto max-w-3xl">
+          <div className="text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-green/10">
+              <HelpCircle className="size-6 text-brand-green" />
+            </div>
+            <h3 className="mt-4 text-2xl font-bold text-brand-navy-dark sm:text-3xl">
+              Frequently Asked Questions
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Common questions about our pipeline inspection services.
+            </p>
+          </div>
+
+          <div className="mt-8 divide-y divide-border overflow-hidden rounded-xl border border-border bg-background">
+            {FAQS.map((faq, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div key={faq.q}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-brand-gray-light"
+                  >
+                    <span className={`font-semibold ${isOpen ? "text-brand-green" : "text-brand-navy-dark"}`}>
+                      {faq.q}
+                    </span>
+                    <ChevronDown
+                      className={`size-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-180 text-brand-green" : ""}`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </Reveal>
 
       <div className="mt-12">
         <QuoteRequestForm sector="evtol" />

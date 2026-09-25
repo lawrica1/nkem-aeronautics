@@ -7,14 +7,9 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, Home, Wrench, BookOpen, Mail, Building2 } from "lucide-react";
 import { getToken } from "@/lib/api";
 import { NotificationBell } from "@/components/NotificationBell";
+import { SERVICES } from "@/lib/services";
 
-const SERVICE_LINKS = [
-  { label: "Agricultural Drone Services", slug: "agricultural" },
-  { label: "Wildlife & Surveillance", slug: "wildlife" },
-  { label: "Pipeline & Infrastructure Inspection", slug: "pipeline" },
-  { label: "Survey & Mapping", slug: "survey-mapping" },
-  { label: "eVTOL & Heavy-Lift Operations", slug: "evtol" },
-];
+const SERVICE_LINKS = SERVICES.map((s) => ({ label: s.title, slug: s.slug }));
 
 export function Navbar() {
   const pathname = usePathname();
@@ -71,7 +66,7 @@ export function Navbar() {
               {SERVICE_LINKS.map((service) => (
                 <li key={service.slug}>
                   <Link
-                    href={`/services#${service.slug}`}
+                    href={`/services/${service.slug}`}
                     className="block px-4 py-2 text-sm font-normal text-white/85 hover:bg-white/10 hover:text-white"
                   >
                     {service.label}
@@ -154,7 +149,7 @@ export function Navbar() {
                       {SERVICE_LINKS.map((service) => (
                         <li key={service.slug}>
                           <Link
-                            href={`/services#${service.slug}`}
+                            href={`/services/${service.slug}`}
                             className="block rounded-md px-2 py-1.5 text-brand-navy-dark/75 hover:bg-brand-gray-light"
                           >
                             {service.label}

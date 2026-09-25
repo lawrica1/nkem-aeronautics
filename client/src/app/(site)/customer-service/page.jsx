@@ -8,7 +8,7 @@ export const metadata = {
 
 const QUICK_CONTACTS = [
   { icon: Mail, label: "Email", value: "nkem@aeronautics.com", href: "mailto:nkem@aeronautics.com" },
-  { icon: Phone, label: "MTN Number", value: "+237 670 439 117", href: "tel:+237670439117" },
+  { icon: Phone, label: "Telephone", value: "+237 670 439 117", href: "tel:+237670439117" },
 ];
 
 export default function CustomerServicePage() {
