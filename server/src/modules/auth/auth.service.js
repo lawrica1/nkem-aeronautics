@@ -153,17 +153,22 @@ export async function resendSignupOtp({ channel, contact }) {
   };
 }
 
-export async function login({ email, password }) {
-  if (!email || !password) throw new HttpError(400, "email and password are required.");
+export async function login({ email, telephone, password }) {
+  if (!email && !telephone) throw new HttpError(400, "email or phone number is required.");
+  if (!password) throw new HttpError(400, "password is required.");
 
   const user = await prisma.user.findFirst({
-    where: { email: email.toLowerCase(), isVerified: true },
+    where: {
+      isVerified: true,
+      ...(email ? { email: email.toLowerCase() } : { telephone }),
+    },
   });
 
   if (user && !user.passwordHash) {
     throw new HttpError(400, "This account was created without a password. Please set a password through your profile settings.");
   }
 
-  await checkPassword("user", email, user?.passwordHash, password);
+  const identifier = email || telephone;
+  await checkPassword("user", identifier, user?.passwordHash, password);
   return { token: signUserToken(user), role: user.role };
 }

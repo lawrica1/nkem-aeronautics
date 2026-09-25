@@ -1,58 +1,90 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLogin } from "@/hooks/useLogin";
+import { cn } from "@/lib/utils";
 
 export function LoginForm({ onSuccess }) {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [method, setMethod] = useState("email"); // "email" | "phone"
+  const [contact, setContact] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
 
-  function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
-    login.mutate(form, { onSuccess });
+    const body =
+      method === "email"
+        ? { email: contact, password }
+        : { telephone: contact, password };
+    login.mutate(body, { onSuccess });
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Method toggle */}
+      <div className="flex rounded-lg border border-border bg-brand-input/60 p-1">
+        {[
+          { id: "email", label: "Email" },
+          { id: "phone", label: "Phone number" },
+        ].map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => { setMethod(opt.id); setContact(""); }}
+            className={cn(
+              "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
+              method === opt.id
+                ? "bg-white text-brand-navy-dark shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Contact field */}
       <div className="space-y-2">
-        <Label htmlFor="login-email">Email</Label>
+        <Label htmlFor="login-contact">
+          {method === "email" ? "Email" : "Phone number"}
+        </Label>
         <div className="relative">
-          <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          {method === "email"
+            ? <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            : <Phone className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          }
           <Input
-            id="login-email"
-            name="email"
-            type="email"
-            placeholder="you@company.com"
+            id="login-contact"
+            type={method === "email" ? "email" : "tel"}
+            placeholder={method === "email" ? "you@example.com" : "+237 670 000 000"}
             required
-            value={form.email}
-            onChange={handleChange}
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
             className="pl-9"
+            autoComplete={method === "email" ? "email" : "tel"}
           />
         </div>
       </div>
 
+      {/* Password */}
       <div className="space-y-2">
         <Label htmlFor="login-password">Password</Label>
         <div className="relative">
           <Lock className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="login-password"
-            name="password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
             required
-            value={form.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="pr-9 pl-9"
+            autoComplete="current-password"
           />
           <button
             type="button"
