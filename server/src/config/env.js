@@ -18,6 +18,7 @@ export const env = {
   smtpPort: Number(process.env.SMTP_PORT) || 465,
   smtpUser: process.env.SMTP_USER || "nkemaeronautics@gmail.com",
   smtpPass: process.env.SMTP_PASS,
+  brevoApiKey: process.env.BREVO_API_KEY,
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
   flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
 };
