@@ -5,7 +5,7 @@ import { enforce, hit, reset } from "../../shared/utils/rateLimit.js";
 
 const OTP_TTL_MS = 10 * 60 * 1000;
 const OTP_SALT_ROUNDS = 8;
-const TERMII_SEND_URL = "https://api.ng.termii.com/api/sms/send";
+const TERMII_SEND_URL = "https://v4.api.termii.com/api/sms/send";
 export const OTP_MAX_FAILED_ATTEMPTS = 5;
 
 // Keyed by the destination, not the caller: the harm (SMS spend, harassment, guessing)
