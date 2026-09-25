@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminNews, useCreateNews, useUpdateNews } from "@/hooks/useNews";
+import { Trash2 } from "lucide-react";
+import { useAdminNews, useCreateNews, useDeleteNews, useUpdateNews } from "@/hooks/useNews";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FileUpload } from "@/components/portal/FileUpload";
@@ -20,6 +21,12 @@ export function NewsAdminView() {
   const { data: posts, isLoading, isError, error } = useAdminNews();
   const createNews = useCreateNews();
   const updateNews = useUpdateNews();
+  const deleteNews = useDeleteNews();
+
+  function removePost(post) {
+    if (!window.confirm(`Delete "${post.title}"? This removes it from the website permanently.`)) return;
+    deleteNews.mutate(post.id);
+  }
   const [form, setForm] = useState(EMPTY_FORM);
 
   return (
@@ -29,7 +36,7 @@ export function NewsAdminView() {
           e.preventDefault();
           createNews.mutate(form, { onSuccess: () => setForm(EMPTY_FORM) });
         }}
-        className="space-y-4 rounded-xl border border-border p-4"
+        className="space-y-4 rounded-2xl border border-border bg-white p-5 shadow-sm"
       >
         <div className="grid gap-4 sm:grid-cols-[1fr_160px]">
           <div className="space-y-1.5">
@@ -74,24 +81,37 @@ export function NewsAdminView() {
 
       {!isLoading && !isError && (
         <div className="space-y-2">
+          {deleteNews.isError && <p className="text-sm text-destructive">{deleteNews.error.message}</p>}
           {posts?.length === 0 && <p className="text-sm text-muted-foreground">No posts yet — publish one above.</p>}
           {posts?.map((post) => (
-            <div key={post.id} className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
+            <div key={post.id} className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-white px-5 py-4 shadow-sm">
               <div>
                 <p className="font-medium text-brand-navy-dark">{post.title}</p>
                 <p className="text-xs text-muted-foreground">{post.category} · {formatDate(post.publishedAt)}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => updateNews.mutate({ id: post.id, isPublished: !post.isPublished })}
-                className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  post.isPublished
-                    ? "bg-green-50 text-green-700 border border-green-200"
-                    : "bg-gray-100 text-gray-500 border border-gray-200"
-                }`}
-              >
-                {post.isPublished ? "Published" : "Hidden"}
-              </button>
+              <div className="flex shrink-0 items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => updateNews.mutate({ id: post.id, isPublished: !post.isPublished })}
+                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    post.isPublished
+                      ? "bg-green-50 text-green-700 border border-green-200"
+                      : "bg-gray-100 text-gray-500 border border-gray-200"
+                  }`}
+                >
+                  {post.isPublished ? "Published" : "Hidden"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removePost(post)}
+                  disabled={deleteNews.isPending}
+                  aria-label={`Delete ${post.title}`}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-destructive disabled:opacity-50"
+                >
+                  <Trash2 className="size-3.5" />
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>

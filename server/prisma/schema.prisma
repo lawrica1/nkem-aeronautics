@@ -99,6 +99,9 @@ model Drone {
   model      String?
   type       String?
   specs      String           @default("")
+  // [{ label, value }] — an array, not an object, because jsonb reorders object keys.
+  specList   Json             @default("[]")
+  images     String[]         @default([])
   active     Boolean          @default(true)
   operations Operation[]
   telemetry  DroneTelemetry[]
@@ -331,6 +334,7 @@ model User {
   tokenVersion         Int              @default(0) // bump to sign the user out of every device
   isVerified           Boolean          @default(false)
   isProfileComplete    Boolean          @default(false)
+  logbookVerifiedAt    DateTime?
   identificationNumber String?          @unique
   otpHash              String?
   otpChannel           String?

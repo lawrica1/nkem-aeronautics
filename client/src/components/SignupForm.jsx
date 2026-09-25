@@ -281,7 +281,7 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
               type="tel"
               required
               autoComplete="tel"
-              placeholder="+237 670 000 000"
+              placeholder="+260 670 000 000"
               value={telephone}
               onChange={(e) => setTelephone(e.target.value)}
             />

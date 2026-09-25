@@ -36,3 +36,14 @@ export function useUpdateNews() {
     },
   });
 }
+
+export function useDeleteNews() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => apiRequest(`/news/${id}`, { method: "DELETE", admin: true }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "news"] });
+      queryClient.invalidateQueries({ queryKey: ["news"] });
+    },
+  });
+}

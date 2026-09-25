@@ -117,8 +117,12 @@ export default function LogbookPortalPage() {
           )}
 
           <OrdersList />
-          <ShopSection />
-          <PartRequestSection />
+          <div className="border-t border-border pt-8">
+            <ShopSection />
+          </div>
+          <div className="border-t border-border pt-8">
+            <PartRequestSection />
+          </div>
         </div>
       </div>
     </main>

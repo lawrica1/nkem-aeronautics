@@ -4,7 +4,7 @@ const STEPS = [
   {
     number: "01",
     title: "Sign Up",
-    description: "Register your farm details and declare your firm affiliation.",
+    description: "Register your details and declare your firm affiliation.",
   },
   {
     number: "02",
@@ -14,7 +14,7 @@ const STEPS = [
   {
     number: "03",
     title: "Request a Service",
-    description: "Request chemical spraying or another aerial service when you need it.",
+    description: "Request spraying drones, machinery, or another aerial service when you need it.",
   },
   {
     number: "04",

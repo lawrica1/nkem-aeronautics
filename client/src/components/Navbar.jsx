@@ -61,8 +61,19 @@ export function Navbar() {
             <Link href="/">Home</Link>
           </li>
           <li className="group relative">
-            <Link href="/services">Services</Link>
-            <ul className="invisible absolute top-full left-0 z-50 w-64 rounded-lg border border-white/10 bg-brand-navy py-2 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100">
+            <button type="button" aria-haspopup="true" className="flex items-center gap-1">
+              Services
+              <ChevronDown className="size-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+            </button>
+            <ul className="invisible absolute top-full left-0 z-50 w-64 rounded-lg border border-white/10 bg-brand-navy py-2 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <li>
+                <Link
+                  href="/services"
+                  className="block border-b border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  All services
+                </Link>
+              </li>
               {SERVICE_LINKS.map((service) => (
                 <li key={service.slug}>
                   <Link

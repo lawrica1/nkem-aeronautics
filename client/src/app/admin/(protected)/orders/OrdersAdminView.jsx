@@ -51,7 +51,7 @@ function OnSiteSaleForm() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border border-border p-4">
+    <div className="space-y-4 rounded-2xl border border-border bg-white p-5 shadow-sm">
       <p className="text-sm font-semibold text-brand-navy-dark">Record an on-site sale</p>
 
       <div className="space-y-1.5">
@@ -167,7 +167,7 @@ function OrderRow({ order }) {
   const paidSoFar = order.payments.reduce((sum, p) => sum + p.amount, 0);
 
   return (
-    <div className="rounded-xl border border-border">
+    <div className="rounded-2xl border border-border bg-white shadow-sm">
       <button type="button" onClick={() => setIsOpen(!isOpen)} className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left">
         <div>
           <p className="font-medium text-brand-navy-dark">

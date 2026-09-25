@@ -13,8 +13,9 @@ export function ShopSection() {
     <div>
       <h2 className="flex items-center gap-2 font-semibold text-brand-navy-dark">
         <ShoppingBag className="size-4 text-brand-green" />
-        Drones & Parts
+        Drones
       </h2>
+      <p className="mt-1 text-sm text-muted-foreground">Browse and order drones from our catalogue.</p>
 
       {createOrder.isSuccess && (
         <p className="mt-2 rounded-lg bg-brand-green/10 px-3 py-2 text-xs text-brand-green">

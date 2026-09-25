@@ -1,19 +1,47 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserRound, CheckCircle2, Sprout, Binoculars, Camera, Loader2 } from "lucide-react";
+import { UserRound, ShieldCheck, Clock, Sprout, Binoculars, Pickaxe, Camera, Loader2, Headphones } from "lucide-react";
 import { apiUpload } from "@/lib/api";
 
 const SECTOR_LABELS = {
   agricultural: "Agriculture",
   wildlife: "Wildlife & Surveillance",
+  mining: "Mining",
 };
 
 const SECTOR_ICONS = {
   agricultural: Sprout,
   wildlife: Binoculars,
+  mining: Pickaxe,
 };
+
+function LogbookStatus({ verifiedAt }) {
+  if (verifiedAt) {
+    return (
+      <div className="mt-3 w-full rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-left">
+        <p className="flex items-center gap-1.5 text-sm font-semibold text-green-700">
+          <ShieldCheck className="size-4" />
+          Verified logbook
+        </p>
+        <p className="mt-0.5 text-xs text-green-700/80">
+          Approved by Nkem Aeronautics on {new Date(verifiedAt).toLocaleDateString("en-GB")}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-3 w-full rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-left">
+      <p className="flex items-center gap-1.5 text-sm font-semibold text-amber-700">
+        <Clock className="size-4" />
+        Pending verification
+      </p>
+      <p className="mt-0.5 text-xs text-amber-700/80">Our team will review your details and approve your logbook.</p>
+    </div>
+  );
+}
 
 function SectorBadge({ sector }) {
   const Icon = SECTOR_ICONS[sector] ?? Sprout;
@@ -97,18 +125,13 @@ export function ProfileCard({ farmer, onLogout }) {
 
         <p className="mt-3 text-lg font-semibold text-brand-navy-dark">{displayName}</p>
 
-        {farmer?.isVerified && (
-          <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-brand-green">
-            <CheckCircle2 className="size-3.5" />
-            Verified Account
-          </span>
-        )}
-
         {farmer?.sector && (
           <div className="mt-2">
             <SectorBadge sector={farmer.sector} />
           </div>
         )}
+
+        {farmer && <LogbookStatus verifiedAt={farmer.logbookVerifiedAt} />}
       </div>
 
       <div className="mt-5 space-y-3 text-sm">
@@ -162,10 +185,18 @@ export function ProfileCard({ farmer, onLogout }) {
         )}
       </div>
 
+      <Link
+        href="/customer-service"
+        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-blue py-2 text-sm font-medium text-white transition-colors hover:bg-brand-blue-dark"
+      >
+        <Headphones className="size-4" />
+        Contact Support
+      </Link>
+
       <button
         type="button"
         onClick={onLogout}
-        className="mt-6 w-full rounded-lg bg-destructive/10 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/20"
+        className="mt-3 w-full rounded-lg bg-destructive/10 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/20"
       >
         Logout
       </button>

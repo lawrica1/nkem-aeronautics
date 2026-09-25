@@ -40,7 +40,7 @@ npm install
 npm run prisma:generate
 npm run prisma:push
 npm run dev
-npm run create-admin -- --email admin@example.com --password "change-me" --name "Admin"
+npm run create-admin -- admin@example.com "change-me" "Admin"
 ```
 
 Local API URL: `http://localhost:5000/api`

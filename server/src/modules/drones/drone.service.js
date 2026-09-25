@@ -5,6 +5,21 @@ export async function list() {
   return prisma.drone.findMany({ orderBy: { name: "asc" } });
 }
 
+function cleanSpecList(value) {
+  if (!Array.isArray(value)) throw new HttpError(400, "specList must be an array.");
+  return value
+    .map((s) => ({ label: String(s?.label ?? "").trim(), value: String(s?.value ?? "").trim() }))
+    .filter((s) => s.label || s.value);
+}
+
+function cleanImages(value) {
+  if (!Array.isArray(value)) throw new HttpError(400, "images must be an array.");
+  return value.map((url) => {
+    if (typeof url !== "string" || !/^(https?:\/\/|\/)/.test(url)) throw new HttpError(400, "Invalid image URL.");
+    return url;
+  });
+}
+
 export async function create(body) {
   if (!body.name) throw new HttpError(400, "name is required.");
 
@@ -14,6 +29,8 @@ export async function create(body) {
       model: body.model || null,
       type: body.type || null,
       specs: body.specs || "",
+      specList: body.specList === undefined ? [] : cleanSpecList(body.specList),
+      images: body.images === undefined ? [] : cleanImages(body.images),
     },
   });
 }
@@ -23,6 +40,8 @@ export async function update(id, body) {
   for (const key of ["name", "model", "type", "specs", "active"]) {
     if (body[key] !== undefined) data[key] = body[key];
   }
+  if (body.specList !== undefined) data.specList = cleanSpecList(body.specList);
+  if (body.images !== undefined) data.images = cleanImages(body.images);
 
   const drone = await prisma.drone.update({ where: { id }, data }).catch(() => null);
   if (!drone) throw new HttpError(404, "Drone not found.");

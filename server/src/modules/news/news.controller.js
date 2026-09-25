@@ -15,3 +15,8 @@ export async function create(req, res) {
 export async function update(req, res) {
   res.json(await newsService.update(req.params.id, req.body));
 }
+
+export async function remove(req, res) {
+  await newsService.remove(req.params.id);
+  res.status(204).end();
+}

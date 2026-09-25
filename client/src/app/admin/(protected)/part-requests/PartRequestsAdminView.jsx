@@ -26,7 +26,7 @@ function PartRequestRow({ request }) {
   const [notes, setNotes] = useState(request.adminNotes || "");
 
   return (
-    <div className="space-y-3 rounded-xl border border-border p-4">
+    <div className="space-y-3 rounded-2xl border border-border bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="font-medium text-brand-navy-dark">

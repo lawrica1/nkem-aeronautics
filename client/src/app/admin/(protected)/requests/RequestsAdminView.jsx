@@ -327,7 +327,7 @@ export function RequestsAdminView() {
       {!isLoading && !isError && requests?.length > 0 && requests.map((request) => {
         const isOpen = expandedId === request.id;
         return (
-          <div key={request.id} className="rounded-xl border border-border">
+          <div key={request.id} className="rounded-2xl border border-border bg-white shadow-sm">
             <button
               type="button"
               onClick={() => setExpandedId(isOpen ? null : request.id)}

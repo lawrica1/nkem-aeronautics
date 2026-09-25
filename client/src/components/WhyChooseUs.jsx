@@ -10,7 +10,7 @@ const REASONS = [
   {
     icon: BarChart3,
     title: "Data-Driven Allocation",
-    description: "Real farmer counts replace estimates for chemical distribution.",
+    description: "Every challenge counts, replaces loss and insecurity across regions and countries.",
   },
   {
     icon: Layers,
@@ -19,8 +19,8 @@ const REASONS = [
   },
   {
     icon: UserCheck,
-    title: "Farmer-First Design",
-    description: "A simple sign-up flow built to work for every farmer, not just the tech-savvy.",
+    title: "First Design",
+    description: "A simple sign-up flow built to work for every individual/personnel, not just the tech.",
   },
 ];
 

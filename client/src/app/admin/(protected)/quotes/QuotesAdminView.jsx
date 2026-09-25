@@ -17,6 +17,9 @@ const STATUS_OPTIONS = [
 const SECTOR_LABELS = {
   agricultural: "Agricultural",
   wildlife: "Wildlife & Surveillance",
+  mining: "Mining",
+  pipeline: "Pipeline & Infrastructure",
+  "survey-mapping": "Survey & Mapping",
   evtol: "eVTOL",
   general: "General / Customer Service",
 };
@@ -31,7 +34,7 @@ function QuoteRow({ quote }) {
   const [notes, setNotes] = useState(quote.adminNotes || "");
 
   return (
-    <div className="space-y-3 rounded-xl border border-border p-4">
+    <div className="space-y-3 rounded-2xl border border-border bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="font-medium text-brand-navy-dark">{quote.name || quote.email}</p>

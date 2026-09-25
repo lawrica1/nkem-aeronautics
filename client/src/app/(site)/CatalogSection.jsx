@@ -460,20 +460,6 @@ export function CatalogSection({ sector: activeSector }) {
                 </div>
               )}
 
-              {copy.closing && (
-                <div className="mt-16 rounded-xl bg-brand-gray-light px-6 py-12 text-center">
-                  <h3 className="text-2xl font-bold tracking-tight text-brand-navy-dark sm:text-3xl">{copy.closing.heading}</h3>
-                  <p className="mt-2 text-muted-foreground">{copy.closing.paragraph}</p>
-                  <button
-                    type="button"
-                    onClick={() => setShowGetInTouch(true)}
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-blue px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
-                  >
-                    Contact Us
-                  </button>
-                </div>
-              )}
-
               {copy.capabilities && (
                 <div className="mt-16">
                   <p className="text-xs font-semibold tracking-widest text-brand-green uppercase">Capabilities</p>
@@ -589,7 +575,20 @@ export function CatalogSection({ sector: activeSector }) {
                 </div>
               )}
 
-              <div className="mt-12">
+              <div className={`mt-12 grid gap-6 ${copy.closing ? "md:grid-cols-2" : ""}`}>
+                {copy.closing && (
+                  <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-brand-gray-light px-6 py-10 text-center">
+                    <h3 className="text-2xl font-bold tracking-tight text-brand-navy-dark">{copy.closing.heading}</h3>
+                    <p className="mt-1.5 max-w-xl text-sm text-muted-foreground">{copy.closing.paragraph}</p>
+                    <button
+                      type="button"
+                      onClick={() => setShowGetInTouch(true)}
+                      className="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-brand-blue px-8 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
+                    >
+                      Contact Us
+                    </button>
+                  </div>
+                )}
                 <QuoteRequestForm sector={activeSector} />
               </div>
             </>

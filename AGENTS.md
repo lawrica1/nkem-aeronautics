@@ -34,7 +34,7 @@ Never commit real `.env` files, database URLs, JWT secrets, API keys, OTP creden
 ## Admin Account
 
 ```bash
-cd server && npm run create-admin -- --email admin@example.com --password "change-me" --name "Admin"
+cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 ```
 
 ## Domain Rules

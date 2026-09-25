@@ -126,52 +126,52 @@ export function EvtolSeries() {
         )}
       </div>
 
-      {/* FAQs */}
+      {/* FAQs + quote, side by side on large screens */}
       <Reveal className="mt-16">
-        <div className="mx-auto max-w-3xl">
-          <div className="text-center">
-            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-brand-green/10">
-              <HelpCircle className="size-6 text-brand-green" />
+        <div className="grid items-stretch gap-8 lg:grid-cols-[1.5fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-green/10">
+                <HelpCircle className="size-6 text-brand-green" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-brand-navy-dark sm:text-3xl">Frequently Asked Questions</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Common questions about our pipeline inspection services.
+                </p>
+              </div>
             </div>
-            <h3 className="mt-4 text-2xl font-bold text-brand-navy-dark sm:text-3xl">
-              Frequently Asked Questions
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Common questions about our pipeline inspection services.
-            </p>
+
+            <div className="mt-8 divide-y divide-border overflow-hidden rounded-xl border border-border bg-background">
+              {FAQS.map((faq, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div key={faq.q}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-brand-gray-light"
+                    >
+                      <span className={`font-semibold ${isOpen ? "text-brand-green" : "text-brand-navy-dark"}`}>
+                        {faq.q}
+                      </span>
+                      <ChevronDown
+                        className={`size-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-180 text-brand-green" : ""}`}
+                      />
+                    </button>
+                    {isOpen && (
+                      <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="mt-8 divide-y divide-border overflow-hidden rounded-xl border border-border bg-background">
-            {FAQS.map((faq, i) => {
-              const isOpen = openFaq === i;
-              return (
-                <div key={faq.q}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : i)}
-                    aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-brand-gray-light"
-                  >
-                    <span className={`font-semibold ${isOpen ? "text-brand-green" : "text-brand-navy-dark"}`}>
-                      {faq.q}
-                    </span>
-                    <ChevronDown
-                      className={`size-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? "rotate-180 text-brand-green" : ""}`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <QuoteRequestForm sector="evtol" className="h-full" />
         </div>
       </Reveal>
-
-      <div className="mt-12">
-        <QuoteRequestForm sector="evtol" />
-      </div>
     </div>
   );
 }

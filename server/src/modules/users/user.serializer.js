@@ -29,6 +29,7 @@ export function serializeUser(user) {
     identificationNumber: user.identificationNumber,
     isVerified: user.isVerified,
     isProfileComplete: user.isProfileComplete ?? false,
+    logbookVerifiedAt: user.logbookVerifiedAt?.toISOString?.() ?? null,
     profilePhotoUrl: user.profilePhotoUrl ?? null,
     createdAt: user.createdAt?.toISOString?.() ?? user.createdAt,
     updatedAt: user.updatedAt?.toISOString?.() ?? user.updatedAt,

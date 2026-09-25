@@ -22,6 +22,7 @@ const EXPORT_COLUMNS = [
   { key: "crop", header: "Crop" },
   { key: "firmLabel", header: "Firm Affiliation" },
   { key: "createdAt", header: "Registered" },
+  { key: "logbookVerified", header: "Logbook Verified" },
 ];
 
 export async function login({ email, password }) {
@@ -70,12 +71,16 @@ export async function getStats() {
   };
 }
 
-export async function listUsers({ search, role, sector, country } = {}) {
+// logbook: "pending" | "approved" | "all" narrows to registered accounts (those holding a Logbook ID).
+export async function listUsers({ search, role, sector, country, logbook } = {}) {
   const users = await prisma.user.findMany({
     where: {
       ...(role && { role }),
       ...(sector && { sector }),
       ...(country && { country }),
+      ...(["pending", "approved", "all"].includes(logbook) && { identificationNumber: { not: null } }),
+      ...(logbook === "pending" && { logbookVerifiedAt: null }),
+      ...(logbook === "approved" && { logbookVerifiedAt: { not: null } }),
       ...(search && {
         OR: [
           { name: { contains: search, mode: "insensitive" } },
@@ -100,6 +105,7 @@ export async function updateUser(id, body, actor) {
     data.role = body.role;
   }
   if (body.isVerified !== undefined) data.isVerified = !!body.isVerified;
+  if (body.logbookVerified !== undefined) data.logbookVerifiedAt = body.logbookVerified ? new Date() : null;
   if (body.organizationId !== undefined) data.organizationId = body.organizationId || null;
   if (body.revokeSessions === true) data.tokenVersion = { increment: 1 };
 
@@ -124,8 +130,13 @@ export async function updateUser(id, body, actor) {
     return tx.user.update({ where: { id }, data, include: { organization: { select: { name: true } } } });
   });
 
-  if (data.role !== undefined || data.isVerified !== undefined || data.tokenVersion) {
-    const change = { role: data.role, isVerified: data.isVerified, revokedSessions: !!data.tokenVersion };
+  if (data.role !== undefined || data.isVerified !== undefined || data.tokenVersion || data.logbookVerifiedAt !== undefined) {
+    const change = {
+      role: data.role,
+      isVerified: data.isVerified,
+      logbookVerified: data.logbookVerifiedAt === undefined ? undefined : !!data.logbookVerifiedAt,
+      revokedSessions: !!data.tokenVersion,
+    };
     console.info(`[audit] admin ${actor.id} updated user ${id}: ${JSON.stringify(change)}`);
   }
   return serializeUser(user);
@@ -147,7 +158,7 @@ export async function exportLogbooks({ firm = "all", format = "csv" }) {
 
   const rows = users.map((user) => {
     const row = serializeUser(user);
-    return { ...row, createdAt: row.createdAt?.slice(0, 10) || "" };
+    return { ...row, createdAt: row.createdAt?.slice(0, 10) || "", logbookVerified: row.logbookVerifiedAt ? "Yes" : "No" };
   });
 
   const filename = `nkem-logbooks-${firm}-${new Date().toISOString().slice(0, 10)}`;

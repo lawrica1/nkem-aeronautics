@@ -7,6 +7,7 @@ import { PRODUCTS } from "@/lib/catalog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +18,9 @@ const INTEREST_OPTIONS = [
   { value: "general", label: "General Inquiry" },
 ];
 
-export function QuoteRequestForm({ sector }) {
+export function QuoteRequestForm({ sector, className = "" }) {
   const createQuote = useCreateQuote();
+  const [open, setOpen] = useState(false);
   const { data: dbProducts } = useProducts("evtol", undefined, undefined, { enabled: sector === "evtol" });
   const productOptions = sector === "evtol" ? (dbProducts ?? []) : PRODUCTS.filter((p) => p.sector === sector);
 
@@ -58,133 +60,156 @@ export function QuoteRequestForm({ sector }) {
     );
   }
 
-  if (createQuote.isSuccess) {
-    return (
-      <div className="rounded-xl border border-border bg-background p-8 text-center">
-        <p className="font-semibold text-brand-navy-dark">Thank you — your request has been sent.</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Our team will get back to you shortly.
-        </p>
-        <Button type="button" variant="outline" className="mt-4" onClick={() => createQuote.reset()}>
-          Submit another request
-        </Button>
-      </div>
-    );
+  function handleOpenChange(next) {
+    setOpen(next);
+    if (!next) createQuote.reset();
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-2xl space-y-5 rounded-2xl border border-border bg-background p-6 shadow-sm sm:p-10"
-    >
-      <div className="text-center">
+    <>
+      <div className={`flex flex-col items-center justify-center rounded-2xl border border-border bg-brand-gray-light px-6 py-10 text-center sm:px-10 ${className}`}>
         <h3 className="text-2xl font-bold text-brand-navy-dark">Request A Quote</h3>
-        <p className="mt-1.5 text-sm text-muted-foreground">
+        <p className="mx-auto mt-1.5 max-w-xl text-sm text-muted-foreground">
           Tell us what you need and our team will get back to you with pricing and availability.
         </p>
+        <Button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="mt-6 h-10 rounded-full bg-brand-blue px-8 text-white hover:bg-brand-blue-dark"
+        >
+          Request A Quote
+        </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor={`${sector}-quote-name`}>Name</Label>
-          <Input id={`${sector}-quote-name`} value={form.name} onChange={(e) => set("name", e.target.value)} />
-        </div>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-brand-navy-dark">Request A Quote</DialogTitle>
+            <DialogDescription>
+              Tell us what you need and our team will get back to you with pricing and availability.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-1.5">
-          <Label htmlFor={`${sector}-quote-email`}>
-            Your Email <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id={`${sector}-quote-email`}
-            type="email"
-            required
-            value={form.email}
-            onChange={(e) => set("email", e.target.value)}
-          />
-        </div>
+          {createQuote.isSuccess ? (
+            <div className="py-6 text-center">
+              <p className="font-semibold text-brand-navy-dark">Thank you — your request has been sent.</p>
+              <p className="mt-2 text-sm text-muted-foreground">Our team will get back to you shortly.</p>
+              <div className="mt-4 flex justify-center gap-3">
+                <Button type="button" variant="outline" onClick={() => createQuote.reset()}>
+                  Submit another request
+                </Button>
+                <Button type="button" onClick={() => handleOpenChange(false)} className="bg-brand-blue text-white hover:bg-brand-blue-dark">
+                  Close
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${sector}-quote-name`}>Name</Label>
+                  <Input id={`${sector}-quote-name`} value={form.name} onChange={(e) => set("name", e.target.value)} />
+                </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor={`${sector}-quote-whatsapp`}>WhatsApp</Label>
-          <Input id={`${sector}-quote-whatsapp`} value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
-        </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${sector}-quote-email`}>
+                    Your Email <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id={`${sector}-quote-email`}
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => set("email", e.target.value)}
+                  />
+                </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor={`${sector}-quote-company`}>Company</Label>
-          <Input id={`${sector}-quote-company`} value={form.company} onChange={(e) => set("company", e.target.value)} />
-        </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${sector}-quote-whatsapp`}>WhatsApp</Label>
+                  <Input id={`${sector}-quote-whatsapp`} value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
+                </div>
 
-        <div className="space-y-1.5 sm:col-span-2">
-          <Label htmlFor={`${sector}-quote-country`}>
-            Targeted Country/Region <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id={`${sector}-quote-country`}
-            required
-            value={form.targetCountry}
-            onChange={(e) => set("targetCountry", e.target.value)}
-          />
-        </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${sector}-quote-company`}>Company</Label>
+                  <Input id={`${sector}-quote-company`} value={form.company} onChange={(e) => set("company", e.target.value)} />
+                </div>
 
-        {productOptions.length > 0 && (
-          <div className="space-y-1.5">
-            <Label htmlFor={`${sector}-quote-product`}>Interested Products</Label>
-            <Select value={form.interestedProduct} onValueChange={(v) => set("interestedProduct", v)}>
-              <SelectTrigger id={`${sector}-quote-product`} className="w-full">
-                <SelectValue placeholder="Select a product" />
-              </SelectTrigger>
-              <SelectContent>
-                {productOptions.map((p) => (
-                  <SelectItem key={p.id} value={p.name}>
-                    {p.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor={`${sector}-quote-country`}>
+                    Targeted Country/Region <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id={`${sector}-quote-country`}
+                    required
+                    value={form.targetCountry}
+                    onChange={(e) => set("targetCountry", e.target.value)}
+                  />
+                </div>
 
-        <div className={cn("space-y-1.5", productOptions.length === 0 && "sm:col-span-2")}>
-          <Label htmlFor={`${sector}-quote-interest`}>I am interested in</Label>
-          <Select value={form.interestedIn} onValueChange={(v) => set("interestedIn", v)}>
-            <SelectTrigger id={`${sector}-quote-interest`} className="w-full">
-              <SelectValue placeholder="Select an option" />
-            </SelectTrigger>
-            <SelectContent>
-              {INTEREST_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+                {productOptions.length > 0 && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`${sector}-quote-product`}>Interested Products</Label>
+                    <Select value={form.interestedProduct} onValueChange={(v) => set("interestedProduct", v)}>
+                      <SelectTrigger id={`${sector}-quote-product`} className="w-full">
+                        <SelectValue placeholder="Select a product" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {productOptions.map((p) => (
+                          <SelectItem key={p.id} value={p.name}>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-      <div className="space-y-1.5">
-        <Label htmlFor={`${sector}-quote-message`}>
-          Message <span className="text-destructive">*</span>
-        </Label>
-        <textarea
-          id={`${sector}-quote-message`}
-          required
-          rows={4}
-          value={form.message}
-          onChange={(e) => set("message", e.target.value)}
-          className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
-        />
-      </div>
+                <div className={cn("space-y-1.5", productOptions.length === 0 && "sm:col-span-2")}>
+                  <Label htmlFor={`${sector}-quote-interest`}>I am interested in</Label>
+                  <Select value={form.interestedIn} onValueChange={(v) => set("interestedIn", v)}>
+                    <SelectTrigger id={`${sector}-quote-interest`} className="w-full">
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INTEREST_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-      {createQuote.isError && (
-        <p className="text-sm text-destructive">{createQuote.error.message}</p>
-      )}
+              <div className="space-y-1.5">
+                <Label htmlFor={`${sector}-quote-message`}>
+                  Message <span className="text-destructive">*</span>
+                </Label>
+                <textarea
+                  id={`${sector}-quote-message`}
+                  required
+                  rows={4}
+                  value={form.message}
+                  onChange={(e) => set("message", e.target.value)}
+                  className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30"
+                />
+              </div>
 
-      <Button
-        type="submit"
-        disabled={createQuote.isPending}
-        className="w-full bg-brand-blue text-white hover:bg-brand-blue-dark"
-      >
-        {createQuote.isPending ? "Submitting…" : "Submit"}
-      </Button>
-    </form>
+              {createQuote.isError && (
+                <p className="text-sm text-destructive">{createQuote.error.message}</p>
+              )}
+
+              <Button
+                type="submit"
+                disabled={createQuote.isPending}
+                className="w-full bg-brand-blue text-white hover:bg-brand-blue-dark"
+              >
+                {createQuote.isPending ? "Submitting…" : "Submit"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

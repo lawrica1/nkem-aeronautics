@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { SERVICES } from "@/lib/services";
 import { CATALOG_SECTORS } from "@/lib/catalog";
 import { CatalogSection } from "../../CatalogSection";
+import { QuoteRequestForm } from "@/components/QuoteRequestForm";
 import { ServiceSection } from "./ServiceSection";
 
 const findService = (slug) => SERVICES.find((s) => s.slug === slug);
@@ -87,18 +88,23 @@ export default async function ServiceDetailPage({ params }) {
       {hasCatalog && <CatalogSection sector={service.slug} />}
 
       {!hasCatalog && (
-        <section className="bg-brand-navy px-6 py-20 text-center text-white">
-          <h2 className="text-3xl font-bold">Talk to our team about {service.title.toLowerCase()}</h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/70">
-            Tell us about your site and requirements and we will recommend the right inspection approach.
-          </p>
-          <Link
-            href={service.ctaHref}
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand-blue px-10 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
-          >
-            {service.cta}
-            <ArrowRight className="size-4" />
-          </Link>
+        <section className="bg-white px-6 py-20">
+          <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
+            <div className="flex flex-col items-center justify-center rounded-2xl bg-brand-navy px-6 py-10 text-center text-white sm:px-10">
+              <h2 className="text-2xl font-bold">Talk to our team about {service.title.toLowerCase()}</h2>
+              <p className="mt-1.5 max-w-xl text-sm text-white/70">
+                Tell us about your site and requirements and we will recommend the right inspection approach.
+              </p>
+              <Link
+                href={service.ctaHref}
+                className="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-brand-blue px-8 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
+              >
+                {service.cta}
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
+            <QuoteRequestForm sector={service.slug} />
+          </div>
         </section>
       )}
     </main>

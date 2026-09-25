@@ -10,3 +10,4 @@ newsRouter.get("/", asyncHandler(controller.list));
 newsRouter.get("/admin", requireUser, requireRole(ROLES.ADMIN), asyncHandler(controller.listAdmin));
 newsRouter.post("/", requireUser, requireRole(ROLES.ADMIN), asyncHandler(controller.create));
 newsRouter.patch("/:id", requireUser, requireRole(ROLES.ADMIN), asyncHandler(controller.update));
+newsRouter.delete("/:id", requireUser, requireRole(ROLES.ADMIN), asyncHandler(controller.remove));

@@ -7,6 +7,7 @@ export function useAdminUsers(filters = {}) {
   if (filters.role) params.set("role", filters.role);
   if (filters.sector) params.set("sector", filters.sector);
   if (filters.country) params.set("country", filters.country);
+  if (filters.logbook) params.set("logbook", filters.logbook);
   const query = params.toString();
 
   return useQuery({

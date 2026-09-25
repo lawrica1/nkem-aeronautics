@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCreateOrder } from "@/hooks/useOrders";
+import { getToken } from "@/lib/api";
 import { formatXAF } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 
 export function ProductRow({ product }) {
   const createOrder = useCreateOrder();
   const [quantity, setQuantity] = useState(1);
-  const canOrder = product.price !== null;
+  // Synced after mount — localStorage isn't available during the server render.
+  const [loggedIn, setLoggedIn] = useState(false);
+  useEffect(() => setLoggedIn(!!getToken()), []);
+  const hasPrice = product.price !== null;
+  const canOrder = hasPrice && loggedIn;
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">

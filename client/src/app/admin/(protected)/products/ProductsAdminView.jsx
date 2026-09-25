@@ -25,7 +25,7 @@ export function ProductsAdminView() {
           e.preventDefault();
           createProduct.mutate(form, { onSuccess: () => setForm(EMPTY_FORM) });
         }}
-        className="grid gap-4 rounded-xl border border-border p-4 sm:grid-cols-2"
+        className="grid gap-4 rounded-2xl border border-border bg-white p-6 shadow-sm sm:grid-cols-2"
       >
         <div className="space-y-1.5">
           <Label>Sector</Label>
@@ -65,12 +65,12 @@ export function ProductsAdminView() {
       {isError && <p className="text-sm text-destructive">{error.message}</p>}
 
       {!isLoading && !isError && (
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
           {products?.length === 0 ? (
             <p className="px-4 py-10 text-center text-sm text-muted-foreground">No products yet — add one above.</p>
           ) : (
             <table className="w-full text-left text-sm">
-              <thead className="bg-brand-input/50 text-xs text-muted-foreground">
+              <thead className="border-b border-border bg-slate-50 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Sector</th>
@@ -80,7 +80,7 @@ export function ProductsAdminView() {
               </thead>
               <tbody className="divide-y divide-border">
                 {products?.map((product) => (
-                  <tr key={product.id} className="hover:bg-muted/30">
+                  <tr key={product.id} className="transition-colors hover:bg-slate-50">
                     <td className="px-4 py-3 font-medium text-brand-navy-dark">
                       {product.name}
                       {product.model ? <span className="ml-1 text-muted-foreground">({product.model})</span> : null}

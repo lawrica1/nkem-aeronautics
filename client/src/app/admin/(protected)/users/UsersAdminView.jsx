@@ -58,6 +58,14 @@ export function UsersAdminView() {
     update.mutate({ id: user.id, isVerified: !user.isVerified });
   }
 
+  function toggleLogbookVerified(user) {
+    const approved = !!user.logbookVerifiedAt;
+    const label = user.name ? `${user.name} ${user.surname ?? ""}`.trim() : user.email;
+    const action = approved ? "Revoke logbook verification for" : "Approve the logbook of";
+    if (!window.confirm(`${action} ${label}?`)) return;
+    update.mutate({ id: user.id, logbookVerified: !approved });
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3">
@@ -92,13 +100,13 @@ export function UsersAdminView() {
       {isError && <p className="text-sm text-destructive">{error.message}</p>}
 
       {!isLoading && !isError && (
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
           {users?.length === 0 ? (
             <p className="px-4 py-10 text-center text-sm text-muted-foreground">No users match.</p>
           ) : (
             <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="bg-brand-input/50 text-xs text-muted-foreground">
+            <table className="w-full min-w-[860px] text-left text-sm">
+              <thead className="border-b border-border bg-slate-50 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Email</th>
@@ -106,13 +114,14 @@ export function UsersAdminView() {
                   <th className="px-4 py-3 font-medium">Sector</th>
                   <th className="px-4 py-3 font-medium">Role</th>
                   <th className="px-4 py-3 font-medium">Organization</th>
-                  <th className="px-4 py-3 font-medium">Verified</th>
+                  <th className="px-4 py-3 font-medium">Account</th>
+                  <th className="px-4 py-3 font-medium">Logbook</th>
                   <th className="px-4 py-3 font-medium">Sessions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {users?.map((user) => (
-                  <tr key={user.id} className="hover:bg-muted/30">
+                  <tr key={user.id} className="transition-colors hover:bg-slate-50">
                     <td className="px-4 py-3 font-medium text-brand-navy-dark">
                       {user.name ? `${user.name} ${user.surname ?? ""}` : "—"}
                       {user.id === myId && <span className="ml-2 text-xs font-normal text-muted-foreground">(you)</span>}
@@ -157,6 +166,20 @@ export function UsersAdminView() {
                         }`}
                       >
                         {user.isVerified ? "Verified" : "Unverified"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => toggleLogbookVerified(user)}
+                        title={user.logbookVerifiedAt ? `Approved ${new Date(user.logbookVerifiedAt).toLocaleDateString("en-GB")}` : "Click to approve"}
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          user.logbookVerifiedAt
+                            ? "bg-green-50 text-green-700 border border-green-200"
+                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                        }`}
+                      >
+                        {user.logbookVerifiedAt ? "Approved" : "Pending"}
                       </button>
                     </td>
                     <td className="px-4 py-3">

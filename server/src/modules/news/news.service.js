@@ -41,3 +41,8 @@ export async function update(id, body) {
   if (!post) throw new HttpError(404, "News post not found.");
   return post;
 }
+
+export async function remove(id) {
+  const deleted = await prisma.newsPost.delete({ where: { id } }).catch(() => null);
+  if (!deleted) throw new HttpError(404, "News post not found.");
+}

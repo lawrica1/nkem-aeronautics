@@ -28,13 +28,18 @@ export function PartRequestSection() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 font-semibold text-brand-navy-dark">
-          <Wrench className="size-4 text-brand-green" />
-          Need help finding a part?
-        </h2>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-semibold text-brand-navy-dark">
+            <Wrench className="size-4 text-brand-green" />
+            Parts
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Need a replacement part? Describe it and add photos — we&rsquo;ll identify and source it for you.
+          </p>
+        </div>
         {!showForm && (
-          <Button size="sm" onClick={() => setShowForm(true)} className="bg-brand-navy text-white hover:bg-brand-navy/90">
+          <Button size="sm" onClick={() => setShowForm(true)} className="shrink-0 bg-brand-navy text-white hover:bg-brand-navy/90">
             New Part Request
           </Button>
         )}
