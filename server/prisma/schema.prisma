@@ -313,7 +313,7 @@ model User {
   name                 String?
   sex                  String?
   telephone            String?
-  email                String           @unique
+  email                String?          @unique
   address              String?
   region               String?
   district             String?

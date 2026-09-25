@@ -2,7 +2,9 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 import { ACTIVE_REGISTRATION_SECTORS, DEFAULT_COUNTRY } from "../platform/platform.constants.js";
 
 export function validateSignup(body) {
-  if (!body.email) throw new HttpError(400, "email is required.");
+  if (!body.email && !body.telephone) {
+    throw new HttpError(400, "An email address or phone number is required.");
+  }
   if (!body.sector || !ACTIVE_REGISTRATION_SECTORS.includes(body.sector)) {
     throw new HttpError(400, `Please select a valid sector (${ACTIVE_REGISTRATION_SECTORS.join(", ")}).`);
   }
@@ -19,7 +21,7 @@ export function normalizeSignup(body) {
     sector: body.sector,
     country: body.country || DEFAULT_COUNTRY,
     telephone: body.telephone?.trim() || null,
-    email: body.email.toLowerCase().trim(),
+    email: body.email ? body.email.toLowerCase().trim() : null,
   };
 }
 

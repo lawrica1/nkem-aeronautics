@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Mail, Phone } from "lucide-react";
 import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,8 +34,9 @@ const SECTOR_IDS = SECTORS.map((s) => s.id);
 
 export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
   const validInitialSector = SECTOR_IDS.includes(initialSector) ? initialSector : null;
-  const [step, setStep] = useState(validInitialSector ? "credentials" : "sector"); // "sector" | "credentials"
+  const [step, setStep] = useState(validInitialSector ? "contact" : "sector"); // "sector" | "contact" | "credentials"
   const [sector, setSector] = useState(validInitialSector);
+  const [contactMethod, setContactMethod] = useState(null); // "email" | "phone"
   const [mode, setMode] = useState("password"); // "password" | "otp"
   const [email, setEmail] = useState("");
   const [telephone, setTelephone] = useState("");
@@ -43,32 +44,41 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
   const [showPassword, setShowPassword] = useState(false);
   const signup = useSignup();
 
-  // initialSector can arrive after mount (parent reads it from the URL in an
-  // effect), so react to it changing instead of only using it as the useState
-  // seed above — otherwise a later update never advances past the picker.
   useEffect(() => {
     if (SECTOR_IDS.includes(initialSector)) {
       setSector(initialSector);
-      setStep("credentials");
+      setStep("contact");
     }
   }, [initialSector]);
 
   function handleSectorNext() {
-    if (sector) setStep("credentials");
+    if (sector) setStep("contact");
+  }
+
+  function handleContactNext() {
+    if (contactMethod) setStep("credentials");
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     const body =
       mode === "otp"
-        ? { email, sector, mode: "otp" }
-        : { email, sector, password, telephone: telephone || undefined };
+        ? {
+            sector,
+            mode: "otp",
+            ...(contactMethod === "email" ? { email } : { telephone }),
+          }
+        : {
+            sector,
+            password,
+            ...(contactMethod === "email" ? { email } : { telephone }),
+          };
 
     signup.mutate(body, {
       onSuccess: (data) =>
         onSuccess?.({
-          email,
-          telephone: telephone || null,
+          email: contactMethod === "email" ? email : null,
+          telephone: contactMethod === "phone" ? telephone : null,
           sector,
           otpChannel: data.otpChannel,
           otpContact: data.otpContact,
@@ -76,14 +86,15 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
     });
   }
 
+  const chosen = SECTORS.find((s) => s.id === sector);
+
+  // ── Step 1: Sector ────────────────────────────────────────────────────────
   if (step === "sector") {
     return (
       <div className="space-y-6">
-        <div>
-          <p className="text-sm text-muted-foreground">
-            This helps us show you the right services and set up your account correctly.
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          This helps us show you the right services and set up your account correctly.
+        </p>
 
         <div className="space-y-3">
           {SECTORS.map(({ id, label, description, Icon }) => (
@@ -131,16 +142,88 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
     );
   }
 
-  // step === "credentials"
-  const chosen = SECTORS.find((s) => s.id === sector);
+  // ── Step 2: Contact method ────────────────────────────────────────────────
+  if (step === "contact") {
+    return (
+      <div className="space-y-6">
+        {/* Sector badge + back */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setStep("sector")}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </button>
+          {chosen && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-medium text-brand-blue">
+              <chosen.Icon className="size-3.5" />
+              {chosen.label}
+            </span>
+          )}
+        </div>
 
+        <div>
+          <p className="text-sm text-muted-foreground">
+            How would you like to receive your verification code?
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {[
+            { id: "email", label: "Email address", description: "OTP sent to your email inbox", Icon: Mail },
+            { id: "phone", label: "Phone number", description: "OTP sent via SMS to your phone", Icon: Phone },
+          ].map(({ id, label, description, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setContactMethod(id)}
+              className={cn(
+                "flex w-full items-start gap-4 rounded-xl border-2 px-4 py-4 text-left transition-all",
+                contactMethod === id
+                  ? "border-brand-blue bg-brand-blue/5"
+                  : "border-border hover:border-brand-blue/40 hover:bg-brand-input/40",
+              )}
+            >
+              <div
+                className={cn(
+                  "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg",
+                  contactMethod === id ? "bg-brand-blue text-white" : "bg-brand-input text-muted-foreground",
+                )}
+              >
+                <Icon className="size-5" />
+              </div>
+              <div>
+                <p className={cn("font-semibold", contactMethod === id ? "text-brand-navy-dark" : "text-foreground")}>
+                  {label}
+                </p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <Button
+          type="button"
+          onClick={handleContactNext}
+          disabled={!contactMethod}
+          className="w-full bg-brand-navy text-white hover:bg-brand-navy/90 disabled:opacity-50"
+        >
+          Continue
+        </Button>
+      </div>
+    );
+  }
+
+  // ── Step 3: Credentials ───────────────────────────────────────────────────
   return (
     <div className="space-y-6">
       {/* Sector badge + back */}
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => setStep("sector")}
+          onClick={() => setStep("contact")}
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
@@ -157,8 +240,8 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
       {/* Mode toggle */}
       <div className="flex rounded-lg border border-border bg-brand-input/60 p-1">
         {[
-          { id: "password", label: "Email & Password" },
-          { id: "otp", label: "Email OTP only" },
+          { id: "password", label: "OTP + Password" },
+          { id: "otp", label: "OTP only" },
         ].map((opt) => (
           <button
             key={opt.id}
@@ -177,67 +260,63 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            required
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        {/* Contact field */}
+        {contactMethod === "email" ? (
+          <div className="space-y-2">
+            <Label htmlFor="email">Email address</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="telephone">Phone number</Label>
+            <Input
+              id="telephone"
+              type="tel"
+              required
+              autoComplete="tel"
+              placeholder="+237 670 000 000"
+              value={telephone}
+              onChange={(e) => setTelephone(e.target.value)}
+            />
+          </div>
+        )}
 
+        {/* Password field */}
         {mode === "password" && (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="telephone">
-                Phone Number{" "}
-                <span className="font-normal text-muted-foreground">(optional)</span>
-              </Label>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
               <Input
-                id="telephone"
-                type="tel"
-                autoComplete="tel"
-                placeholder="+237 670 000 000"
-                value={telephone}
-                onChange={(e) => setTelephone(e.target.value)}
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pr-9"
               />
-              <p className="text-xs text-muted-foreground">
-                If provided, your verification code will be sent by SMS. Otherwise we use email.
-              </p>
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-9"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((p) => !p)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </button>
-              </div>
-            </div>
-          </>
+          </div>
         )}
 
         {mode === "otp" && (
           <p className="rounded-lg bg-brand-input/60 px-3 py-2 text-sm text-muted-foreground">
-            We&apos;ll send a one-time code to your email. You can set a password and complete your
-            profile details after signing in.
+            We&apos;ll send a one-time code to your {contactMethod === "email" ? "email" : "phone"}. You can set a password and complete your profile after signing in.
           </p>
         )}
 

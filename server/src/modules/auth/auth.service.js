@@ -22,9 +22,11 @@ export async function signup(body) {
   validateSignup(body);
 
   const normalized = normalizeSignup(body);
-  const existing = await prisma.user.findUnique({ where: { email: normalized.email } });
+  const existing = normalized.email
+    ? await prisma.user.findUnique({ where: { email: normalized.email } })
+    : await prisma.user.findFirst({ where: { telephone: normalized.telephone } });
   if (existing?.isVerified) {
-    throw new HttpError(409, "An account with this email already exists. Try logging in.");
+    throw new HttpError(409, "An account with this contact already exists. Try logging in.");
   }
 
   // Send OTP to phone if provided, otherwise fall back to email
@@ -37,31 +39,23 @@ export async function signup(body) {
   const otpHash = await hashOtp(otp);
   const otpExpiresAt = otpExpiryDate();
 
-  await prisma.user.upsert({
-    where: { email: normalized.email },
-    create: {
-      ...normalized,
-      passwordHash,
-      isVerified: false,
-      otpHash,
-      otpChannel,
-      otpContact,
-      otpExpiresAt,
-      otpResendCount: 0,
-      otpLastSentAt: new Date(),
-    },
-    update: {
-      ...normalized,
-      passwordHash,
-      isVerified: false,
-      otpHash,
-      otpChannel,
-      otpContact,
-      otpExpiresAt,
-      otpResendCount: 0,
-      otpLastSentAt: new Date(),
-    },
-  });
+  const otpData = {
+    ...normalized,
+    passwordHash,
+    isVerified: false,
+    otpHash,
+    otpChannel,
+    otpContact,
+    otpExpiresAt,
+    otpResendCount: 0,
+    otpLastSentAt: new Date(),
+  };
+
+  if (existing) {
+    await prisma.user.update({ where: { id: existing.id }, data: otpData });
+  } else {
+    await prisma.user.create({ data: otpData });
+  }
 
   await sendOtp(otpChannel, otpContact, otp);
   return {
