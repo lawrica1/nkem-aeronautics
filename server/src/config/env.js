@@ -12,7 +12,7 @@ export const env = {
   r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
   r2PublicBaseUrl: process.env.R2_PUBLIC_BASE_URL,
   termiiApiKey: process.env.TERMII_API_KEY,
-  termiiSenderId: process.env.TERMII_SENDER_ID || "N-Alert",
+  termiiSenderId: process.env.TERMII_SENDER_ID ?? "",
   termiiChannel: process.env.TERMII_CHANNEL || "generic",
   smtpHost: process.env.SMTP_HOST || "smtp.gmail.com",
   smtpPort: Number(process.env.SMTP_PORT) || 465,

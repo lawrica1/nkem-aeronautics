@@ -78,15 +78,15 @@ async function sendSms(to, message) {
 export async function sendOtp(channel, contact, code) {
   const message = `Your Nkem Aeronautics verification code is ${code}. It expires in 10 minutes.`;
 
-  if (channel === "sms" && env.termiiApiKey) {
-    try {
-      await sendSms(contact, message);
+  if (channel === "sms") {
+    if (!env.termiiApiKey) {
+      // SMS not configured — dev/test fallback
+      console.log(`[otp:sms:dev] ${code} -> ${contact}`);
       return;
-    } catch (error) {
-      // Don't let a provider outage fail signup/resend — the OTP is still valid and the
-      // farmer can request another code. Just make the failure visible in the server log.
-      console.error(`[otp:sms] Termii send failed for ${contact}: ${error.message}`);
     }
+    // Let errors propagate so the caller can surface a clear message to the user.
+    await sendSms(contact, message);
+    return;
   }
 
   if (channel === "email") {

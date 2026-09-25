@@ -57,7 +57,15 @@ export async function signup(body) {
     await prisma.user.create({ data: otpData });
   }
 
-  await sendOtp(otpChannel, otpContact, otp);
+  try {
+    await sendOtp(otpChannel, otpContact, otp);
+  } catch (err) {
+    console.error(`[signup] OTP delivery failed (${otpChannel} → ${otpContact}): ${err.message}`);
+    if (otpChannel === "sms") {
+      throw new HttpError(503, "SMS delivery is currently unavailable. Please sign up with an email address instead.");
+    }
+    throw new HttpError(503, "Failed to send verification code. Please try again.");
+  }
   return {
     message: "Verification code sent.",
     otpChannel,
@@ -146,7 +154,15 @@ export async function resendSignupOtp({ channel, contact }) {
     },
   });
 
-  await sendOtp(channel, contact, otp);
+  try {
+    await sendOtp(channel, contact, otp);
+  } catch (err) {
+    console.error(`[resend] OTP delivery failed (${channel} → ${contact}): ${err.message}`);
+    if (channel === "sms") {
+      throw new HttpError(503, "SMS delivery is currently unavailable. Please use the 'Send it to my email instead' option.");
+    }
+    throw new HttpError(503, "Failed to send verification code. Please try again.");
+  }
   return {
     message: "Verification code resent.",
     ...(env.nodeEnv !== "production" ? { otpDebug: otp } : {}),
@@ -182,7 +198,15 @@ export async function forgotPassword({ email, telephone }) {
     },
   });
 
-  await sendOtp(channel, contact, otp);
+  try {
+    await sendOtp(channel, contact, otp);
+  } catch (err) {
+    console.error(`[forgot-password] OTP delivery failed (${channel} → ${contact}): ${err.message}`);
+    if (channel === "sms") {
+      throw new HttpError(503, "SMS delivery is currently unavailable. Please reset your password using your email address.");
+    }
+    throw new HttpError(503, "Failed to send reset code. Please try again.");
+  }
   return {
     message: "If an account exists, a reset code has been sent.",
     otpChannel: channel,
