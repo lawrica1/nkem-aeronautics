@@ -8,7 +8,7 @@ function getTransporter() {
     transporter = nodemailer.createTransport({
       host: env.smtpHost,
       port: env.smtpPort,
-      secure: env.smtpPort === 465,
+      secure: false, // Brevo uses STARTTLS on 587, not implicit TLS
       auth: { user: env.smtpUser, pass: env.smtpPass },
     });
   }

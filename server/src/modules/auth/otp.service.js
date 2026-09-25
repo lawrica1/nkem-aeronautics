@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { env } from "../../config/env.js";
+import { sendEmail } from "../notifications/email.service.js";
 import { enforce, hit, reset } from "../../shared/utils/rateLimit.js";
 
 const OTP_TTL_MS = 10 * 60 * 1000;
@@ -86,6 +87,15 @@ export async function sendOtp(channel, contact, code) {
       // farmer can request another code. Just make the failure visible in the server log.
       console.error(`[otp:sms] Termii send failed for ${contact}: ${error.message}`);
     }
+  }
+
+  if (channel === "email") {
+    await sendEmail(
+      contact,
+      "Your Nkem Aeronautics verification code",
+      `<p>Your verification code is <strong style="font-size:1.4em">${code}</strong></p><p>It expires in 10 minutes. If you did not request this, ignore this email.</p><p>— Nkem Aeronautics Ltd</p>`,
+    );
+    return;
   }
 
   console.log(`[otp:${channel}] ${code} -> ${contact}`);
