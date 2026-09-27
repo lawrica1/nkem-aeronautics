@@ -20,7 +20,12 @@ const UPDATES = [
       "/images/drones/large-fixed-wing-1.webp",
       "/images/drones/large-fixed-wing-2.webp",
       "/images/drones/large-fixed-wing-3.webp",
+      "/images/drones/large-fixed-wing-4.webp",
+      "/images/drones/large-fixed-wing-5.webp",
+      "/images/drones/large-fixed-wing-6.webp",
+      "/images/drones/large-fixed-wing-7.webp",
     ],
+    removeHybrid: true,
   },
   {
     nameContains: "AW50G",
