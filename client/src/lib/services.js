@@ -99,7 +99,7 @@ export const SERVICES = [
         heading: "Complete Pipeline Solutions for Every Integrity Challenge",
         subtitle:
           "From inspection to reporting, Nkem Aeronautics supports operators across the full pipeline integrity lifecycle.",
-        image: "/images/hero/pipeline-manufacturing.jpg",
+        image: "/images/hero/pipeline-manufacturing.webp",
         caption: {
           title: "Manufacturing & R&D",
           text: "Nkem Aeronautics designs, manufactures, and develops inspection technologies in-house to support complex pipeline conditions and evolving integrity needs.",
