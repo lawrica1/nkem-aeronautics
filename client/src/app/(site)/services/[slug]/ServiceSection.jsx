@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
+import { FaqSection } from "./FaqSection";
 
 const H2 = "text-3xl font-bold tracking-tight text-brand-navy-dark sm:text-4xl";
 const LABEL = "text-xs font-semibold tracking-widest text-brand-blue uppercase";
@@ -211,6 +212,10 @@ export function ServiceSection({ section: s, alt }) {
         </div>
       </Wrap>
     );
+  }
+
+  if (s.type === "faq") {
+    return <FaqSection section={s} alt={alt} />;
   }
 
   return null;

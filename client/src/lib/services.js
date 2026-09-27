@@ -165,6 +165,32 @@ export const SERVICES = [
           { title: "Cracking", text: "SCC, fatigue, or weld-related defects", image: "/images/pipeline/water-cracking.webp" },
         ],
       },
+      {
+        type: "faq",
+        id: "faq",
+        nav: "FAQ",
+        label: "Your Questions",
+        heading: "Frequently Asked Questions",
+        subtitle:
+          "Nkem Aeronautics supports pipeline operators with VTOL drones, inspection, tool manufacturing, data analysis, and integrity services for oil, gas, water, and industrial pipelines. These FAQs answer common questions about inspection technologies, difficult pipeline conditions, tool selection, and reporting.",
+        group: "General FAQs",
+        groupIntro:
+          "Find answers to common questions about our services, inspection technologies, and how Nkem Aeronautics works.",
+        items: [
+          {
+            q: "What does Nkem Aeronautics do?",
+            a: "Nkem Aeronautics provides pipeline integrity services, inline inspection technologies, surveillance support, data analysis, and inspection tool manufacturing for oil, gas, water, and industrial pipeline operators. Our work helps detect, size, and assess threats such as corrosion, cracks, dents, wall loss, deposits, restrictions, geometry changes, and other pipeline integrity risks.",
+          },
+          {
+            q: "Which industries does Nkem Aeronautics serve?",
+            a: "Nkem Aeronautics serves oil and gas pipelines, water transmission networks, refineries, petrochemical plants, loading lines, and multi-product pipeline systems. Our services support operators that need reliable pipeline condition data for maintenance planning, risk reduction, regulatory compliance, and long-term asset integrity.",
+          },
+          {
+            q: "Where does Nkem Aeronautics operate?",
+            a: "Nkem Aeronautics has offices and operational presence across Africa and serves several regions worldwide. This global network supports pipeline inspection, cleaning, data analysis, and integrity services across the Middle East, Europe, Asia, Africa, and the Americas.",
+          },
+        ],
+      },
     ],
     features: [
       "Pipeline leak detection",
