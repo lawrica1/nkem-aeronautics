@@ -280,7 +280,6 @@ export const SERVICES = [
       {
         type: "feature",
         label: "Step 3",
-        image: "/images/survey/step-1-capture.png",
         title: "Hardware agnostic, accuracy obsessed",
         text: "Upload surface data from the capture or survey tool that best matches your accuracy needs — drone mapping, GNSS rover, total station, or other conventional methods. Nkem Aeronautics brings it all together into one unified map, stored in your Logbook. Our high-precision processing ensures every data point aligns reliably, no matter how it was captured, so your team can trust the map and make confident, accurate decisions across the site.",
       },
@@ -296,7 +295,6 @@ export const SERVICES = [
       {
         type: "feature",
         label: "Step 5",
-        image: "/images/survey/step-3-upload.png",
         title: "Upload your data",
         text: "Transfer the collected data to your Logbook in Nkem Aeronautics for processing.",
       },
@@ -386,7 +384,6 @@ export const SERVICES = [
         type: "benefits",
         label: "Solutions",
         heading: "How you can boost productivity with Nkem Aeronautics",
-        image: "/images/survey/daily-reporting-email.png",
         items: [
           {
             icon: MapIcon,
@@ -415,7 +412,6 @@ export const SERVICES = [
         id: "whats-new",
         label: "Now in Nkem Aeronautics",
         heading: "Not your average 3D drone mapping software",
-        image: "/images/survey/whats-new.png",
         paragraphs: [
           "Handheld scanning, RTK, and more.",
           "From field to office, these updates make it easier to capture data, move faster, and stay aligned on the same map using the Nkem Aeronautics website alongside your Logbook.",
