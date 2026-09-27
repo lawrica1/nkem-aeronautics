@@ -237,7 +237,6 @@ export const SERVICES = [
         id: "challenge",
         label: "The Challenge",
         heading: "Why unreliable survey data is costing you more than just time",
-        image: "/images/survey/challenge.png",
         paragraphs: [
           "If your team is relying on a constant RTK and GPS rover signal in remote or complex terrain, you're betting your margins on a connection that can drop at any moment. A single data gap leads to unreliable surveys, which means:",
         ],
@@ -251,7 +250,6 @@ export const SERVICES = [
         type: "feature",
         id: "why-it-matters",
         label: "Why it matters",
-        image: "/images/survey/why-surveillance-matters.png",
         title: "Why Drone Surveillance matters",
         points: [
           "Remove reliance on real-time GNSS connections that can drift or fail",

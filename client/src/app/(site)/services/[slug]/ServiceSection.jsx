@@ -66,18 +66,28 @@ export function ServiceSection({ section: s, alt }) {
       <Wrap section={s} alt={alt}>
         <div className="mx-auto max-w-6xl">
           {s.topic && <h2 className={`mb-14 text-center ${H2}`}>{s.topic}</h2>}
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className={s.reverse ? "lg:order-last" : ""}>
-              <Photo src={s.image} alt={s.title} />
+          {s.image ? (
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div className={s.reverse ? "lg:order-last" : ""}>
+                <Photo src={s.image} alt={s.title} />
+              </div>
+              <div>
+                {s.label && <p className={LABEL}>{s.label}</p>}
+                <h3 className={`${s.label ? "mt-2" : ""} ${H2}`}>{s.title}</h3>
+                <div className="mt-5 h-1 w-14 rounded-full bg-brand-blue" />
+                {s.text && <p className={`mt-5 ${BODY}`}>{s.text}</p>}
+                <Points items={s.points} />
+              </div>
             </div>
-            <div>
+          ) : (
+            <div className="mx-auto max-w-3xl text-center">
               {s.label && <p className={LABEL}>{s.label}</p>}
               <h3 className={`${s.label ? "mt-2" : ""} ${H2}`}>{s.title}</h3>
-              <div className="mt-5 h-1 w-14 rounded-full bg-brand-blue" />
+              <div className="mx-auto mt-5 h-1 w-14 rounded-full bg-brand-blue" />
               {s.text && <p className={`mt-5 ${BODY}`}>{s.text}</p>}
-              <Points items={s.points} />
+              {s.points && <Points items={s.points} className="mt-6 inline-block text-left" />}
             </div>
-          </div>
+          )}
         </div>
       </Wrap>
     );
