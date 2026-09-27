@@ -205,6 +205,7 @@ export const PRODUCTS = [
     tags: ["Agricultural", "Spraying", "Electric"],
     crops: ["grains", "plantation"],
     service: "spraying",
+    image: "/images/drones/aw50g-1.png",
   },
   {
     id: "awv2548",
@@ -216,6 +217,7 @@ export const PRODUCTS = [
     tags: ["Agricultural", "Spraying", "Foldable"],
     crops: ["vegetables"],
     service: "spraying",
+    image: "/images/drones/awv2548-1.webp",
   },
   {
     id: "awv2847",
