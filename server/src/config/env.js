@@ -21,6 +21,8 @@ export const env = {
   brevoApiKey: process.env.BREVO_API_KEY,
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
   flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
+  adminEmail: process.env.ADMIN_EMAIL || "",
+  adminPhone: process.env.ADMIN_PHONE || "",
 };
 
 export function requireEnv(name, value) {

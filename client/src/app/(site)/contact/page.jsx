@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Headphones,
 } from "lucide-react";
+import { ContactMessageForm } from "@/components/ContactMessageForm";
 
 export const metadata = {
   title: "Contact — Nkem Aeronautics",
@@ -126,6 +127,19 @@ export default function ContactPage() {
             Whether you have a service enquiry, need to purchase a drone, or want to discuss a
             partnership — we&apos;re here to help.
           </p>
+        </div>
+      </section>
+
+      {/* Inquiry form */}
+      <section className="bg-brand-gray-light px-6 py-20">
+        <div className="mx-auto max-w-2xl">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-brand-navy-dark sm:text-3xl">Send Us a Message</h2>
+            <p className="mt-2 text-muted-foreground">
+              Fill in the form and our team will get back to you promptly.
+            </p>
+          </div>
+          <ContactMessageForm />
         </div>
       </section>
 
