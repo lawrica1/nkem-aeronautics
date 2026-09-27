@@ -79,7 +79,7 @@ export const SERVICES = [
         id: "oil-gas",
         nav: "Oil & Gas",
         label: "Oil & Gas",
-        image: "/images/hero/pipeline-integrity.jpg",
+        image: "/images/hero/pipeline-integrity.webp",
         title: "Oil & Gas Pipeline Integrity Solutions",
         text: "Nkem supports oil and gas operators with Drone inspection, integrity assessment, and surveillance designed to detect threats, reduce risk, and support safe pipeline operation.",
       },
