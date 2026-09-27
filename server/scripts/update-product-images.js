@@ -7,7 +7,6 @@ const UPDATES = [
   {
     nameContains: "ZAM-26A",
     images: [
-      "/images/drones/zam-26a-1.webp",
       "/images/drones/zam-26a-2.png",
       "/images/drones/zam-26a-3.png",
       "/images/drones/zam-26a-4.png",
@@ -17,7 +16,6 @@ const UPDATES = [
   {
     nameContains: "Large Fixed-Wing UAV",
     images: [
-      "/images/drones/large-fixed-wing-1.webp",
       "/images/drones/large-fixed-wing-2.webp",
       "/images/drones/large-fixed-wing-3.webp",
       "/images/drones/large-fixed-wing-4.webp",
