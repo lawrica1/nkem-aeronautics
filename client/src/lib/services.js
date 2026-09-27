@@ -209,7 +209,7 @@ export const SERVICES = [
       "High-accuracy topographic surveys, volumetric measurements, and digital elevation models for engineering and government projects.",
     image: "/images/services/survey-mapping.jpg",
     hero: {
-      image: "/images/hero/survey-homepage.jpg",
+      image: "/images/hero/survey-homepage.webp",
       title: "Turn raw drone data into survey-grade maps with Nkem Aeronautics drone mapping",
       description:
         "PPK, or post-processing kinematic, is a high-precision workflow that ensures your drone imagery is accurately geolocated. Using AeroPoints and high-accuracy drones, processing with Nkem Aeronautics PPK makes survey-grade mapping reliable, repeatable, and simple.",
@@ -237,7 +237,7 @@ export const SERVICES = [
         id: "challenge",
         label: "The Challenge",
         heading: "Why unreliable survey data is costing you more than just time",
-        image: "/images/survey/challenge.jpg",
+        image: "/images/survey/challenge.png",
         paragraphs: [
           "If your team is relying on a constant RTK and GPS rover signal in remote or complex terrain, you're betting your margins on a connection that can drop at any moment. A single data gap leads to unreliable surveys, which means:",
         ],
@@ -251,7 +251,7 @@ export const SERVICES = [
         type: "feature",
         id: "why-it-matters",
         label: "Why it matters",
-        image: "/images/survey/why-surveillance-matters.jpeg",
+        image: "/images/survey/why-surveillance-matters.png",
         title: "Why Drone Surveillance matters",
         points: [
           "Remove reliance on real-time GNSS connections that can drift or fail",
@@ -265,14 +265,14 @@ export const SERVICES = [
         type: "feature",
         id: "how-it-works",
         label: "Step 1",
-        image: "/images/survey/step-aeropoints.jpg",
+        image: "/images/survey/step-aeropoints.webp",
         title: "Lay your AeroPoints",
         text: "Place AeroPoints on-site to record precise ground positions.",
       },
       {
         type: "feature",
         label: "Step 2",
-        image: "/images/survey/step-drone-data.jpg",
+        image: "/images/survey/step-drone-data.webp",
         title: "Gather drone data",
         text: "Fly RTK-enabled drones along an automated flight path, then process with PPK.",
         reverse: true,
@@ -280,14 +280,14 @@ export const SERVICES = [
       {
         type: "feature",
         label: "Step 3",
-        image: "/images/survey/step-1-capture.jpg",
+        image: "/images/survey/step-1-capture.png",
         title: "Hardware agnostic, accuracy obsessed",
         text: "Upload surface data from the capture or survey tool that best matches your accuracy needs — drone mapping, GNSS rover, total station, or other conventional methods. Nkem Aeronautics brings it all together into one unified map, stored in your Logbook. Our high-precision processing ensures every data point aligns reliably, no matter how it was captured, so your team can trust the map and make confident, accurate decisions across the site.",
       },
       {
         type: "feature",
         label: "Step 4",
-        image: "/images/survey/step-2-verify.jpg",
+        image: "/images/survey/step-2-verify.webp",
         title: "Verify your data",
         text: "Along with your processed dataset, you'll receive a summary report, linked to your Logbook, detailing:",
         points: ["GNSS corrections applied to each photo", "Ground control accuracy", "Overall survey precision"],
@@ -296,14 +296,14 @@ export const SERVICES = [
       {
         type: "feature",
         label: "Step 5",
-        image: "/images/survey/step-3-upload.jpg",
+        image: "/images/survey/step-3-upload.png",
         title: "Upload your data",
         text: "Transfer the collected data to your Logbook in Nkem Aeronautics for processing.",
       },
       {
         type: "feature",
         label: "Step 6",
-        image: "/images/survey/step-4-processed.jpg",
+        image: "/images/survey/step-4-processed.webp",
         title: "Receive processed data",
         text: "Get a high-resolution 3D map, point cloud, and orthophoto.",
         reverse: true,
@@ -311,12 +311,12 @@ export const SERVICES = [
       {
         type: "feature",
         label: "Step 7",
-        image: "/images/survey/step-5-progress.jpg",
+        image: "/images/survey/step-5-progress.webp",
         title: "Run leaner, smarter, and with less guesswork",
       },
       {
         type: "feature",
-        image: "/images/survey/daily-reporting.jpg",
+        image: "/images/survey/daily-reporting.webp",
         title: "Create daily reporting routines that drive data-driven quarry decisions",
         text: "Gain instant visibility into haul route performance and operator patterns to eliminate bottlenecks before they cost hours of wait time.",
         reverse: true,
@@ -324,20 +324,20 @@ export const SERVICES = [
       {
         type: "feature",
         id: "stockpiles",
-        image: "/images/survey/stockpiles.jpg",
+        image: "/images/survey/stockpiles.webp",
         title: "Real-time insights for your construction aggregates and stockpiles",
         text: "From pit to stockpile, your team gets a single source of truth for decision-making. Track construction aggregate volumes, monitor production, see which trucks are on standby, idle, or running, and plan ahead with the latest site data at your fingertips.",
       },
       {
         type: "feature",
-        image: "/images/survey/telematics.jpg",
+        image: "/images/survey/telematics.webp",
         title: "Real-time machine telematics",
         text: "Take Nkem Aeronautics drone surveillance and mapping to the next level by bringing live machine data right onto your site map. See where your machines are, track cycle times, and monitor utilisation in real time. This seamless integration helps you cut downtime, boost operator efficiency, and keep every team member working from the same updated view.",
         reverse: true,
       },
       {
         type: "feature",
-        image: "/images/survey/cad-workflows.jpg",
+        image: "/images/survey/cad-workflows.webp",
         title: "Lightweight CAD workflows",
         text: "Bring your designs to life. Whether they come from CAD, drone surveys, or site layouts, you can overlay design files directly onto your Logbook. Your team can annotate, mark up, and add context from the field so everyone in the office and on site can make confident decisions and collaborate seamlessly.",
       },
@@ -386,7 +386,7 @@ export const SERVICES = [
         type: "benefits",
         label: "Solutions",
         heading: "How you can boost productivity with Nkem Aeronautics",
-        image: "/images/survey/daily-reporting-email.jpg",
+        image: "/images/survey/daily-reporting-email.png",
         items: [
           {
             icon: MapIcon,
@@ -415,6 +415,7 @@ export const SERVICES = [
         id: "whats-new",
         label: "Now in Nkem Aeronautics",
         heading: "Not your average 3D drone mapping software",
+        image: "/images/survey/whats-new.png",
         paragraphs: [
           "Handheld scanning, RTK, and more.",
           "From field to office, these updates make it easier to capture data, move faster, and stay aligned on the same map using the Nkem Aeronautics website alongside your Logbook.",
