@@ -148,7 +148,7 @@ export const SERVICES = [
       {
         type: "text",
         label: "Introduction",
-        image: "/images/pipeline/water-introduction.jpg",
+        image: "/images/pipeline/water-introduction.webp",
         paragraphs: [
           "Modern water supply systems face aging infrastructure, increasing demand, and challenging operating environments. Even a small underground defect can lead to leaks, service disruptions, high operating costs, or public health risks.",
           "We support clients throughout the entire pipeline lifecycle: from condition assessment and maintenance planning to long-term asset integrity strategies.",
@@ -159,9 +159,9 @@ export const SERVICES = [
         label: "Threats We Detect",
         heading: "Identifying what threatens your pipeline",
         text: "Every pipeline faces unique operating challenges. Our technologies are designed to accurately identify, size, and track integrity threats — enabling proactive maintenance and risk management.",
-        image: "/images/pipeline/water-threats.jpg",
+        image: "/images/pipeline/water-threats.webp",
         items: [
-          { title: "Corrosion", text: "External, and pitting metal loss", image: "/images/pipeline/water-corrosion.jpg" },
+          { title: "Corrosion", text: "External, and pitting metal loss", image: "/images/pipeline/water-corrosion.webp" },
           { title: "Cracking", text: "SCC, fatigue, or weld-related defects", image: "/images/pipeline/water-cracking.jpg" },
         ],
       },
