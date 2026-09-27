@@ -162,7 +162,7 @@ export const SERVICES = [
         image: "/images/pipeline/water-threats.webp",
         items: [
           { title: "Corrosion", text: "External, and pitting metal loss", image: "/images/pipeline/water-corrosion.webp" },
-          { title: "Cracking", text: "SCC, fatigue, or weld-related defects", image: "/images/pipeline/water-cracking.jpg" },
+          { title: "Cracking", text: "SCC, fatigue, or weld-related defects", image: "/images/pipeline/water-cracking.webp" },
         ],
       },
     ],
