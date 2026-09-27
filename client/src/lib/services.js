@@ -64,7 +64,7 @@ export const SERVICES = [
     image: "/images/services/pipeline-infrastructure.jpg",
     // Optional overrides for the /services/[slug] hero; the card keeps title/description/image.
     hero: {
-      image: "/images/hero/pipeline-homepage.jpg",
+      image: "/images/hero/pipeline-homepage.webp",
       title: "A Global Leader in Complete Pipeline Solutions",
       description:
         "Nkem Aeronautics delivers pipeline inspection, integrity assessment, Survey solutions for operators worldwide.",
