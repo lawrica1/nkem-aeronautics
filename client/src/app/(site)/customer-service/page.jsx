@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 const QUICK_CONTACTS = [
-  { icon: Mail, label: "Email", value: "nkem@aeronautics.com", href: "mailto:nkem@aeronautics.com" },
+  { icon: Mail, label: "Email", value: "nkem@nkemaeronautics.com", href: "mailto:nkem@nkemaeronautics.com" },
   { icon: Phone, label: "Telephone", value: "+237 670 439 117", href: "tel:+237670439117" },
 ];
 

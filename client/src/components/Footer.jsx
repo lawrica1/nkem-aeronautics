@@ -59,7 +59,7 @@ export function Footer() {
           </div>
           <div>
             <p className="font-semibold text-white/80">Contact Us</p>
-            <p className="mt-3 text-sm text-brand-footer-text">Email: nkem@aeronautics.com</p>
+            <p className="mt-3 text-sm text-brand-footer-text">Email: nkem@nkemaeronautics.com</p>
             <p className="text-sm text-brand-footer-text">Tel / WhatsApp: +237 670 439 117</p>
             <div className="mt-4 flex gap-4">
               {SOCIAL_LINKS.map(({ name, href, icon: Icon }) => (

@@ -27,8 +27,8 @@ const CONTACT_DETAILS = [
   {
     icon: Mail,
     label: "Email",
-    value: "nkem@aeronautics.com",
-    href: "mailto:nkem@aeronautics.com",
+    value: "nkem@nkemaeronautics.com",
+    href: "mailto:nkem@nkemaeronautics.com",
   },
   {
     icon: Globe,
