@@ -21,9 +21,9 @@ const MEDIA_SECTORS = ["wildlife"];
 function GuestView() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-1 flex-col items-center justify-center px-6 py-12 text-center">
-      <h1 className="text-2xl font-semibold text-brand-navy-dark">Logbook Portal</h1>
+      <h1 className="text-2xl font-semibold text-brand-navy-dark">Service Portal</h1>
       <p className="mt-2 text-muted-foreground">
-        Log in to view your farmer logbook and manage service requests.
+        Log in to view your logbook and manage service requests.
       </p>
       <Link
         href="/login"

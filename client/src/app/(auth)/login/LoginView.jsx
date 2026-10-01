@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Users2, ClipboardCheck, MapPin } from "lucide-react";
+import { Users2, ClipboardCheck, MapPin, Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { LoginForm } from "@/components/LoginForm";
 
 export function LoginView() {
@@ -68,16 +68,18 @@ export function LoginView() {
             className="animate-float absolute top-80 left-6 w-64 rounded-xl bg-white p-4 shadow-xl"
             style={{ animationDuration: "5.5s", animationDelay: "1.6s" }}
           >
-            <p className="text-xs font-medium text-muted-foreground">Today&apos;s Tasks</p>
+            <p className="text-xs font-medium text-muted-foreground">Active Sectors</p>
             <ul className="mt-2 space-y-2 text-sm text-brand-navy-dark">
-              {["Review spraying request", "Confirm firm routing", "Update farmer logbook"].map(
-                (task) => (
-                  <li key={task} className="flex items-center gap-2">
-                    <ClipboardCheck className="size-4 text-brand-green" />
-                    {task}
-                  </li>
-                ),
-              )}
+              {[
+                { label: "Agricultural spraying", Icon: Sprout },
+                { label: "Wildlife surveillance", Icon: Binoculars },
+                { label: "Mining site survey", Icon: Pickaxe },
+              ].map(({ label, Icon }) => (
+                <li key={label} className="flex items-center gap-2">
+                  <Icon className="size-4 text-brand-green" />
+                  {label}
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -86,7 +88,7 @@ export function LoginView() {
             style={{ animationDuration: "6.5s", animationDelay: "0.4s" }}
           >
             <Users2 className="size-4 text-brand-green" />
-            <span className="text-xs font-medium text-brand-navy-dark">Farmer network</span>
+            <span className="text-xs font-medium text-brand-navy-dark">Our network</span>
           </div>
 
           <div
@@ -104,10 +106,10 @@ export function LoginView() {
 
         <div className="relative mt-auto">
           <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Manage your farm operations, <span className="text-white">in one place.</span>
+            Manage your drone services, <span className="text-white">in one place.</span>
           </h1>
           <p className="mt-3 max-w-sm text-white/70">
-            Registration, logbooks, and service requests unified in a single, secure workspace.
+            Agriculture, wildlife, and mining — registration, logbooks, and service requests unified in one secure workspace.
           </p>
         </div>
       </div>
