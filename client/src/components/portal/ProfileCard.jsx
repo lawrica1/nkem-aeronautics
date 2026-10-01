@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserRound, ShieldCheck, Clock, Sprout, Binoculars, Pickaxe, Camera, Loader2, Headphones } from "lucide-react";
+import { UserRound, Sprout, Binoculars, Pickaxe, Camera, Loader2, Headphones } from "lucide-react";
 import { apiUpload } from "@/lib/api";
 
 const SECTOR_LABELS = {
@@ -18,30 +18,6 @@ const SECTOR_ICONS = {
   mining: Pickaxe,
 };
 
-function LogbookStatus({ verifiedAt }) {
-  if (verifiedAt) {
-    return (
-      <div className="mt-3 w-full rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-left">
-        <p className="flex items-center gap-1.5 text-sm font-semibold text-green-700">
-          <ShieldCheck className="size-4" />
-          Verified logbook
-        </p>
-        <p className="mt-0.5 text-xs text-green-700/80">
-          Approved by Nkem Aeronautics on {new Date(verifiedAt).toLocaleDateString("en-GB")}
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div className="mt-3 w-full rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-left">
-      <p className="flex items-center gap-1.5 text-sm font-semibold text-amber-700">
-        <Clock className="size-4" />
-        Pending verification
-      </p>
-      <p className="mt-0.5 text-xs text-amber-700/80">Our team will review your details and approve your logbook.</p>
-    </div>
-  );
-}
 
 function SectorBadge({ sector }) {
   const Icon = SECTOR_ICONS[sector] ?? Sprout;
@@ -66,7 +42,7 @@ function Avatar({ photoUrl, name, onPhotoChange }) {
     try {
       const fd = new FormData();
       fd.append("photo", file);
-      const updated = await apiUpload("/farmers/me/photo", fd);
+      const updated = await apiUpload("/farmers/me/photo", fd, { method: "PATCH" });
       onPhotoChange?.(updated.profilePhotoUrl);
     } catch (err) {
       setUploadError(err.message || "Photo upload failed. Please try again.");
@@ -105,7 +81,7 @@ function Avatar({ photoUrl, name, onPhotoChange }) {
         onChange={handleFile}
       />
       {uploadError && (
-        <p className="absolute -bottom-5 left-1/2 w-40 -translate-x-1/2 text-center text-[10px] text-destructive">
+        <p className="absolute -bottom-7 left-1/2 w-52 -translate-x-1/2 rounded bg-destructive/10 px-2 py-1 text-center text-xs font-medium text-destructive">
           {uploadError}
         </p>
       )}
@@ -140,7 +116,6 @@ export function ProfileCard({ farmer, onLogout }) {
           </div>
         )}
 
-        {farmer && <LogbookStatus verifiedAt={farmer.logbookVerifiedAt} />}
       </div>
 
       <div className="mt-5 space-y-3 text-sm">

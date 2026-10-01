@@ -88,13 +88,13 @@ export async function signOut({ admin = false } = {}) {
   else clearToken();
 }
 
-export async function apiUpload(path, formData, { admin = false } = {}) {
+export async function apiUpload(path, formData, { admin = false, method = "POST" } = {}) {
   const headers = {};
   const token = admin ? getAdminToken() : getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
+    method,
     headers,
     credentials: "include",
     body: formData,
