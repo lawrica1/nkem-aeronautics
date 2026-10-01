@@ -1,7 +1,15 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
+import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
-import { PART_REQUEST_STATUS_VALUES } from "./partRequest.constants.js";
+import { notify } from "../notifications/notification.service.js";
+import { sendEmail } from "../notifications/email.service.js";
+import {
+  partRequestConfirmation,
+  partRequestStatusUpdate,
+  adminNewPartRequest,
+} from "../notifications/email.templates.js";
+import { PART_REQUEST_STATUS_VALUES, PART_REQUEST_STATUS_LABELS } from "./partRequest.constants.js";
 import { serializePartRequest } from "./partRequest.serializer.js";
 
 const INCLUDE = { files: { orderBy: { createdAt: "asc" } } };
@@ -21,6 +29,22 @@ export async function createForUser(user, body) {
   }
 
   const withFiles = await prisma.partRequest.findUnique({ where: { id: request.id }, include: INCLUDE });
+
+  // Customer confirmation
+  notify(
+    user.id,
+    { type: "part_request_submitted", title: "Part identification request received", body: "Our team will review your request and identify the part for you.", link: "/logbook" },
+    "We've received your part identification request",
+    partRequestConfirmation({ name: user.name, description: body.description }),
+  ).catch((err) => console.error("[notify:part_request_submitted]", err.message));
+
+  // Admin alert
+  sendEmail(
+    env.adminEmail,
+    "New part identification request",
+    adminNewPartRequest({ userName: `${user.name || ""} ${user.surname || ""}`.trim(), userEmail: user.email, description: body.description, requestId: request.id }),
+  ).catch((err) => console.error("[admin-notify:new_part_request]", err.message));
+
   return serializePartRequest(withFiles);
 }
 
@@ -57,5 +81,16 @@ export async function update(id, body) {
     throw err;
   });
   if (!request) throw new HttpError(404, "Part request not found.");
+
+  if (data.status !== undefined) {
+    const statusLabel = PART_REQUEST_STATUS_LABELS[request.status] || request.status;
+    notify(
+      request.userId,
+      { type: "part_request_status", title: `Part request update: ${statusLabel}`, body: request.adminNotes || "", link: "/logbook" },
+      "Update on your part identification request",
+      partRequestStatusUpdate({ name: null, description: request.description, statusLabel, adminNotes: request.adminNotes }),
+    ).catch((err) => console.error("[notify:part_request_status]", err.message));
+  }
+
   return serializePartRequest(request);
 }

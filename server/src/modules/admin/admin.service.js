@@ -1,8 +1,12 @@
 import ExcelJS from "exceljs";
 import { prisma } from "../../config/prisma.js";
+import { env } from "../../config/env.js";
 import { ROLES, ROLE_VALUES, SECTORS } from "../platform/platform.constants.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { signAdminToken } from "../../shared/middleware/auth.js";
+import { notify } from "../notifications/notification.service.js";
+import { sendEmail } from "../notifications/email.service.js";
+import { logbookVerifiedEmail, adminNewVerifiedUser } from "../notifications/email.templates.js";
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
@@ -139,6 +143,33 @@ export async function updateUser(id, body, actor) {
     };
     console.info(`[audit] admin ${actor.id} updated user ${id}: ${JSON.stringify(change)}`);
   }
+
+  // Logbook verified — congratulate user + alert admin
+  if (data.logbookVerifiedAt instanceof Date) {
+    notify(
+      user.id,
+      { type: "logbook_verified", title: "Your logbook has been verified!", body: "You now have full access to submit service requests.", link: "/logbook" },
+      "Your logbook is now verified — Nkem Aeronautics",
+      logbookVerifiedEmail({ name: user.name, logbookId: user.identificationNumber }),
+    ).catch((err) => console.error("[notify:logbook_verified]", err.message));
+
+    sendEmail(
+      env.adminEmail,
+      `Logbook verified: ${user.name || ""} ${user.surname || ""}`.trim(),
+      adminNewVerifiedUser({ userName: `${user.name || ""} ${user.surname || ""}`.trim(), email: user.email, logbookId: user.identificationNumber }),
+    ).catch((err) => console.error("[admin-notify:logbook_verified]", err.message));
+  }
+
+  // Account verified (isVerified toggled to true)
+  if (data.isVerified === true) {
+    notify(
+      user.id,
+      { type: "account_verified", title: "Your account has been verified", body: "You can now log in and access your logbook.", link: "/logbook" },
+      "Your Nkem Aeronautics account is now active",
+      logbookVerifiedEmail({ name: user.name, logbookId: user.identificationNumber }),
+    ).catch((err) => console.error("[notify:account_verified]", err.message));
+  }
+
   return serializeUser(user);
 }
 

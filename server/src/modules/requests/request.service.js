@@ -4,6 +4,12 @@ import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { escapeHtml } from "../../shared/utils/html.js";
 import { notify } from "../notifications/notification.service.js";
+import { sendEmail } from "../notifications/email.service.js";
+import {
+  serviceRequestConfirmation,
+  serviceRequestStatusUpdate,
+  adminNewServiceRequest,
+} from "../notifications/email.templates.js";
 import { ROLES } from "../platform/platform.constants.js";
 import { REQUEST_STATUS, REQUEST_STATUS_VALUES, REQUEST_STATUS_LABELS } from "./request.constants.js";
 import { serializeRequest } from "./request.serializer.js";
@@ -48,6 +54,21 @@ export async function createForUser(user, body) {
       data: { serviceRequestId: request.id },
     });
   }
+
+  // Customer confirmation
+  notify(
+    user.id,
+    { type: "request_submitted", title: `Service request received: ${request.service}`, body: "We'll review your request and get back to you shortly.", link: "/logbook" },
+    `We've received your ${request.service} request`,
+    serviceRequestConfirmation({ name: user.name, service: request.service, location: request.location, logbookId: user.identificationNumber }),
+  ).catch((err) => console.error("[notify:request_submitted]", err.message));
+
+  // Admin alert
+  sendEmail(
+    env.adminEmail,
+    `New service request — ${request.service}`,
+    adminNewServiceRequest({ userName: `${user.name || ""} ${user.surname || ""}`.trim(), userEmail: user.email, service: request.service, location: request.location, region: request.region, requestId: request.id }),
+  ).catch((err) => console.error("[admin-notify:new_request]", err.message));
 
   return serializeRequest(request);
 }
@@ -165,6 +186,7 @@ export async function updateStatus(id, body) {
   if (!request) throw new HttpError(404, "Service request not found.");
 
   const statusLabel = REQUEST_STATUS_LABELS[request.status] || request.status;
+  const customerName = await prisma.user.findUnique({ where: { id: request.userId }, select: { name: true } }).then((u) => u?.name);
   // Fire-and-forget — a notification failure must not roll back the committed status change.
   notify(
     request.userId,
@@ -175,7 +197,7 @@ export async function updateStatus(id, body) {
       link: "/logbook",
     },
     `Update on your ${request.service} request`,
-    `<p>Your request for <strong>${escapeHtml(request.service)}</strong> is now <strong>${statusLabel}</strong>.</p>${request.adminNotes ? `<p>${escapeHtml(request.adminNotes)}</p>` : ""}<p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+    serviceRequestStatusUpdate({ name: customerName, service: request.service, statusLabel, adminNotes: request.adminNotes }),
   ).catch((err) => console.error("[notify:request_status]", err.message));
 
   return serializeRequest(request);

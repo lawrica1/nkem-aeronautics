@@ -4,6 +4,7 @@ import { env } from "../../config/env.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { escapeHtml } from "../../shared/utils/html.js";
 import { notify } from "../notifications/notification.service.js";
+import { serviceRequestStatusUpdate } from "../notifications/email.templates.js";
 import { ROLES } from "../platform/platform.constants.js";
 import { REQUEST_STATUS, REQUEST_STATUS_VALUES, REQUEST_STATUS_LABELS } from "../requests/request.constants.js";
 import { serializeOperation } from "./operation.serializer.js";
@@ -51,6 +52,15 @@ export async function assign(body) {
     }),
   ]);
 
+  // Notify customer that their request has been assigned and is being scheduled
+  const customerName = await prisma.user.findUnique({ where: { id: request.userId }, select: { name: true } }).then((u) => u?.name);
+  notify(
+    request.userId,
+    { type: "request_status", title: `Your ${request.service} request has been assigned`, body: "A pilot and drone have been assigned. We'll confirm the schedule soon.", link: "/logbook" },
+    `Your ${request.service} request has been assigned`,
+    serviceRequestStatusUpdate({ name: customerName, service: request.service, statusLabel: "Assigned — scheduling in progress", adminNotes: null }),
+  ).catch((err) => console.error("[notify:operation_assigned]", err.message));
+
   return serializeOperation(operation);
 }
 
@@ -86,8 +96,10 @@ export async function update(id, body) {
       data: { status: body.status },
     });
 
+    const opCustomerName = await prisma.user.findUnique({ where: { id: updatedRequest.userId }, select: { name: true } }).then((u) => u?.name);
     // Fire-and-forget — notification failure must not roll back the committed status change.
     if (body.status === REQUEST_STATUS.COMPLETED) {
+      const completedNotes = operation.results ? `Operation results: ${operation.results}` : null;
       notify(
         updatedRequest.userId,
         {
@@ -97,7 +109,7 @@ export async function update(id, body) {
           link: "/logbook",
         },
         `Your ${updatedRequest.service} operation is complete`,
-        `<p>Your <strong>${escapeHtml(updatedRequest.service)}</strong> operation${operation.pilot ? ` with pilot ${escapeHtml(operation.pilot.name)}` : ""} is complete.</p>${operation.results ? `<p><strong>Results:</strong> ${escapeHtml(operation.results)}</p>` : ""}<p>You can now leave a review for the pilot from your Logbook.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+        serviceRequestStatusUpdate({ name: opCustomerName, service: updatedRequest.service, statusLabel: "Completed", adminNotes: completedNotes }),
       ).catch((err) => console.error("[notify:operation_completed]", err.message));
     } else {
       const statusLabel = REQUEST_STATUS_LABELS[updatedRequest.status] || updatedRequest.status;
@@ -109,7 +121,7 @@ export async function update(id, body) {
           link: "/logbook",
         },
         `Update on your ${updatedRequest.service} request`,
-        `<p>Your request for <strong>${escapeHtml(updatedRequest.service)}</strong> is now <strong>${statusLabel}</strong>.</p><p><a href="${env.clientOrigin}/logbook">View in your Logbook</a></p><p>— Nkem Aeronautics Ltd</p>`,
+        serviceRequestStatusUpdate({ name: opCustomerName, service: updatedRequest.service, statusLabel, adminNotes: null }),
       ).catch((err) => console.error("[notify:request_status]", err.message));
     }
   }

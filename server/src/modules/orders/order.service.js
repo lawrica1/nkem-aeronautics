@@ -5,8 +5,13 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 import { escapeHtml } from "../../shared/utils/html.js";
 import { nextReceiptNumber } from "../logbooks/counter.model.js";
 import { sendEmail } from "../notifications/email.service.js";
-import { createNotification } from "../notifications/notification.service.js";
-import { ORDER_STATUS, ORDER_STATUS_VALUES, PAYMENT_METHODS } from "./order.constants.js";
+import { createNotification, notify } from "../notifications/notification.service.js";
+import {
+  orderConfirmation,
+  orderStatusUpdate,
+  adminNewOrder,
+} from "../notifications/email.templates.js";
+import { ORDER_STATUS, ORDER_STATUS_VALUES, ORDER_STATUS_LABELS, PAYMENT_METHODS } from "./order.constants.js";
 import { serializeOrder } from "./order.serializer.js";
 
 const ORDER_INCLUDE = { items: { include: { product: true } }, payments: true, receipt: true };
@@ -49,6 +54,23 @@ export async function createForUser(user, body) {
     include: ORDER_INCLUDE,
   });
 
+  const itemsForEmail = order.items.map((i) => ({ name: i.product?.name || i.productId, quantity: i.quantity, unitPrice: i.unitPrice }));
+
+  // Customer confirmation
+  notify(
+    user.id,
+    { type: "order_placed", title: "Your order has been received", body: `Total: ${totalAmount.toLocaleString("fr-CM")} XAF`, link: "/logbook" },
+    "Your order has been received — Nkem Aeronautics",
+    orderConfirmation({ name: user.name, orderId: order.id, items: itemsForEmail, total: totalAmount }),
+  ).catch((err) => console.error("[notify:order_placed]", err.message));
+
+  // Admin alert
+  sendEmail(
+    env.adminEmail,
+    `New online order — ${totalAmount.toLocaleString("fr-CM")} XAF`,
+    adminNewOrder({ userName: `${user.name || ""} ${user.surname || ""}`.trim(), userEmail: user.email, orderId: order.id, items: itemsForEmail, total: totalAmount }),
+  ).catch((err) => console.error("[admin-notify:new_order]", err.message));
+
   return serializeOrder(order);
 }
 
@@ -66,6 +88,19 @@ export async function createForAdmin(body) {
     },
     include: ORDER_INCLUDE,
   });
+
+  const itemsForEmail = order.items.map((i) => ({ name: i.product?.name || i.productId, quantity: i.quantity, unitPrice: i.unitPrice }));
+  const customer = await prisma.user.findUnique({ where: { id: body.userId }, select: { name: true, email: true } });
+
+  // Customer confirmation
+  if (customer) {
+    notify(
+      body.userId,
+      { type: "order_placed", title: "An order has been created for you", body: `Total: ${totalAmount.toLocaleString("fr-CM")} XAF`, link: "/logbook" },
+      "Your order has been received — Nkem Aeronautics",
+      orderConfirmation({ name: customer.name, orderId: order.id, items: itemsForEmail, total: totalAmount }),
+    ).catch((err) => console.error("[notify:order_placed_admin]", err.message));
+  }
 
   return serializeOrder(order);
 }
@@ -104,6 +139,15 @@ export async function updateStatus(id, body) {
       throw err;
     });
   if (!order) throw new HttpError(404, "Order not found.");
+
+  const statusLabel = ORDER_STATUS_LABELS[order.status] || order.status;
+  notify(
+    order.userId,
+    { type: "order_status", title: `Order update: ${statusLabel}`, body: `Order ${order.id.slice(0, 8)}`, link: "/logbook" },
+    `Your order has been updated — ${statusLabel}`,
+    orderStatusUpdate({ name: null, orderId: order.id, statusLabel }),
+  ).catch((err) => console.error("[notify:order_status]", err.message));
+
   return serializeOrder(order);
 }
 
@@ -144,6 +188,13 @@ export async function recordPayment(id, body) {
     });
 
     if (user?.email) await sendReceiptEmail(user, order, receipt);
+
+    // Admin alert
+    sendEmail(
+      env.adminEmail,
+      `Receipt ${receipt.receiptNumber} issued — ${order.totalAmount.toLocaleString("fr-CM")} XAF`,
+      adminNewOrder({ userName: user ? `${user.name || ""} ${user.surname || ""}`.trim() : "Unknown", userEmail: user?.email || "", orderId: order.id, items: (await prisma.orderItem.findMany({ where: { orderId: order.id }, include: { product: true } })).map((i) => ({ name: i.product?.name || i.productId, quantity: i.quantity, unitPrice: i.unitPrice })), total: order.totalAmount }),
+    ).catch((err) => console.error("[admin-notify:receipt_issued]", err.message));
   }
 
   const updated = await prisma.order.findUnique({ where: { id }, include: ORDER_INCLUDE });
@@ -152,18 +203,45 @@ export async function recordPayment(id, body) {
 
 async function sendReceiptEmail(user, order, receipt) {
   const items = await prisma.orderItem.findMany({ where: { orderId: order.id }, include: { product: true } });
+  const itemsForEmail = items.map((i) => ({ name: i.product?.name || i.productId, quantity: i.quantity, unitPrice: i.unitPrice }));
+
+  const BRAND_NAVY = "#0f172a";
+  const BRAND_BLUE = "#2563eb";
+  const BRAND_LIGHT = "#f8fafc";
+  const BRAND_BORDER = "#e2e8f0";
+  const TEXT_MAIN = "#1e293b";
+  const TEXT_MUTED = "#64748b";
   const format = (amount) => `${amount.toLocaleString("fr-CM")} XAF`;
-  const rows = items
-    .map((item) => `<tr><td>${escapeHtml(item.product.name)} &times; ${item.quantity}</td><td style="text-align:right">${format(item.unitPrice * item.quantity)}</td></tr>`)
+
+  const itemRows = itemsForEmail
+    .map((i) => `<tr><td style="padding:8px 0;font-size:13px;color:${TEXT_MUTED};">${escapeHtml(i.name)} × ${i.quantity}</td><td style="padding:8px 0;font-size:13px;color:${TEXT_MAIN};font-weight:600;text-align:right;">${format(i.unitPrice * i.quantity)}</td></tr>`)
     .join("");
 
-  const html = `
-    <p>Hi ${escapeHtml(user.name || "there")},</p>
-    <p>Thanks for your order. Receipt <strong>${receipt.receiptNumber}</strong> for <strong>${format(order.totalAmount)}</strong> is confirmed.</p>
-    <table cellpadding="6" style="border-collapse:collapse;width:100%;max-width:480px">${rows}</table>
-    <p><a href="${env.clientOrigin}/receipts/${order.id}">View and print your receipt</a></p>
-    <p>— Nkem Aeronautics Ltd</p>
-  `;
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Receipt</title></head>
+<body style="margin:0;padding:0;background:${BRAND_LIGHT};font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND_LIGHT};padding:32px 16px;"><tr><td align="center">
+<table width="100%" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid ${BRAND_BORDER};">
+<tr><td style="background:${BRAND_NAVY};padding:28px 36px;">
+<span style="font-size:22px;font-weight:700;color:#fff;letter-spacing:0.5px;">NKEM AERONAUTICS</span>
+<div style="height:3px;background:${BRAND_BLUE};border-radius:2px;margin-top:16px;"></div>
+</td></tr>
+<tr><td style="padding:36px;">
+<span style="display:inline-block;background:#16a34a;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;">Receipt Confirmed</span>
+<h1 style="margin:16px 0 4px;font-size:22px;font-weight:700;color:${TEXT_MAIN};">Payment Received</h1>
+<p style="margin:0 0 20px;font-size:15px;color:${TEXT_MUTED};">Hi ${escapeHtml(user.name || "there")}, your payment has been confirmed.</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${BRAND_BORDER};margin-top:20px;">
+<tr><td style="padding:8px 0;font-size:13px;color:${TEXT_MUTED};width:40%;">Receipt Number</td><td style="padding:8px 0;font-size:13px;color:${TEXT_MAIN};font-weight:600;">${receipt.receiptNumber}</td></tr>
+${itemRows}
+<tr><td style="padding:8px 0;font-size:13px;color:${TEXT_MUTED};">Total</td><td style="padding:8px 0;font-size:15px;color:${BRAND_BLUE};font-weight:700;">${format(order.totalAmount)}</td></tr>
+</table>
+<div style="background:#eff6ff;border-left:4px solid ${BRAND_BLUE};border-radius:6px;padding:14px 18px;margin:20px 0;font-size:14px;color:${TEXT_MAIN};">Thank you for your purchase. A copy of your receipt is available in your logbook.</div>
+<a href="${env.clientOrigin}/receipts/${order.id}" style="display:inline-block;background:${BRAND_BLUE};color:#fff;font-size:14px;font-weight:600;padding:12px 28px;border-radius:8px;text-decoration:none;margin-top:4px;">View &amp; Print Receipt</a>
+</td></tr>
+<tr><td style="background:${BRAND_LIGHT};border-top:1px solid ${BRAND_BORDER};padding:20px 36px;font-size:12px;color:${TEXT_MUTED};">
+<strong style="color:${TEXT_MAIN};">Nkem Aeronautics Ltd</strong><br/>Junction of Cairo Road and Independence Avenue, Lusaka 10101, Zambia<br/>
+<a href="mailto:nkem@nkemaeronautics.com" style="color:${BRAND_BLUE};text-decoration:none;">nkem@nkemaeronautics.com</a>
+</td></tr>
+</table></td></tr></table></body></html>`;
 
   await sendEmail(user.email, `Receipt ${receipt.receiptNumber} — Nkem Aeronautics`, html);
 }

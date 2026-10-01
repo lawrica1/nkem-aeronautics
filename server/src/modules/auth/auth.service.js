@@ -16,6 +16,8 @@ import {
 import { normalizeSignup, validateSignup } from "./auth.validators.js";
 import { env } from "../../config/env.js";
 import { notify } from "../notifications/notification.service.js";
+import { sendEmail } from "../notifications/email.service.js";
+import { passwordChangedEmail } from "../notifications/email.templates.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
 
 export async function signup(body) {
@@ -253,6 +255,15 @@ export async function resetPassword({ contact, otp, newPassword }) {
       otpLastSentAt: null,
     },
   });
+
+  // Security confirmation — fire-and-forget
+  if (user.email) {
+    sendEmail(
+      user.email,
+      "Your password was changed — Nkem Aeronautics",
+      passwordChangedEmail({ name: user.name }),
+    ).catch((err) => console.error("[notify:password_changed]", err.message));
+  }
 
   return { message: "Password updated successfully. You can now log in." };
 }
