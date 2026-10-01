@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
-import { DIAL_CODES, getDialCode, countryCodeToFlag } from "@/lib/dialCodes";
+import { DIAL_CODES, getDialCode } from "@/lib/dialCodes";
 import { COUNTRIES } from "@/lib/countries";
 import { cn } from "@/lib/utils";
 
@@ -18,14 +18,30 @@ function parseValue(value) {
   return { code: null, num: v };
 }
 
+// Real flag images via flagcdn.com — works on all platforms including Windows
+function Flag({ code }) {
+  const lower = (code || "").toLowerCase();
+  return (
+    <img
+      src={`https://flagcdn.com/24x18/${lower}.png`}
+      srcSet={`https://flagcdn.com/48x36/${lower}.png 2x`}
+      width={24}
+      height={18}
+      alt={code}
+      className="rounded-sm object-cover"
+      onError={(e) => { e.currentTarget.style.display = "none"; }}
+    />
+  );
+}
+
 const PHONE_COUNTRIES = COUNTRIES
-  .map(({ code, name }) => ({ code, name, dialCode: DIAL_CODES[code], flag: countryCodeToFlag(code) }))
+  .map(({ code, name }) => ({ code, name, dialCode: DIAL_CODES[code] }))
   .filter((c) => c.dialCode);
 
-// PhoneInput — compound input with flag + dial-code picker and number field.
-// value:         full E.164-ish string e.g. "+260 97 123 456"
-// onChange:      called as onChange({ target: { name, value: fullNumber } })
-// countryCode:   optional ISO code from a parent country selector — auto-syncs the dial code
+// PhoneInput — compound input with flag image + dial-code picker and number field.
+// value:          full E.164-ish string e.g. "+260 97 123 456"
+// onChange:       called as onChange({ target: { name, value: fullNumber } })
+// countryCode:    optional ISO code from a parent country selector — auto-syncs the dial code
 // defaultCountry: fallback when no value/countryCode provided (default "ZM")
 export function PhoneInput({
   id,
@@ -118,9 +134,9 @@ export function PhoneInput({
         onClick={() => setOpen((p) => !p)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex shrink-0 items-center gap-1 rounded-l-md border-r border-input bg-muted/40 px-3 py-2 text-sm transition-colors hover:bg-muted disabled:opacity-50"
+        className="flex shrink-0 items-center gap-1.5 rounded-l-md border-r border-input bg-muted/40 px-3 py-2 text-sm transition-colors hover:bg-muted disabled:opacity-50"
       >
-        <span className="select-none text-base leading-none">{selected?.flag ?? "🌐"}</span>
+        {selected && <Flag code={selected.code} />}
         <span className="min-w-[2.75rem] text-xs font-medium text-brand-navy-dark">
           {dialCode || "+???"}
         </span>
@@ -171,7 +187,7 @@ export function PhoneInput({
                     c.code === selectedCode && "bg-accent",
                   )}
                 >
-                  <span className="select-none text-base">{c.flag}</span>
+                  <Flag code={c.code} />
                   <span className="flex-1 truncate text-brand-navy-dark">{c.name}</span>
                   <span className="shrink-0 text-xs text-muted-foreground">{c.dialCode}</span>
                 </li>
