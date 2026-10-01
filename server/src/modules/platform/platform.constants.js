@@ -27,4 +27,4 @@ export const COUNTRIES = [
   { code: "ZM", name: "Zambia" },
 ];
 
-export const DEFAULT_COUNTRY = "CM";
+export const DEFAULT_COUNTRY = "ZM";

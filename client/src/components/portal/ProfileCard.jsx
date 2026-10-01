@@ -115,7 +115,9 @@ function Avatar({ photoUrl, name, onPhotoChange }) {
 
 export function ProfileCard({ farmer, onLogout }) {
   const queryClient = useQueryClient();
-  const displayName = farmer ? `${farmer.name} ${farmer.surname}` : "—";
+  const displayName = farmer
+    ? [farmer.name, farmer.surname].filter(Boolean).join(" ") || "—"
+    : "—";
 
   function handlePhotoChange() {
     queryClient.invalidateQueries({ queryKey: ["farmer", "me"] });

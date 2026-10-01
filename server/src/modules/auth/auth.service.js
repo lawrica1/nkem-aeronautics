@@ -103,7 +103,7 @@ export async function verifySignupOtp({ channel, contact, otp }) {
     where: { id: user.id },
     data: {
       isVerified: true,
-      identificationNumber: await nextLogbookId(),
+      identificationNumber: await nextLogbookId(user.country),
       otpHash: null,
       otpChannel: null,
       otpContact: null,

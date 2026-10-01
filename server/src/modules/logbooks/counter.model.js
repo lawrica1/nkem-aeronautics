@@ -1,13 +1,16 @@
 import { prisma } from "../../config/prisma.js";
 
-export async function nextLogbookId() {
+// Country codes use ISO 3166-1 alpha-2. The counter is shared across all countries;
+// the prefix just makes IDs human-readable per region.
+export async function nextLogbookId(country = "ZM") {
   const counter = await prisma.counter.upsert({
     where: { key: "logbookId" },
     update: { seq: { increment: 1 } },
     create: { key: "logbookId", seq: 1 },
   });
 
-  return `NKEM-${new Date().getFullYear()}-${String(counter.seq).padStart(6, "0")}`;
+  const code = (country || "ZM").toUpperCase().slice(0, 2);
+  return `NKEM-${code}-${String(counter.seq).padStart(6, "0")}`;
 }
 
 export async function nextReceiptNumber() {
