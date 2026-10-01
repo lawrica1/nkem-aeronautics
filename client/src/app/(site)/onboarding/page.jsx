@@ -5,14 +5,23 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getToken } from "@/lib/api";
+import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { OnboardingForm } from "@/components/OnboardingForm";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const profile = useFarmerProfile({ enabled: !!getToken() });
 
   useEffect(() => {
-    if (!getToken()) router.replace("/signup");
-  }, [router]);
+    if (!getToken()) {
+      router.replace("/signup");
+      return;
+    }
+    // Already completed — send them to the dashboard
+    if (profile.isFetched && profile.data?.isProfileComplete) {
+      router.replace("/logbook");
+    }
+  }, [profile.isFetched, profile.data, router]);
 
   return (
     <main className="min-h-screen bg-background">

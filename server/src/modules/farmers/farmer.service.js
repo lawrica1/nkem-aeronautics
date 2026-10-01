@@ -47,9 +47,9 @@ export async function updateProfile(user, body) {
     throw new HttpError(400, "Choose a firm affiliation from the list.");
   }
 
-  // Mark profile complete when name + surname are provided (sector is set at signup)
+  // Mark profile complete when name, surname, and country are all provided
   const merged = { ...user, ...data };
-  if (merged.name && merged.surname) {
+  if (merged.name && merged.surname && merged.country) {
     data.isProfileComplete = true;
   }
 

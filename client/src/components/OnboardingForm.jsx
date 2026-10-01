@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import { useFarmerProfile } from "@/hooks/useFarmerProfile";
@@ -41,7 +41,7 @@ export function OnboardingForm() {
     surname: "",
     sex: "",
     telephone: "",
-    country: profile?.country || "",
+    country: "",
     address: "",
     region: "",
     district: "",
@@ -54,6 +54,29 @@ export function OnboardingForm() {
     miningOrg: "",
     miningRole: "",
   });
+
+  // Pre-populate form from saved profile so the user can continue where they left off.
+  useEffect(() => {
+    if (!profile) return;
+    setForm((prev) => ({
+      name: profile.name || prev.name,
+      surname: profile.surname || prev.surname,
+      sex: profile.sex || prev.sex,
+      telephone: profile.telephone || prev.telephone,
+      country: profile.country || prev.country,
+      address: profile.address || prev.address,
+      region: profile.region || prev.region,
+      district: profile.district || prev.district,
+      crop: profile.crop || prev.crop,
+      otherCrop: profile.otherCrop || prev.otherCrop,
+      firm: profile.firm || prev.firm,
+      otherFirm: profile.otherFirm || prev.otherFirm,
+      wildlifeOrg: profile.wildlifeOrg || prev.wildlifeOrg,
+      wildlifeRole: profile.wildlifeRole || prev.wildlifeRole,
+      miningOrg: profile.miningOrg || prev.miningOrg,
+      miningRole: profile.miningRole || prev.miningRole,
+    }));
+  }, [profile]);
 
   function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -276,18 +299,13 @@ export function OnboardingForm() {
         <p className="text-sm text-destructive">{update.error.message}</p>
       )}
 
-      <div className="flex gap-3">
-        <Button
-          type="submit"
-          disabled={update.isPending || !form.name || !form.surname || !form.country}
-          className="flex-1 bg-brand-navy text-white hover:bg-brand-navy/90"
-        >
-          {update.isPending ? "Saving…" : "Complete Profile & Go to Logbook →"}
-        </Button>
-        <Button type="button" variant="outline" onClick={() => router.push("/logbook")}>
-          Skip for now
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        disabled={update.isPending || !form.name || !form.surname || !form.country}
+        className="w-full bg-brand-navy text-white hover:bg-brand-navy/90"
+      >
+        {update.isPending ? "Saving…" : "Complete Profile & Go to Logbook →"}
+      </Button>
     </form>
   );
 }

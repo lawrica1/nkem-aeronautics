@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, ArrowRight } from "lucide-react";
+import { Bell, Loader2 } from "lucide-react";
 import { getToken, signOut } from "@/lib/api";
 import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFarmerServiceRequests } from "@/hooks/useFarmerServiceRequests";
@@ -63,6 +63,14 @@ export default function LogbookPortalPage() {
   const profile = useFarmerProfile({ enabled: isLoggedIn });
   const serviceRequests = useFarmerServiceRequests({ enabled: isLoggedIn });
 
+  // Gate: redirect to onboarding until profile is complete.
+  // Wait for the profile query to settle before redirecting so we don't flash.
+  useEffect(() => {
+    if (isLoggedIn && profile.isFetched && profile.data && !profile.data.isProfileComplete) {
+      router.replace("/onboarding");
+    }
+  }, [isLoggedIn, profile.isFetched, profile.data, router]);
+
   async function handleLogout() {
     await signOut();
     queryClient.clear();
@@ -75,6 +83,15 @@ export default function LogbookPortalPage() {
 
   if (!isLoggedIn) {
     return <GuestView />;
+  }
+
+  // Show a spinner while we determine whether to redirect or render the dashboard.
+  if (!profile.isFetched || (profile.data && !profile.data.isProfileComplete)) {
+    return (
+      <main className="flex min-h-screen items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-brand-blue" />
+      </main>
+    );
   }
 
   return (
@@ -93,18 +110,6 @@ export default function LogbookPortalPage() {
             </div>
           )}
 
-          {profile.data && !profile.data.isProfileComplete && (
-            <Link
-              href="/onboarding"
-              className="flex items-center justify-between gap-3 rounded-xl border-2 border-brand-blue/30 bg-brand-blue/5 px-4 py-3 text-sm text-brand-navy-dark transition-colors hover:border-brand-blue/60"
-            >
-              <div>
-                <p className="font-semibold">Complete your profile</p>
-                <p className="text-muted-foreground">Add your name, sector, and location to unlock full logbook features.</p>
-              </div>
-              <ArrowRight className="size-5 shrink-0 text-brand-blue" />
-            </Link>
-          )}
 
           <WelcomeBanner name={profile.data?.name} />
 
