@@ -284,5 +284,5 @@ export async function login({ email, telephone, password }) {
 
   const identifier = email || telephone;
   await checkPassword("user", identifier, user?.passwordHash, password);
-  return { token: signUserToken(user), role: user.role };
+  return { token: signUserToken(user), role: user.role, sector: user.sector };
 }

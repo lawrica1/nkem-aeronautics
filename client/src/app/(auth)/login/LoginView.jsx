@@ -141,11 +141,12 @@ export function LoginView() {
 
           <div className="mt-8">
             <LoginForm
-              onSuccess={(data) =>
-                router.push(
-                  { pilot: "/pilot", partner: "/partner" }[data?.role] ?? "/logbook",
-                )
-              }
+              onSuccess={(data) => {
+                const byRole = { pilot: "/pilot", partner: "/partner" }[data?.role];
+                if (byRole) return router.push(byRole);
+                // Route every sector user to the same portal page — sector content is personalised there
+                router.push("/logbook");
+              }}
             />
           </div>
 

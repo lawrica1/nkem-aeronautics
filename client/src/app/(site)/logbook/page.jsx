@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, Loader2 } from "lucide-react";
+import { Bell, Loader2, Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { getToken, signOut } from "@/lib/api";
 import { useFarmerProfile } from "@/hooks/useFarmerProfile";
 import { useFarmerServiceRequests } from "@/hooks/useFarmerServiceRequests";
@@ -17,6 +17,24 @@ import { DroneRecommendation } from "@/components/portal/DroneRecommendation";
 import { MediaGallery } from "@/components/portal/MediaGallery";
 
 const MEDIA_SECTORS = ["wildlife"];
+
+const SECTOR_META = {
+  agricultural: { label: "Agricultural Operations Portal", Icon: Sprout, color: "text-brand-green" },
+  wildlife: { label: "Wildlife & Surveillance Portal", Icon: Binoculars, color: "text-brand-blue" },
+  mining: { label: "Mining Operations Portal", Icon: Pickaxe, color: "text-brand-gold" },
+};
+
+function SectorHeader({ sector }) {
+  const meta = SECTOR_META[sector];
+  if (!meta) return null;
+  const { label, Icon, color } = meta;
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className={`size-5 ${color}`} />
+      <h1 className="text-xl font-bold text-brand-navy-dark">{label}</h1>
+    </div>
+  );
+}
 
 function GuestView() {
   return (
@@ -35,13 +53,19 @@ function GuestView() {
   );
 }
 
-function WelcomeBanner({ name }) {
+const SECTOR_WELCOME = {
+  agricultural: "Submit spraying or field-treatment requests and track their progress here.",
+  wildlife: "Submit surveillance or monitoring mission requests and track their progress here.",
+  mining: "Submit site-survey or inspection requests and track their progress here.",
+};
+
+function WelcomeBanner({ name, sector }) {
+  const detail = SECTOR_WELCOME[sector] ?? "Submit service requests and track their progress here.";
   return (
     <div className="flex items-start gap-3 rounded-xl border-l-4 border-brand-green bg-brand-green/5 p-4 text-sm text-brand-navy-dark">
       <Bell className="mt-0.5 size-4 shrink-0 text-brand-green" />
       <p>
-        Welcome back{name ? `, ${name}` : ""}! You can submit new service requests and track their
-        progress here. A member of the Nkem Aeronautics team will review your requests.
+        Welcome back{name ? `, ${name}` : ""}! {detail} A member of the Nkem Aeronautics team will review your requests.
       </p>
     </div>
   );
@@ -103,6 +127,8 @@ export default function LogbookPortalPage() {
         />
 
         <div className="space-y-8">
+          <SectorHeader sector={profile.data?.sector} />
+
           {profile.isError && (
             <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
               Could not load your profile. Please refresh the page or{" "}
@@ -110,8 +136,7 @@ export default function LogbookPortalPage() {
             </div>
           )}
 
-
-          <WelcomeBanner name={profile.data?.name} />
+          <WelcomeBanner name={profile.data?.name} sector={profile.data?.sector} />
 
           <ServiceRequestList
             requests={serviceRequests.data}
