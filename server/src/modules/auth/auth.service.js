@@ -13,6 +13,7 @@ import {
   verifyOtp,
 } from "./otp.service.js";
 import { normalizeSignup, validateSignup } from "./auth.validators.js";
+import { ACTIVE_REGISTRATION_SECTORS } from "../platform/platform.constants.js";
 import { env } from "../../config/env.js";
 import { notify } from "../notifications/notification.service.js";
 import { sendEmail } from "../notifications/email.service.js";
@@ -267,7 +268,7 @@ export async function resetPassword({ contact, otp, newPassword }) {
   return { message: "Password updated successfully. You can now log in." };
 }
 
-export async function login({ email, telephone, password }) {
+export async function login({ email, telephone, password, sector }) {
   if (!email && !telephone) throw new HttpError(400, "email or phone number is required.");
   if (!password) throw new HttpError(400, "password is required.");
 
@@ -284,5 +285,17 @@ export async function login({ email, telephone, password }) {
 
   const identifier = email || telephone;
   await checkPassword("user", identifier, user?.passwordHash, password);
-  return { token: signUserToken(user), role: user.role, sector: user.sector };
+
+  // Persist the sector chosen at login time so the portal personalises correctly
+  const sessionSector =
+    sector && ACTIVE_REGISTRATION_SECTORS.includes(sector) ? sector : user.sector;
+  let sessionUser = user;
+  if (sessionSector && sessionSector !== user.sector) {
+    sessionUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { sector: sessionSector },
+    });
+  }
+
+  return { token: signUserToken(sessionUser), role: sessionUser.role, sector: sessionSector };
 }

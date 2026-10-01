@@ -32,12 +32,9 @@ export function OnboardingForm() {
   const { data: firms } = useFirms();
 
   const sector = profile?.sector;
-  const isAgricultural = sector === "agricultural";
-  const isWildlife = sector === "wildlife";
-  const isMining = sector === "mining";
-  const meta = SECTOR_META[sector];
 
   const [form, setForm] = useState({
+    sector: "",
     name: "",
     surname: "",
     sex: "",
@@ -60,6 +57,7 @@ export function OnboardingForm() {
   useEffect(() => {
     if (!profile) return;
     setForm((prev) => ({
+      sector: profile.sector || prev.sector,
       name: profile.name || prev.name,
       surname: profile.surname || prev.surname,
       sex: profile.sex || prev.sex,
@@ -91,6 +89,11 @@ export function OnboardingForm() {
     setForm((prev) => ({ ...prev, country: value, region: "", district: "" }));
   }
 
+  const activeSector = form.sector || sector;
+  const isAgricultural = activeSector === "agricultural";
+  const isWildlife = activeSector === "wildlife";
+  const isMining = activeSector === "mining";
+
   const regionOptions = getRegionOptions(form.country);
   const divisionOptions = getDivisionOptions(form.country, form.region);
 
@@ -119,16 +122,27 @@ export function OnboardingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
-      {/* Show sector badge — already locked in */}
-      {meta && (
-        <div className="flex items-center gap-2 rounded-xl border border-brand-blue/20 bg-brand-blue/5 px-4 py-3">
-          <meta.Icon className="size-5 text-brand-blue" />
-          <div>
-            <p className="text-sm font-semibold text-brand-navy-dark">{meta.label}</p>
-            <p className="text-xs text-muted-foreground">Selected at sign-up — contact support to change</p>
-          </div>
+      {/* Sector selector — chosen at login, can be updated here */}
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold text-brand-navy-dark">Your sector</h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {Object.entries(SECTOR_META).map(([id, { label, Icon }]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, sector: id }))}
+              className={`flex items-center gap-2 rounded-xl border-2 px-4 py-3 text-left transition-all ${
+                (form.sector || sector) === id
+                  ? "border-brand-blue bg-brand-blue/5"
+                  : "border-border hover:border-brand-blue/40"
+              }`}
+            >
+              <Icon className={`size-5 shrink-0 ${(form.sector || sector) === id ? "text-brand-blue" : "text-muted-foreground"}`} />
+              <span className={`text-sm font-medium ${(form.sector || sector) === id ? "text-brand-navy-dark" : "text-foreground"}`}>{label}</span>
+            </button>
+          ))}
         </div>
-      )}
+      </section>
 
       {/* Identity */}
       <section className="space-y-4">

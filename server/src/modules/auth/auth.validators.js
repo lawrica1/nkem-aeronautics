@@ -5,9 +5,6 @@ export function validateSignup(body) {
   if (!body.email && !body.telephone) {
     throw new HttpError(400, "An email address or phone number is required.");
   }
-  if (!body.sector || !ACTIVE_REGISTRATION_SECTORS.includes(body.sector)) {
-    throw new HttpError(400, `Please select a valid sector (${ACTIVE_REGISTRATION_SECTORS.join(", ")}).`);
-  }
 
   // OTP-only mode: no password needed
   if (body.mode === "otp") return;
@@ -17,8 +14,7 @@ export function validateSignup(body) {
 
 export function normalizeSignup(body) {
   return {
-    role: body.sector === "agricultural" ? "farmer" : "customer",
-    sector: body.sector,
+    role: "farmer",
     country: body.country,
     telephone: body.telephone?.trim() || null,
     email: body.email ? body.email.toLowerCase().trim() : null,

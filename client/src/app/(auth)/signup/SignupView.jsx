@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,13 +30,6 @@ function BrandHeader() {
   );
 }
 
-const SECTOR_BACKGROUNDS = {
-  agricultural: "/images/services/agricultural-spraying.jpg",
-  wildlife: "/images/services/wildlife-surveillance.jpg",
-  mining: "/images/services/mining-signup.jpg",
-};
-const DEFAULT_BACKGROUND = "/images/services/agricultural-spraying.jpg";
-
 function maskContact(value) {
   if (!value) return null;
   if (value.includes("@")) {
@@ -50,14 +43,7 @@ function maskContact(value) {
 export function SignupView() {
   const router = useRouter();
   const [step, setStep] = useState("form"); // "form" | "otp"
-  const [sector, setSector] = useState(null);
   const [signupData, setSignupData] = useState(null);
-
-  // Lets links like "/signup?sector=wildlife" preselect the sector step.
-  useEffect(() => {
-    const urlSector = new URLSearchParams(window.location.search).get("sector");
-    if (urlSector) setSector(urlSector);
-  }, []);
   const [channel, setChannel] = useState("sms");
   const [contact, setContact] = useState(null);
   const [otp, setOtp] = useState("");
@@ -67,7 +53,7 @@ export function SignupView() {
   function handleSignupSuccess(data) {
     setSignupData(data);
     setChannel(data.otpChannel ?? (data.telephone ? "sms" : "email"));
-    setContact(data.otpContact ?? (data.telephone || data.email));
+    setContact(data.otpContact ?? (data.telephone ?? data.email));
     setStep("otp");
   }
 
@@ -101,8 +87,8 @@ export function SignupView() {
       {/* Left panel */}
       <div className="relative hidden overflow-hidden bg-brand-navy px-10 py-12 lg:flex lg:flex-col lg:justify-between">
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-85 transition-[background-image] duration-500"
-          style={{ backgroundImage: `url('${SECTOR_BACKGROUNDS[sector] ?? DEFAULT_BACKGROUND}')` }}
+          className="absolute inset-0 bg-cover bg-center opacity-85"
+          style={{ backgroundImage: "url('/images/services/agricultural-spraying.jpg')" }}
         />
         <div className="absolute inset-0 bg-brand-navy/40" />
         <div
@@ -121,9 +107,9 @@ export function SignupView() {
             <p className="text-xs text-muted-foreground">Getting started</p>
             <ul className="mt-2 space-y-2 text-sm text-brand-navy-dark">
               {[
-                { icon: UserRoundCheck, text: "Choose your sector" },
                 { icon: ShieldCheck, text: "Verify your account" },
                 { icon: NotebookPen, text: "Logbook ID issued" },
+                { icon: UserRoundCheck, text: "Complete your profile" },
               ].map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-center gap-2">
                   <Icon className="size-4 text-brand-blue" />
@@ -234,7 +220,7 @@ export function SignupView() {
             </p>
 
             <div className="mt-8">
-              <SignupForm onSuccess={handleSignupSuccess} onSectorChange={setSector} initialSector={sector} />
+              <SignupForm onSuccess={handleSignupSuccess} />
             </div>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
