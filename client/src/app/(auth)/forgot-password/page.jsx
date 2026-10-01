@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 import { apiRequest } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -103,21 +104,28 @@ export default function ForgotPasswordPage() {
             <Label htmlFor="contact">
               {method === "email" ? "Email address" : "Phone number"}
             </Label>
-            <div className="relative">
-              {method === "email"
-                ? <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                : <Phone className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              }
-              <Input
+            {method === "email" ? (
+              <div className="relative">
+                <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="contact"
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            ) : (
+              <PhoneInput
                 id="contact"
-                type={method === "email" ? "email" : "tel"}
-                placeholder={method === "email" ? "you@example.com" : "+237 670 000 000"}
+                name="contact"
                 required
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
-                className="pl-9"
               />
-            </div>
+            )}
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}

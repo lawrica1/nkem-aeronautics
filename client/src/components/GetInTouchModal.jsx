@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { COUNTRY_OPTIONS } from "@/lib/adminOptions";
+import { COUNTRIES } from "@/lib/countries";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 const EMPTY_FORM = {
   firstName: "",
@@ -36,7 +37,7 @@ export function GetInTouchModal({ open, onOpenChange }) {
         email: form.email,
         whatsapp: form.mobile,
         company: form.company,
-        targetCountry: COUNTRY_OPTIONS.find((c) => c.value === form.country)?.label || form.country,
+        targetCountry: COUNTRIES.find((c) => c.code === form.country)?.name || form.country,
         message: form.message,
       },
       { onSuccess: () => setForm(EMPTY_FORM) },
@@ -79,25 +80,32 @@ export function GetInTouchModal({ open, onOpenChange }) {
             </div>
 
             <div className="space-y-1.5">
+              <Label htmlFor="git-country">Country</Label>
+              <Select value={form.country} onValueChange={(v) => set("country", v)}>
+                <SelectTrigger id="git-country" className="w-full"><SelectValue placeholder="Select a country" /></SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map(({ code, name }) => (
+                    <SelectItem key={code} value={code}>{name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
               <Label htmlFor="git-mobile">Mobile Number <span className="text-destructive">*</span></Label>
-              <Input id="git-mobile" type="tel" required placeholder="+260 XXX XXX XXX" value={form.mobile} onChange={(e) => set("mobile", e.target.value)} />
+              <PhoneInput
+                id="git-mobile"
+                name="mobile"
+                required
+                value={form.mobile}
+                onChange={(e) => set("mobile", e.target.value)}
+                countryCode={form.country || undefined}
+              />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="git-company">Company Name</Label>
               <Input id="git-company" value={form.company} onChange={(e) => set("company", e.target.value)} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="git-country">Select Country</Label>
-              <Select value={form.country} onValueChange={(v) => set("country", v)}>
-                <SelectTrigger id="git-country" className="w-full"><SelectValue placeholder="Select a country" /></SelectTrigger>
-                <SelectContent>
-                  {COUNTRY_OPTIONS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="space-y-1.5">

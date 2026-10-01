@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 import { useLogin } from "@/hooks/useLogin";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -54,22 +55,29 @@ export function LoginForm({ onSuccess }) {
         <Label htmlFor="login-contact">
           {method === "email" ? "Email" : "Phone number"}
         </Label>
-        <div className="relative">
-          {method === "email"
-            ? <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            : <Phone className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          }
-          <Input
+        {method === "email" ? (
+          <div className="relative">
+            <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="login-contact"
+              type="email"
+              placeholder="you@example.com"
+              required
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              className="pl-9"
+              autoComplete="email"
+            />
+          </div>
+        ) : (
+          <PhoneInput
             id="login-contact"
-            type={method === "email" ? "email" : "tel"}
-            placeholder={method === "email" ? "you@example.com" : "+237 670 000 000"}
+            name="login-contact"
             required
             value={contact}
             onChange={(e) => setContact(e.target.value)}
-            className="pl-9"
-            autoComplete={method === "email" ? "email" : "tel"}
           />
-        </div>
+        )}
       </div>
 
       {/* Password */}

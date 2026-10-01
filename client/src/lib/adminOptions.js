@@ -1,3 +1,5 @@
+import { COUNTRIES } from "./countries.js";
+
 // Mirrors server/src/modules/platform/platform.constants.js — kept in sync by hand,
 // same pattern as lib/firms.js and lib/serviceOptions.js.
 export const ROLE_OPTIONS = [
@@ -20,7 +22,4 @@ export const SECTOR_OPTIONS = [
 // also carry categories like "evtol" that aren't a registration sector.
 export const PRODUCT_SECTOR_OPTIONS = [...SECTOR_OPTIONS, { value: "evtol", label: "eVTOL" }];
 
-export const COUNTRY_OPTIONS = [
-  { value: "CM", label: "Cameroon" },
-  { value: "ZM", label: "Zambia" },
-];
+export const COUNTRY_OPTIONS = COUNTRIES.map(({ code, name }) => ({ value: code, label: name }));

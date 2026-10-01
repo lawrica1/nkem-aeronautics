@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getRegionOptions, getDivisionOptions } from "@/lib/locations";
 import { COUNTRIES } from "@/lib/countries";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 
 const SECTOR_META = {
@@ -162,13 +163,13 @@ export function OnboardingForm() {
                 {profile?.telephone ? "(already set)" : "(optional)"}
               </span>
             </Label>
-            <Input
+            <PhoneInput
               id="telephone"
               name="telephone"
-              type="tel"
-              placeholder={profile?.telephone ?? "+237 670 000 000"}
+              key={profile?.id ?? "new"}
               value={form.telephone}
               onChange={handleChange}
+              countryCode={form.country || undefined}
             />
           </div>
         </div>

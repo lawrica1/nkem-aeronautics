@@ -6,6 +6,7 @@ import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 import { useSignup } from "@/hooks/useSignup";
 import { cn } from "@/lib/utils";
 
@@ -276,12 +277,10 @@ export function SignupForm({ onSuccess, onSectorChange, initialSector }) {
         ) : (
           <div className="space-y-2">
             <Label htmlFor="telephone">Phone number</Label>
-            <Input
+            <PhoneInput
               id="telephone"
-              type="tel"
+              name="telephone"
               required
-              autoComplete="tel"
-              placeholder="+260 670 000 000"
               value={telephone}
               onChange={(e) => setTelephone(e.target.value)}
             />

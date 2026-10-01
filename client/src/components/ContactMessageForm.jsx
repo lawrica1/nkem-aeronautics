@@ -5,6 +5,8 @@ import { useCreateQuote } from "@/hooks/useQuotes";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PhoneInput } from "@/components/ui/PhoneInput";
+import { COUNTRIES } from "@/lib/countries";
 
 const SERVICE_OPTIONS = [
   { value: "general", label: "General / Customer Service" },
@@ -31,7 +33,11 @@ export function ContactMessageForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    createMessage.mutate(form, { onSuccess: () => setForm(EMPTY_FORM) });
+    const payload = {
+      ...form,
+      targetCountry: COUNTRIES.find((c) => c.code === form.targetCountry)?.name || form.targetCountry,
+    };
+    createMessage.mutate(payload, { onSuccess: () => setForm(EMPTY_FORM) });
   }
 
   if (createMessage.isSuccess) {
@@ -60,13 +66,29 @@ export function ContactMessageForm() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="cmf-whatsapp">Phone / WhatsApp</Label>
-          <Input id="cmf-whatsapp" value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+260 97X XXX XXX" />
+          <Label htmlFor="cmf-country">Country</Label>
+          <select
+            id="cmf-country"
+            className={fieldClass}
+            value={form.targetCountry}
+            onChange={(e) => set("targetCountry", e.target.value)}
+          >
+            <option value="">Select country…</option>
+            {COUNTRIES.map(({ code, name }) => (
+              <option key={code} value={code}>{name}</option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="cmf-region">Region / Country</Label>
-          <Input id="cmf-region" value={form.targetCountry} onChange={(e) => set("targetCountry", e.target.value)} placeholder="e.g. Zambia, Lusaka" />
+          <Label htmlFor="cmf-whatsapp">Phone / WhatsApp</Label>
+          <PhoneInput
+            id="cmf-whatsapp"
+            name="whatsapp"
+            value={form.whatsapp}
+            onChange={(e) => set("whatsapp", e.target.value)}
+            countryCode={form.targetCountry || undefined}
+          />
         </div>
       </div>
 
