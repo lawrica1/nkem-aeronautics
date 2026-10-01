@@ -3,6 +3,7 @@ import { listForUser } from "../requests/request.service.js";
 import { uploadFileToStorage } from "../storage/storage.service.js";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
+import { nextLogbookId } from "../logbooks/counter.model.js";
 import { FIRM_VALUES } from "../firms/firms.constants.js";
 
 export function getProfile(user) {
@@ -50,6 +51,11 @@ export async function updateProfile(user, body) {
   const merged = { ...user, ...data };
   if (merged.name && merged.surname) {
     data.isProfileComplete = true;
+  }
+
+  // Generate country-based logbook ID the first time country is provided (if not already assigned)
+  if (data.country && !user.identificationNumber) {
+    data.identificationNumber = await nextLogbookId(data.country);
   }
 
   const updated = await prisma.user.update({ where: { id: user.id }, data });

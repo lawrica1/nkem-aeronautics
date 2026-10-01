@@ -25,8 +25,10 @@ export const ZM_REGIONS = [
   { value: "western", label: "Western", divisions: ["Mongu", "Senanga", "Kalabo", "Sesheke", "Lukulu"] },
 ];
 
+const REGION_MAP = { ZM: ZM_REGIONS, CM: CM_REGIONS };
+
 function regionsFor(country) {
-  return country === "ZM" ? ZM_REGIONS : CM_REGIONS;
+  return REGION_MAP[country] ?? [];
 }
 
 export function getRegionOptions(country) {

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getRegionOptions, getDivisionOptions } from "@/lib/locations";
+import { COUNTRIES } from "@/lib/countries";
 import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 
 const SECTOR_META = {
@@ -34,13 +35,13 @@ export function OnboardingForm() {
   const isWildlife = sector === "wildlife";
   const isMining = sector === "mining";
   const meta = SECTOR_META[sector];
-  const country = profile?.country || "CM";
 
   const [form, setForm] = useState({
     name: "",
     surname: "",
     sex: "",
     telephone: "",
+    country: profile?.country || "",
     address: "",
     region: "",
     district: "",
@@ -62,8 +63,12 @@ export function OnboardingForm() {
     setForm((prev) => ({ ...prev, region: value, district: "" }));
   }
 
-  const regionOptions = getRegionOptions(country);
-  const divisionOptions = getDivisionOptions(country, form.region);
+  function setCountry(value) {
+    setForm((prev) => ({ ...prev, country: value, region: "", district: "" }));
+  }
+
+  const regionOptions = getRegionOptions(form.country);
+  const divisionOptions = getDivisionOptions(form.country, form.region);
 
   function handleChange(e) {
     set(e.target.name, e.target.value);
@@ -219,6 +224,19 @@ export function OnboardingForm() {
       {/* Location */}
       <section className="space-y-4">
         <h2 className="text-base font-semibold text-brand-navy-dark">Where you are</h2>
+
+        <div className="space-y-2">
+          <Label htmlFor="country">Country <span className="text-destructive">*</span></Label>
+          <Select value={form.country} onValueChange={setCountry} required>
+            <SelectTrigger id="country" className="w-full"><SelectValue placeholder="Select your country" /></SelectTrigger>
+            <SelectContent>
+              {COUNTRIES.map(({ code, name }) => (
+                <SelectItem key={code} value={code}>{name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="address">
             {isAgricultural ? "Address / Farm Location" : "Address"}{" "}
@@ -261,7 +279,7 @@ export function OnboardingForm() {
       <div className="flex gap-3">
         <Button
           type="submit"
-          disabled={update.isPending || !form.name || !form.surname}
+          disabled={update.isPending || !form.name || !form.surname || !form.country}
           className="flex-1 bg-brand-navy text-white hover:bg-brand-navy/90"
         >
           {update.isPending ? "Saving…" : "Complete Profile & Go to Logbook →"}

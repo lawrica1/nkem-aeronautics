@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../../config/prisma.js";
-import { nextLogbookId } from "../logbooks/counter.model.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { signUserToken } from "../../shared/middleware/auth.js";
 import {
@@ -103,7 +102,7 @@ export async function verifySignupOtp({ channel, contact, otp }) {
     where: { id: user.id },
     data: {
       isVerified: true,
-      identificationNumber: await nextLogbookId(user.country),
+      // identificationNumber is assigned when the user first sets their country during onboarding
       otpHash: null,
       otpChannel: null,
       otpContact: null,
