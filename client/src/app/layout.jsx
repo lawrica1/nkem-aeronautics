@@ -5,7 +5,7 @@ import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 export const metadata = {
   title: "Nkem Aeronautics",
   description:
-    "Advanced aerial UAV solutions for agriculture, wildlife & surveillance, and mining across Zambia and Africa.",
+    "Advanced drone solutions for agriculture, wildlife & surveillance, and mining across Zambia and Africa.",
   icons: {
     icon: "/favicon.png",
   },
