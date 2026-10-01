@@ -1,5 +1,4 @@
-// Zambia and Cameroon first (primary markets), then all others alphabetically.
-export const COUNTRIES = [
+const ALL_COUNTRIES = [
   { code: "ZM", name: "Zambia" },
   { code: "CM", name: "Cameroon" },
   // Africa
@@ -166,3 +165,5 @@ export const COUNTRIES = [
   { code: "VN", name: "Vietnam" },
   { code: "YE", name: "Yemen" },
 ];
+
+export const COUNTRIES = ALL_COUNTRIES.slice().sort((a, b) => a.name.localeCompare(b.name));
