@@ -16,7 +16,7 @@ export const env = {
   termiiChannel: process.env.TERMII_CHANNEL || "generic",
   smtpHost: process.env.SMTP_HOST || "smtp.gmail.com",
   smtpPort: Number(process.env.SMTP_PORT) || 465,
-  smtpUser: process.env.SMTP_USER || "nkemaeronautics@gmail.com",
+  smtpUser: process.env.SMTP_USER || "nkem@nkemaeronautics.com",
   smtpPass: process.env.SMTP_PASS,
   brevoApiKey: process.env.BREVO_API_KEY,
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
