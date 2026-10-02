@@ -22,6 +22,7 @@ const EXPORT_COLUMNS = [
   { key: "country", header: "Country" },
   { key: "region", header: "Region" },
   { key: "district", header: "District" },
+  { key: "subdivision", header: "Subdivision" },
   { key: "sector", header: "Sector" },
   { key: "crop", header: "Crop" },
   { key: "firmLabel", header: "Firm Affiliation" },

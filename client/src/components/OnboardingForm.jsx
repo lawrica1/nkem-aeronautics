@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getRegionOptions, getDivisionOptions } from "@/lib/locations";
+import { getRegionOptions, getDivisionOptions, getSubdivisionOptions } from "@/lib/locations";
 import { COUNTRIES } from "@/lib/countries";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 import { Sprout, Binoculars, Pickaxe } from "lucide-react";
@@ -43,6 +43,8 @@ export function OnboardingForm() {
     address: "",
     region: "",
     district: "",
+    subdivision: "",
+    otherSubdivision: "",
     crop: "",
     otherCrop: "",
     firm: "",
@@ -82,11 +84,15 @@ export function OnboardingForm() {
   }
 
   function setRegion(value) {
-    setForm((prev) => ({ ...prev, region: value, district: "" }));
+    setForm((prev) => ({ ...prev, region: value, district: "", subdivision: "", otherSubdivision: "" }));
+  }
+
+  function setDivision(value) {
+    setForm((prev) => ({ ...prev, district: value, subdivision: "", otherSubdivision: "" }));
   }
 
   function setCountry(value) {
-    setForm((prev) => ({ ...prev, country: value, region: "", district: "" }));
+    setForm((prev) => ({ ...prev, country: value, region: "", district: "", subdivision: "", otherSubdivision: "" }));
   }
 
   const activeSector = form.sector || sector;
@@ -96,6 +102,11 @@ export function OnboardingForm() {
 
   const regionOptions = getRegionOptions(form.country);
   const divisionOptions = getDivisionOptions(form.country, form.region);
+  const subdivisionOptions = getSubdivisionOptions(form.country, form.district);
+  // No list for this division (e.g. all of Zambia) → type it; otherwise "Other" also opens a text box.
+  const typeSubdivision = form.district && (subdivisionOptions.length === 0 || form.subdivision === "other");
+  const divisionLabel = form.country === "ZM" ? "District" : "Division";
+  const subdivisionLabel = form.country === "ZM" ? "Area / Ward" : "Subdivision";
 
   function handleChange(e) {
     set(e.target.name, e.target.value);
@@ -103,7 +114,9 @@ export function OnboardingForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    update.mutate(form, {
+    const { otherSubdivision, ...payload } = form;
+    if (typeSubdivision) payload.subdivision = otherSubdivision.trim();
+    update.mutate(payload, {
       onSuccess: () => router.push("/logbook"),
     });
   }
@@ -275,16 +288,19 @@ export function OnboardingForm() {
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="address">
-            {isAgricultural ? "Address / Farm Location" : "Address"}{" "}
-            <span className="text-destructive">*</span>
-          </Label>
-          <Input id="address" name="address" required value={form.address} onChange={handleChange} />
+        <div>
+          <h3 className="text-sm font-semibold text-brand-navy-dark">
+            {isAgricultural ? "Farm location" : "Site location"}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Select the region, then the {divisionLabel.toLowerCase()}, then the {subdivisionLabel.toLowerCase()} where your{" "}
+            {isAgricultural ? "farm" : "site"} is located <span className="text-muted-foreground/70">(optional)</span>.
+          </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="region">Region <span className="font-normal text-muted-foreground">(optional)</span></Label>
+            <Label htmlFor="region">Region</Label>
             <Select value={form.region} onValueChange={setRegion}>
               <SelectTrigger id="region" className="w-full"><SelectValue placeholder="Select region" /></SelectTrigger>
               <SelectContent>
@@ -294,11 +310,12 @@ export function OnboardingForm() {
               </SelectContent>
             </Select>
           </div>
+
           <div className="space-y-2">
-            <Label htmlFor="district">District / Division <span className="font-normal text-muted-foreground">(optional)</span></Label>
-            <Select value={form.district} onValueChange={(v) => set("district", v)} disabled={!form.region}>
+            <Label htmlFor="district">{divisionLabel}</Label>
+            <Select value={form.district} onValueChange={setDivision} disabled={!form.region}>
               <SelectTrigger id="district" className="w-full">
-                <SelectValue placeholder={form.region ? "Select district" : "Select a region first"} />
+                <SelectValue placeholder={form.region ? `Select ${divisionLabel.toLowerCase()}` : "Select a region first"} />
               </SelectTrigger>
               <SelectContent>
                 {divisionOptions.map((d) => (
@@ -307,6 +324,53 @@ export function OnboardingForm() {
               </SelectContent>
             </Select>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="subdivision">{subdivisionLabel}</Label>
+            {subdivisionOptions.length > 0 ? (
+              <Select value={form.subdivision} onValueChange={(v) => set("subdivision", v)} disabled={!form.district}>
+                <SelectTrigger id="subdivision" className="w-full">
+                  <SelectValue placeholder={`Select ${subdivisionLabel.toLowerCase()}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {subdivisionOptions.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                  <SelectItem value="other">Other (not listed)</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input
+                id="subdivision"
+                name="otherSubdivision"
+                disabled={!form.district}
+                placeholder={form.district ? `Type your ${subdivisionLabel.toLowerCase()}` : `Select a ${divisionLabel.toLowerCase()} first`}
+                value={form.otherSubdivision}
+                onChange={handleChange}
+              />
+            )}
+          </div>
+        </div>
+
+        {typeSubdivision && subdivisionOptions.length > 0 && (
+          <div className="space-y-2">
+            <Label htmlFor="otherSubdivision">{subdivisionLabel} name</Label>
+            <Input
+              id="otherSubdivision"
+              name="otherSubdivision"
+              required
+              value={form.otherSubdivision}
+              onChange={handleChange}
+              placeholder={`Type your ${subdivisionLabel.toLowerCase()}`}
+            />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="address">
+            {isAgricultural ? "Village / Address" : "Address"} <span className="text-destructive">*</span>
+          </Label>
+          <Input id="address" name="address" required value={form.address} onChange={handleChange} />
         </div>
       </section>
 

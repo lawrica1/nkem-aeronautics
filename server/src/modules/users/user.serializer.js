@@ -15,6 +15,7 @@ export function serializeUser(user) {
     address: user.address,
     region: user.region,
     district: user.district,
+    subdivision: user.subdivision,
     crop: user.crop,
     otherCrop: user.otherCrop,
     firm: user.firm,

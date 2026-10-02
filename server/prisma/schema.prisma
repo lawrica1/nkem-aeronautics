@@ -320,6 +320,7 @@ model User {
   address              String?
   region               String?
   district             String?
+  subdivision          String?
   crop                 String?
   otherCrop            String?
   firm                 String?

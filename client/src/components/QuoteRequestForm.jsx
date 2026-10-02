@@ -67,7 +67,7 @@ export function QuoteRequestForm({ sector, className = "" }) {
 
   return (
     <>
-      <div className={`flex flex-col items-center justify-center rounded-2xl border border-border bg-brand-gray-light px-6 py-10 text-center sm:px-10 ${className}`}>
+      <div className={cn("flex flex-col items-center justify-center rounded-2xl border border-border bg-brand-gray-light px-6 py-10 text-center sm:px-10", className)}>
         <h3 className="text-2xl font-bold text-brand-navy-dark">Request A Quote</h3>
         <p className="mx-auto mt-1.5 max-w-xl text-sm text-muted-foreground">
           Tell us what you need and our team will get back to you with pricing and availability.

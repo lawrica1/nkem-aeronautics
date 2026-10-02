@@ -121,7 +121,7 @@ export function LogbookVerificationView() {
                 <Detail label="Sector" value={user.sector} />
                 <Detail label="Crop" value={user.otherCrop || user.crop} />
                 <Detail label="Country" value={user.country} />
-                <Detail label="Region / District" value={[user.region, user.district].filter(Boolean).join(", ")} />
+                <Detail label="Region / Division / Subdivision" value={[user.region, user.district, user.subdivision].filter(Boolean).join(", ")} />
                 <Detail label="Address" value={user.address} />
                 <Detail label="Affiliation" value={user.firmLabel || user.organizationName} />
                 <Detail label="Registered" value={formatDate(user.createdAt)} />

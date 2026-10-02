@@ -33,7 +33,7 @@ export async function updateProfilePhoto(user, file) {
 export async function updateProfile(user, body) {
   const ALLOWED = [
     "sector", "accountType", "name", "surname", "sex",
-    "telephone", "address", "country", "region", "district",
+    "telephone", "address", "country", "region", "district", "subdivision",
     "crop", "otherCrop", "firm", "otherFirm",
     "wildlifeOrg", "wildlifeRole",
     "miningOrg", "miningRole",
