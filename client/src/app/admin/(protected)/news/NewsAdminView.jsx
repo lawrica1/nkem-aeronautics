@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Eye, EyeOff, Trash2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useAdminNews, useCreateNews, useDeleteNews, useUpdateNews } from "@/hooks/useNews";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,9 +24,28 @@ export function NewsAdminView() {
   const updateNews = useUpdateNews();
   const deleteNews = useDeleteNews();
 
+  const [confirm, setConfirm] = useState(null);
+
   function removePost(post) {
-    if (!window.confirm(`Delete "${post.title}"? This removes it from the website permanently.`)) return;
-    deleteNews.mutate(post.id);
+    setConfirm({
+      title: "Delete post permanently?",
+      description: `"${post.title}" will be removed from the website and from the system. This can't be undone.`,
+      confirmLabel: "Delete",
+      destructive: true,
+      onConfirm: () => deleteNews.mutate(post.id),
+    });
+  }
+
+  // Hiding keeps the post in the system so it can be put back later.
+  function setPublished(post, publish) {
+    setConfirm({
+      title: publish ? "Put back on website?" : "Remove from website?",
+      description: publish
+        ? `"${post.title}" will be visible on the website again.`
+        : `"${post.title}" will be hidden from the website but kept here, so you can put it back later.`,
+      confirmLabel: publish ? "Put back" : "Remove from website",
+      onConfirm: () => updateNews.mutate({ id: post.id, isPublished: publish }),
+    });
   }
   const [form, setForm] = useState(EMPTY_FORM);
 
@@ -91,16 +111,23 @@ export function NewsAdminView() {
                 <p className="text-xs text-muted-foreground">{post.category} · {formatDate(post.publishedAt)}</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => updateNews.mutate({ id: post.id, isPublished: !post.isPublished })}
+                <span
                   className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     post.isPublished
                       ? "bg-green-50 text-green-700 border border-green-200"
                       : "bg-gray-100 text-gray-500 border border-gray-200"
                   }`}
                 >
-                  {post.isPublished ? "Published" : "Hidden"}
+                  {post.isPublished ? "On website" : "Hidden"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPublished(post, !post.isPublished)}
+                  disabled={updateNews.isPending}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-brand-navy-dark disabled:opacity-50"
+                >
+                  {post.isPublished ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+                  {post.isPublished ? "Remove from website" : "Put back on website"}
                 </button>
                 <button
                   type="button"
@@ -117,6 +144,8 @@ export function NewsAdminView() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog confirm={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   PanelLeft,
-  X,
+  PanelLeftClose,
   ChevronRight,
   ClipboardList,
   ShoppingCart,
@@ -69,12 +70,23 @@ const groupOf = (pathname) => NAV_GROUPS.find((g) => g.links?.some((l) => pathna
 
 const ROW = "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors";
 
-function Brand() {
+function Brand({ onClose }) {
   return (
-    <Link href="/admin/logbooks" className="flex items-center gap-3 px-5 py-5">
-      <Image src="/images/logo.png" alt="" width={32} height={32} className="size-8 rounded-full" />
-      <p className="text-base font-bold text-brand-navy-dark">Nkem Aeronautics</p>
-    </Link>
+    <div className="flex items-center gap-2 py-5 pr-3 pl-5">
+      <Link href="/admin/logbooks" className="flex flex-1 items-center gap-3">
+        <Image src="/images/logo.png" alt="" width={32} height={32} className="size-8 rounded-full" />
+        <p className="text-base font-bold text-brand-navy-dark">Nkem Aeronautics</p>
+      </Link>
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close sidebar"
+        title="Close sidebar"
+        className="flex size-8 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-brand-navy-dark"
+      >
+        <PanelLeftClose className="size-5" />
+      </button>
+    </div>
   );
 }
 
@@ -162,10 +174,10 @@ function NavList({ pathname }) {
   );
 }
 
-function SidebarBody({ pathname }) {
+function SidebarBody({ pathname, onClose }) {
   return (
     <>
-      <Brand />
+      <Brand onClose={onClose} />
       <NavList pathname={pathname} />
       <div className="space-y-1 border-t border-slate-200 p-3">
         <Link href="/" target="_blank" className={`${ROW} text-slate-600 hover:bg-slate-100`}>
@@ -183,6 +195,7 @@ const COLLAPSE_KEY = "nkem-admin-sidebar-collapsed";
 // Owns the desktop collapse state so the content padding can follow the sidebar.
 export function AdminShell({ children }) {
   const [collapsed, setCollapsed] = useState(false);
+  const queryClient = useQueryClient();
 
   // Remembered per browser; storage can throw in private windows, so it is best-effort.
   useEffect(() => {
@@ -190,6 +203,19 @@ export function AdminShell({ children }) {
       setCollapsed(localStorage.getItem(COLLAPSE_KEY) === "1");
     } catch {}
   }, []);
+
+  // Auto-sync: refetch whatever the current admin page shows, so changes by other admins
+  // and new website sign-ups appear without a reload. Paused while the tab is hidden.
+  // ponytail: polling every 15s, switch to server push (SSE) if admin traffic grows.
+  useEffect(() => {
+    const sync = () => !document.hidden && queryClient.invalidateQueries({ refetchType: "active" });
+    const id = setInterval(sync, 15000);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [queryClient]);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -235,7 +261,7 @@ function AdminNav({ collapsed, onToggleCollapsed }) {
           collapsed ? "-translate-x-full" : ""
         }`}
       >
-        <SidebarBody pathname={pathname} />
+        <SidebarBody pathname={pathname} onClose={onToggleCollapsed} />
       </aside>
 
       {/* Top bar (content area) — current section on desktop, menu button on mobile */}
@@ -254,17 +280,22 @@ function AdminNav({ collapsed, onToggleCollapsed }) {
           >
             <PanelLeft className="size-5" />
           </button>
-          <button
-            type="button"
-            onClick={onToggleCollapsed}
-            aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
-            aria-expanded={!collapsed}
-            title={collapsed ? "Open sidebar" : "Close sidebar"}
-            className="hidden size-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-navy-dark lg:flex"
-          >
-            <PanelLeft className="size-5" />
-          </button>
-          <span className="h-5 w-px bg-border" aria-hidden />
+          {/* Closing lives in the sidebar header; this only reopens it */}
+          {collapsed && (
+            <>
+              <button
+                type="button"
+                onClick={onToggleCollapsed}
+                aria-label="Open sidebar"
+                title="Open sidebar"
+                className="hidden size-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 hover:text-brand-navy-dark lg:flex"
+              >
+                <PanelLeft className="size-5" />
+              </button>
+              <span className="hidden h-5 w-px bg-border lg:block" aria-hidden />
+            </>
+          )}
+          <span className="h-5 w-px bg-border lg:hidden" aria-hidden />
           <p className="text-sm text-muted-foreground">
             Admin
             {current && (
@@ -282,15 +313,7 @@ function AdminNav({ collapsed, onToggleCollapsed }) {
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
           <div className="absolute inset-y-0 left-0 flex w-full max-w-xs flex-col bg-white shadow-xl">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(false)}
-              aria-label="Close menu"
-              className="absolute top-5 right-3 flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
-            >
-              <X className="size-5" />
-            </button>
-            <SidebarBody pathname={pathname} />
+            <SidebarBody pathname={pathname} onClose={() => setMobileOpen(false)} />
           </div>
         </div>
       )}

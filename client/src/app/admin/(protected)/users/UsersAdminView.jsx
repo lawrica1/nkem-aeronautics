@@ -5,6 +5,7 @@ import { useAdminUsers, useUpdateAdminUser } from "@/hooks/useAdminUsers";
 import { useOrganizations } from "@/hooks/useOrganizations";
 import { ROLE_OPTIONS, SECTOR_OPTIONS, COUNTRY_OPTIONS } from "@/lib/adminOptions";
 import { getAdminToken } from "@/lib/api";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 // UI hint only — the server enforces the real rule.
 function currentAdminId() {
@@ -38,6 +39,7 @@ export function UsersAdminView() {
   const { data: users, isLoading, isError, error } = useAdminUsers({ search, role, sector, country });
   const { data: organizations } = useOrganizations();
   const update = useUpdateAdminUser();
+  const [confirm, setConfirm] = useState(null);
   const [myId, setMyId] = useState(null);
   useEffect(() => setMyId(currentAdminId()), []);
 
@@ -58,12 +60,15 @@ export function UsersAdminView() {
     update.mutate({ id: user.id, isVerified: !user.isVerified });
   }
 
-  function toggleLogbookVerified(user) {
-    const approved = !!user.logbookVerifiedAt;
+  function setLogbookApproved(user, approve) {
     const label = user.name ? `${user.name} ${user.surname ?? ""}`.trim() : user.email;
-    const action = approved ? "Revoke logbook verification for" : "Approve the logbook of";
-    if (!window.confirm(`${action} ${label}?`)) return;
-    update.mutate({ id: user.id, logbookVerified: !approved });
+    setConfirm({
+      title: approve ? "Approve logbook?" : "Revoke logbook approval?",
+      description: `${approve ? "Approve the logbook of" : "Revoke logbook approval for"} ${label}.`,
+      confirmLabel: approve ? "Approve" : "Revoke",
+      destructive: !approve,
+      onConfirm: () => update.mutate({ id: user.id, logbookVerified: approve }),
+    });
   }
 
   return (
@@ -171,7 +176,7 @@ export function UsersAdminView() {
                     <td className="px-4 py-3">
                       <button
                         type="button"
-                        onClick={() => toggleLogbookVerified(user)}
+                        onClick={() => setLogbookApproved(user, !user.logbookVerifiedAt)}
                         title={user.logbookVerifiedAt ? `Approved ${new Date(user.logbookVerifiedAt).toLocaleDateString("en-GB")}` : "Click to approve"}
                         className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                           user.logbookVerifiedAt
@@ -201,6 +206,8 @@ export function UsersAdminView() {
           )}
         </div>
       )}
+
+      <ConfirmDialog confirm={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

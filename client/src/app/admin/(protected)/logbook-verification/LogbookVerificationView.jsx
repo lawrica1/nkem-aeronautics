@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAdminUsers, useUpdateAdminUser } from "@/hooks/useAdminUsers";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const TABS = [
   { value: "pending", label: "Pending" },
@@ -34,12 +35,17 @@ export function LogbookVerificationView() {
 
   const { data: users, isLoading, isError, error } = useAdminUsers({ logbook: tab, search });
   const update = useUpdateAdminUser();
+  const [confirm, setConfirm] = useState(null);
 
   function setApproved(user, approve) {
     const name = `${user.name ?? ""} ${user.surname ?? ""}`.trim() || user.email;
-    const action = approve ? "Approve the logbook of" : "Revoke logbook approval for";
-    if (!window.confirm(`${action} ${name} (${user.identificationNumber})?`)) return;
-    update.mutate({ id: user.id, logbookVerified: approve });
+    setConfirm({
+      title: approve ? "Approve logbook?" : "Revoke logbook approval?",
+      description: `${approve ? "Approve the logbook of" : "Revoke logbook approval for"} ${name} (${user.identificationNumber}).`,
+      confirmLabel: approve ? "Approve" : "Revoke",
+      destructive: !approve,
+      onConfirm: () => update.mutate({ id: user.id, logbookVerified: approve }),
+    });
   }
 
   return (
@@ -131,6 +137,8 @@ export function LogbookVerificationView() {
           );
         })}
       </ul>
+
+      <ConfirmDialog confirm={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }
