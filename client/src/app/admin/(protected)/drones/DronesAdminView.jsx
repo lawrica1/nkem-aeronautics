@@ -1,8 +1,10 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
-import { useDrones, useCreateDrone, useUpdateDrone } from "@/hooks/usePilotsAndDrones";
+import { useDrones, useUpdateDrone } from "@/hooks/usePilotsAndDrones";
+import { TableCard, StatusPill, RowMenu, filterRows, thClass, tdClass } from "@/components/admin/AdminTable";
 import { FileUpload } from "@/components/portal/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -33,7 +35,7 @@ function toPayload(form) {
   };
 }
 
-function DroneForm({ drone, mutation, submitLabel, onDone, onCancel }) {
+export function DroneForm({ drone, mutation, submitLabel, onDone, onCancel }) {
   const [form, setForm] = useState(() => toForm(drone));
 
   function setSpec(index, key, value) {
@@ -53,6 +55,15 @@ function DroneForm({ drone, mutation, submitLabel, onDone, onCancel }) {
       }}
       className="grid gap-4 rounded-2xl border border-border bg-white p-6 shadow-sm sm:grid-cols-2"
     >
+      {onCancel && (
+        <button
+          type="button"
+          onClick={onCancel}
+          className="justify-self-start text-sm text-brand-blue underline sm:col-span-2"
+        >
+          ← Back to list
+        </button>
+      )}
       <div className="space-y-1.5">
         <Label>Name</Label>
         <input className={fieldClass} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -118,118 +129,81 @@ function DroneForm({ drone, mutation, submitLabel, onDone, onCancel }) {
   );
 }
 
-function SpecSummary({ drone }) {
-  if (drone.specList?.length) {
-    return (
-      <ul className="space-y-0.5">
-        {drone.specList.map((s, i) => (
-          <li key={i}>
-            <span className="font-medium text-brand-navy-dark">{s.label}</span>
-            {s.label && s.value ? ": " : ""}
-            {s.value}
-          </li>
-        ))}
-      </ul>
-    );
-  }
-  return drone.specs || "—";
-}
-
 export function DronesAdminView() {
   const { data: drones, isLoading, isError, error } = useDrones();
-  const createDrone = useCreateDrone();
   const updateDrone = useUpdateDrone();
-  const [editingId, setEditingId] = useState(null);
+  const router = useRouter();
+  const [filters, setFilters] = useState({ status: "all", search: "" });
+  const rows = filterRows(drones, filters, ["name", "model", "type"]);
 
   return (
-    <div className="space-y-6">
-      <DroneForm mutation={createDrone} submitLabel="Add drone" />
+    <TableCard
+      title="Operational fleet"
+      filters={filters}
+      onFiltersChange={setFilters}
+      addHref="/admin/drones/new"
+      addLabel="Add drone"
+      count={rows.length}
+    >
+      {isLoading && <p className="px-6 py-10 text-center text-sm text-muted-foreground">Loading drones…</p>}
+      {isError && <p className="px-6 py-10 text-center text-sm text-destructive">{error.message}</p>}
+      {updateDrone.isError && <p className="px-6 py-2 text-sm text-destructive">{updateDrone.error.message}</p>}
 
-      {isLoading && <p className="text-sm text-muted-foreground">Loading drones…</p>}
-      {isError && <p className="text-sm text-destructive">{error.message}</p>}
-
-      {!isLoading && !isError && (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-white shadow-sm">
-          {drones?.length === 0 ? (
-            <p className="px-4 py-10 text-center text-sm text-muted-foreground">No drones yet — add one above.</p>
-          ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border bg-slate-50 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Drone</th>
-                  <th className="px-4 py-3 font-medium">Model / Type</th>
-                  <th className="px-4 py-3 font-medium">Specs</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium" />
+      {!isLoading && !isError && rows.length > 0 && (
+        <table className="w-full text-left text-sm">
+          <thead className="border-y border-border bg-slate-50">
+            <tr>
+              <th className={thClass}>Name</th>
+              <th className={thClass}>Model</th>
+              <th className={thClass}>Type</th>
+              <th className={thClass}>Specs</th>
+              <th className={thClass}>Status</th>
+              <th className={thClass}>Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((drone) => (
+                <tr key={drone.id} className="transition-colors hover:bg-slate-50">
+                  <td className={`${tdClass} font-medium text-brand-navy-dark`}>
+                    <div className="flex items-center gap-3">
+                      {drone.images?.[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={drone.images[0]} alt={drone.name} className="size-9 shrink-0 rounded-lg object-cover" />
+                      ) : (
+                        <div className="size-9 shrink-0 rounded-lg bg-slate-100" />
+                      )}
+                      {drone.name}
+                    </div>
+                  </td>
+                  <td className={`${tdClass} text-muted-foreground`}>{drone.model || "—"}</td>
+                  <td className={`${tdClass} text-muted-foreground`}>{drone.type || "—"}</td>
+                  <td className={tdClass}>
+                    <span
+                      title={drone.specList?.map((s) => [s.label, s.value].filter(Boolean).join(": ")).join("\n") || drone.specs || ""}
+                      className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                        drone.specList?.length ? "bg-blue-50 text-brand-blue" : "bg-slate-100 text-muted-foreground"
+                      }`}
+                    >
+                      {drone.specList?.length ?? 0} specs
+                    </span>
+                  </td>
+                  <td className={tdClass}>
+                    <StatusPill active={drone.active} />
+                  </td>
+                  <td className={tdClass}>
+                    <RowMenu
+                      items={[
+                        { label: "View", onClick: () => router.push(`/admin/drones/${drone.id}`) },
+                        { label: "Edit", onClick: () => router.push(`/admin/drones/${drone.id}/edit`) },
+                        { label: drone.active ? "Deactivate" : "Activate", onClick: () => updateDrone.mutate({ id: drone.id, active: !drone.active }) },
+                      ]}
+                    />
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {drones?.map((drone) => (
-                  <Fragment key={drone.id}>
-                    <tr className="align-top transition-colors hover:bg-slate-50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          {drone.images?.[0] ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={drone.images[0]} alt={drone.name} className="size-12 shrink-0 rounded-lg object-cover" />
-                          ) : (
-                            <div className="size-12 shrink-0 rounded-lg bg-slate-100" />
-                          )}
-                          <div>
-                            <p className="font-medium text-brand-navy-dark">{drone.name}</p>
-                            {drone.images?.length > 1 && (
-                              <p className="text-xs text-muted-foreground">{drone.images.length} pictures</p>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">{[drone.model, drone.type].filter(Boolean).join(" · ") || "—"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        <SpecSummary drone={drone} />
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          type="button"
-                          onClick={() => updateDrone.mutate({ id: drone.id, active: !drone.active })}
-                          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                            drone.active
-                              ? "bg-green-50 text-green-700 border border-green-200"
-                              : "bg-gray-100 text-gray-500 border border-gray-200"
-                          }`}
-                        >
-                          {drone.active ? "Active" : "Inactive"}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          type="button"
-                          onClick={() => setEditingId(editingId === drone.id ? null : drone.id)}
-                          className="text-sm font-medium text-brand-blue hover:underline"
-                        >
-                          {editingId === drone.id ? "Close" : "Edit"}
-                        </button>
-                      </td>
-                    </tr>
-                    {editingId === drone.id && (
-                      <tr>
-                        <td colSpan={5} className="bg-slate-50 p-4">
-                          <DroneForm
-                            drone={drone}
-                            mutation={updateDrone}
-                            submitLabel="Save changes"
-                            onDone={() => setEditingId(null)}
-                            onCancel={() => setEditingId(null)}
-                          />
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+            ))}
+          </tbody>
+        </table>
       )}
-    </div>
+    </TableCard>
   );
 }
