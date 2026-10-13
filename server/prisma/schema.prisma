@@ -197,6 +197,11 @@ model Product {
   images        String[]    @default([])
   featureBadges String[]    @default([])
   applications  String[]    @default([])
+  // Website carousel card fields: a one-line key spec, chips, and the agri crop/service filters.
+  highlight     String      @default("")
+  tags          String[]    @default([])
+  crops         String[]    @default([])
+  service       String?
   active        Boolean     @default(true)
   orderItems    OrderItem[]
   createdAt     DateTime    @default(now())

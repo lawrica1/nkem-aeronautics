@@ -1,14 +1,14 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-const CROP_OPTIONS = [
+export const CROP_OPTIONS = [
   { value: "all", label: "All Crops" },
   { value: "grains", label: "Grains (Maize, Rice, Sorghum)" },
   { value: "plantation", label: "Plantation/Trees (Banana, Oil Palm, Cocoa)" },
   { value: "vegetables", label: "Vegetables & Roots (Tomatoes, Cassava)" },
 ];
 
-const SERVICE_OPTIONS = [
+export const SERVICE_OPTIONS = [
   { value: "spraying", label: "Spraying Only" },
   { value: "both", label: "Spraying & Multispectral Monitoring" },
   { value: "machines", label: "Machines" },

@@ -7,12 +7,15 @@ import {
 } from "@/components/ui/carousel";
 import { ProductCard } from "@/components/ProductCard";
 import { Reveal } from "@/components/Reveal";
-import { PRODUCTS } from "@/lib/catalog";
+import { useProducts } from "@/hooks/useProducts";
 
 const COMING_SOON_IMAGES = {};
 
 export function ProductCarousel({ sector, cropFilter = "all", serviceFilter }) {
-  let products = PRODUCTS.filter((product) => product.sector === sector);
+  const { data, isLoading } = useProducts(sector);
+  let products = data ?? [];
+
+  if (isLoading) return <p className="h-72 text-sm text-muted-foreground">Loading drones…</p>;
 
   if (sector === "agricultural") {
     products = products.filter((product) => {

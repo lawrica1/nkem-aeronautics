@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useCreateQuote } from "@/hooks/useQuotes";
 import { useProducts } from "@/hooks/useProducts";
-import { PRODUCTS } from "@/lib/catalog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,8 +20,7 @@ const INTEREST_OPTIONS = [
 export function QuoteRequestForm({ sector, className = "" }) {
   const createQuote = useCreateQuote();
   const [open, setOpen] = useState(false);
-  const { data: dbProducts } = useProducts("evtol", undefined, undefined, { enabled: sector === "evtol" });
-  const productOptions = sector === "evtol" ? (dbProducts ?? []) : PRODUCTS.filter((p) => p.sector === sector);
+  const { data: productOptions = [] } = useProducts(sector);
 
   const [form, setForm] = useState({
     name: "",
