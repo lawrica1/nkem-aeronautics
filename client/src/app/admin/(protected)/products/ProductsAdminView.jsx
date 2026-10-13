@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { useAdminProducts, useUpdateProduct } from "@/hooks/useProducts";
-import { TableCard, StatusPill, RowMenu, filterRows, thClass, tdClass } from "@/components/admin/AdminTable";
+import { TableCard, StatusPill, RowMenu, filterRows, pageRows, thClass, tdClass } from "@/components/admin/AdminTable";
 import { PRODUCT_SECTOR_OPTIONS } from "@/lib/adminOptions";
 import { formatXAF } from "@/lib/currency";
 import { specEntries } from "@/lib/catalog";
@@ -201,7 +201,7 @@ export function ProductsAdminView({ title = "Products" }) {
   const { data: products, isLoading, isError, error } = useAdminProducts();
   const updateProduct = useUpdateProduct();
   const router = useRouter();
-  const [filters, setFilters] = useState({ status: "all", search: "" });
+  const [filters, setFilters] = useState({ status: "all", search: "", page: 1 });
   const rows = filterRows(products, filters, ["name", "model", "type", "sector"]);
 
   return (
@@ -230,7 +230,7 @@ export function ProductsAdminView({ title = "Products" }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {rows.map((product) => (
+            {pageRows(rows, filters.page).map((product) => (
                 <tr key={product.id} className="transition-colors hover:bg-slate-50">
                   <td className={`${tdClass} font-medium text-brand-navy-dark`}>
                     <div className="flex items-center gap-3">
