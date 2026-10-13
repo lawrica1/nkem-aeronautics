@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, X } from "lucide-react";
 import { useDrones, useUpdateDrone } from "@/hooks/usePilotsAndDrones";
-import { TableCard, StatusPill, RowMenu, filterRows, thClass, tdClass } from "@/components/admin/AdminTable";
+import { TableCard, StatusPill, RowMenu, filterRows, pageRows, thClass, tdClass } from "@/components/admin/AdminTable";
 import { FileUpload } from "@/components/portal/FileUpload";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -133,7 +133,7 @@ export function DronesAdminView() {
   const { data: drones, isLoading, isError, error } = useDrones();
   const updateDrone = useUpdateDrone();
   const router = useRouter();
-  const [filters, setFilters] = useState({ status: "all", search: "" });
+  const [filters, setFilters] = useState({ status: "all", search: "", page: 1 });
   const rows = filterRows(drones, filters, ["name", "model", "type"]);
 
   return (
@@ -162,7 +162,7 @@ export function DronesAdminView() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {rows.map((drone) => (
+            {pageRows(rows, filters.page).map((drone) => (
                 <tr key={drone.id} className="transition-colors hover:bg-slate-50">
                   <td className={`${tdClass} font-medium text-brand-navy-dark`}>
                     <div className="flex items-center gap-3">

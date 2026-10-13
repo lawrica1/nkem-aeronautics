@@ -17,7 +17,29 @@ export function filterRows(rows, { status, search }, fields) {
   );
 }
 
-// Card with title, status filter, search and Add button on top, and a results count below.
+export const PAGE_SIZE = 8;
+
+const pageCount = (count) => Math.max(1, Math.ceil(count / PAGE_SIZE));
+// Clamped so a page that empties (e.g. after a filter change) falls back to the last one.
+const clampPage = (page, count) => Math.min(Math.max(1, page ?? 1), pageCount(count));
+
+export function pageRows(rows, page) {
+  const start = (clampPage(page, rows.length) - 1) * PAGE_SIZE;
+  return rows.slice(start, start + PAGE_SIZE);
+}
+
+// Page buttons with ellipses, e.g. 1 2 3 4 5 … 20 or 1 … 9 10 11 … 20.
+export function pageList(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 4) return [1, 2, 3, 4, 5, "…", total];
+  if (current >= total - 3) return [1, "…", total - 4, total - 3, total - 2, total - 1, total];
+  return [1, "…", current - 1, current, current + 1, "…", total];
+}
+
+const pageBtn =
+  "min-w-9 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-brand-navy-dark hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent";
+
+// Card with title, status filter, search and Add button on top, and a results count with paging below.
 export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, count, children }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
@@ -28,7 +50,7 @@ export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, 
             aria-label="Filter by status"
             className={controlClass}
             value={filters.status}
-            onChange={(e) => onFiltersChange({ ...filters, status: e.target.value })}
+            onChange={(e) => onFiltersChange({ ...filters, status: e.target.value, page: 1 })}
           >
             <option value="all">All status</option>
             <option value="active">Active</option>
@@ -40,7 +62,7 @@ export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, 
             placeholder="Search..."
             className={`${controlClass} w-56`}
             value={filters.search}
-            onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
+            onChange={(e) => onFiltersChange({ ...filters, search: e.target.value, page: 1 })}
           />
           <Link
             href={addHref}
@@ -51,9 +73,47 @@ export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, 
         </div>
       </div>
       <div className="overflow-x-auto">{children}</div>
-      <p className="border-t border-border px-6 py-4 text-sm text-muted-foreground">
-        {count ? `Showing 1 to ${count} of ${count} results` : "No results"}
+      <Pager count={count} page={filters.page} onPage={(page) => onFiltersChange({ ...filters, page })} />
+    </div>
+  );
+}
+
+function Pager({ count, page, onPage }) {
+  const total = pageCount(count);
+  const current = clampPage(page, count);
+  const first = (current - 1) * PAGE_SIZE + 1;
+  const last = Math.min(current * PAGE_SIZE, count);
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+      <p className="text-sm text-muted-foreground">
+        {count ? `Showing ${first} to ${last} of ${count} results` : "No results"}
       </p>
+      {total > 1 && (
+        <nav aria-label="Pagination" className="flex flex-wrap items-center gap-1.5">
+          <button type="button" className={pageBtn} disabled={current === 1} onClick={() => onPage(current - 1)}>
+            Previous
+          </button>
+          {pageList(current, total).map((p, i) =>
+            p === "…" ? (
+              <span key={`gap-${i}`} className="px-1.5 text-sm text-muted-foreground">…</span>
+            ) : (
+              <button
+                key={p}
+                type="button"
+                aria-current={p === current ? "page" : undefined}
+                onClick={() => onPage(p)}
+                className={p === current ? `${pageBtn} border-brand-navy bg-brand-navy text-white hover:bg-brand-navy` : pageBtn}
+              >
+                {p}
+              </button>
+            )
+          )}
+          <button type="button" className={pageBtn} disabled={current === total} onClick={() => onPage(current + 1)}>
+            Next
+          </button>
+        </nav>
+      )}
     </div>
   );
 }
