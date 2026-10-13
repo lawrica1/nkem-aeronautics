@@ -4,6 +4,14 @@ export async function login(req, res) {
   res.json(await adminService.login(req.body));
 }
 
+export async function signup(req, res) {
+  res.status(201).json(await adminService.signup(req.body));
+}
+
+export async function createAdmin(req, res) {
+  res.status(201).json(await adminService.createAdmin(req.body, req.user));
+}
+
 export async function stats(_req, res) {
   res.json(await adminService.getStats());
 }

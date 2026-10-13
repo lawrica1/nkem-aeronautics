@@ -52,7 +52,7 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 - `server/src/modules/auth`: signup, OTP verification, resend OTP, login.
 - `server/src/modules/farmers`: authenticated profile and own requests.
 - `server/src/modules/requests`: service request create/list/update.
-- `server/src/modules/admin`: admin login, stats, logbook export, user search/role/verify management.
+- `server/src/modules/admin`: admin login, admin signup (gated by `ADMIN_SIGNUP_CODE`, disabled when unset), admin-only creation of other admins, stats, logbook export, user search/role/verify management.
 - `server/src/modules/catalog`: public catalog data (marketing display only — see `products` for the sellable catalogue).
 - `server/src/modules/logbooks`: collision-safe logbook counter and receipt-number counter.
 - `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.

@@ -1,4 +1,7 @@
+import crypto from "node:crypto";
 import ExcelJS from "exceljs";
+import bcrypt from "bcryptjs";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { ROLES, ROLE_VALUES, SECTORS } from "../platform/platform.constants.js";
@@ -10,6 +13,7 @@ import { logbookVerifiedEmail, adminNewVerifiedUser } from "../notifications/ema
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
+import { enforce } from "../../shared/utils/rateLimit.js";
 
 const EXPORT_COLUMNS = [
   { key: "identificationNumber", header: "Logbook ID" },
@@ -39,6 +43,48 @@ export async function login({ email, password }) {
 
   await checkPassword("admin", email, admin?.passwordHash, password);
   // 12h instead of the 30-day user token: a leaked admin token is the most damaging one.
+  return { token: signAdminToken(admin) };
+}
+
+// Only an existing admin can create another; there is deliberately no public admin signup.
+export async function createAdmin({ name, email, password } = {}, actor) {
+  if (!name || !email || !password) throw new HttpError(400, "name, email and password are required.");
+  if (password.length < 8) throw new HttpError(400, "Password must be at least 8 characters.");
+
+  const admin = await prisma.user
+    .create({
+      data: {
+        role: ROLES.ADMIN,
+        name,
+        email: email.toLowerCase(),
+        passwordHash: await bcrypt.hash(password, 10),
+        isVerified: true,
+        isProfileComplete: true,
+      },
+    })
+    .catch((err) => {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") return null;
+      throw err;
+    });
+  // Never take over an existing account here; promote it from the Users page instead.
+  if (!admin) throw new HttpError(409, "An account with this email already exists. Change its role on the Users page.");
+
+  console.info(`[audit] ${actor ? `admin ${actor.id}` : "signup code"} created admin ${admin.id}`);
+  return serializeUser(admin);
+}
+
+const sha256 = (value) => crypto.createHash("sha256").update(String(value)).digest();
+
+// Public signup, gated by ADMIN_SIGNUP_CODE. Unset code = signup disabled.
+export async function signup({ code, ...body } = {}) {
+  if (!env.adminSignupCode) throw new HttpError(403, "Admin signup is disabled.");
+  // Global key: signups are rare, and a per-IP key is trivially rotated around.
+  enforce("admin-signup", { limit: 10, windowMs: 15 * 60_000 }, "Too many admin signup attempts.");
+  if (!crypto.timingSafeEqual(sha256(code), sha256(env.adminSignupCode))) {
+    throw new HttpError(403, "Invalid signup code.");
+  }
+
+  const admin = await createAdmin(body, null);
   return { token: signAdminToken(admin) };
 }
 
