@@ -1,4 +1,7 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const STEPS = [
   {
@@ -25,26 +28,40 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="flex min-h-screen flex-col justify-center border-t border-white/10 bg-brand-navy px-6 py-24 text-white">
+    <section className="bg-brand-paper px-6 py-20 sm:py-28">
       <div className="mx-auto w-full max-w-6xl">
-        <Reveal className="max-w-2xl">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
-            How It Works
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            From Sign Up to Service, in Four Steps
-          </h2>
-        </Reveal>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading eyebrow="How It Works" title="From Sign Up to Service, in Four Steps" />
+          <Reveal>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-2 rounded-full bg-brand-ink px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-blue"
+            >
+              Start step one
+              <ArrowRight className="size-4" />
+            </Link>
+          </Reveal>
+        </div>
 
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, index) => (
-            <Reveal key={step.number} delay={index * 120}>
-              <p className="text-4xl font-bold text-white/20">{step.number}</p>
-              <h3 className="mt-3 font-semibold">{step.title}</h3>
-              <p className="mt-2 text-sm text-white/70">{step.description}</p>
+            <Reveal
+              as="li"
+              key={step.number}
+              delay={index * 100}
+              className="relative flex flex-col rounded-2xl border border-brand-line bg-white p-6"
+            >
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 items-center justify-center rounded-full bg-brand-blue font-mono text-xs font-semibold text-white">
+                  {step.number}
+                </span>
+                {index < STEPS.length - 1 && <span aria-hidden="true" className="h-px flex-1 bg-brand-line" />}
+              </div>
+              <h3 className="mt-6 text-lg font-semibold text-brand-ink">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">{step.description}</p>
             </Reveal>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

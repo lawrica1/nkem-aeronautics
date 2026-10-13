@@ -5,7 +5,7 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { ManufacturingProcess, ProjectLifecycle } from "@/components/ProjectLifecycle";
 import { NewsSection } from "@/components/NewsSection";
-import { ServiceCards } from "@/components/ServiceCards";
+import { CallToAction } from "@/components/CallToAction";
 
 export const metadata = {
   title: "Nkem Aeronautics — Aerial UAV Solutions",
@@ -19,16 +19,12 @@ export default function HomePage() {
       <Hero />
       <Challenges />
       <ServicesOverview />
-      <section id="catalog" className="border-t border-border bg-white px-6 py-20">
-        <div className="mx-auto max-w-6xl">
-          <ServiceCards />
-        </div>
-      </section>
+      <HowItWorks />
       <ProjectLifecycle />
       <ManufacturingProcess />
-      <HowItWorks />
       <WhyChooseUs />
       <NewsSection />
+      <CallToAction />
     </main>
   );
 }

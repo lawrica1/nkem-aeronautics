@@ -94,6 +94,9 @@
   --color-brand-gray-light: #eef0ff;
   --color-brand-input: #f0f1ff;
   --color-brand-footer-text: #c8d0f8;
+  --color-brand-paper: #f5f6fa;
+  --color-brand-line: #dfe3ee;
+  --color-brand-ink: #0a1a2f;
 
   --animate-float: float 5s ease-in-out infinite;
   --animate-gradient: gradient-pan 14s ease infinite;

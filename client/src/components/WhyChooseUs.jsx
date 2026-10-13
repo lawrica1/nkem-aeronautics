@@ -1,5 +1,6 @@
 import { MapPin, BarChart3, Layers, UserCheck } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const REASONS = [
   {
@@ -26,26 +27,20 @@ const REASONS = [
 
 export function WhyChooseUs() {
   return (
-    <section className="flex min-h-screen flex-col justify-center border-t border-border bg-background px-6 py-24">
+    <section className="bg-white px-6 py-20 sm:py-28">
       <div className="mx-auto w-full max-w-6xl">
-        <Reveal className="max-w-2xl">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-brand-green uppercase">
-            Why Nkem Aeronautics
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight text-brand-navy-dark sm:text-4xl">
-            Built for Agriculture, Wildlife Conservation and Surveillance Challenges Across Every
-            Region and Country
-          </h2>
-        </Reveal>
+        <SectionHeading
+          eyebrow="Why Nkem Aeronautics"
+          title="Built for Agriculture, Wildlife Conservation and Surveillance Challenges Across Every Region and Country"
+          className="max-w-3xl"
+        />
 
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {REASONS.map(({ icon: Icon, title, description }, index) => (
-            <Reveal key={title} delay={index * 100}>
-              <div className="flex size-10 items-center justify-center rounded-md bg-brand-green/10">
-                <Icon className="size-5 text-brand-green" />
-              </div>
-              <h3 className="mt-4 font-semibold text-brand-navy-dark">{title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+            <Reveal key={title} delay={index * 100} className="border-t-2 border-brand-ink pt-6">
+              <Icon className="size-6 text-brand-blue" />
+              <h3 className="mt-5 text-lg font-semibold text-brand-ink">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">{description}</p>
             </Reveal>
           ))}
         </div>

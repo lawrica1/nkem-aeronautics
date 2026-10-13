@@ -47,9 +47,9 @@ export default async function ServiceDetailPage({ params }) {
           <div className="mt-6 flex size-12 items-center justify-center rounded-xl bg-brand-blue">
             <Icon className="size-6 text-white" />
           </div>
-          <h1 className="mt-4 max-w-3xl text-4xl font-bold sm:text-5xl">{hero.title}</h1>
-          <p className="mt-6 max-w-2xl text-lg text-white/75">{hero.description}</p>
-          <ul className="mt-8 grid max-w-3xl gap-3 sm:grid-cols-2">
+          <h1 className="mt-5 max-w-3xl text-4xl leading-[1.05] font-semibold tracking-[-0.025em] text-balance sm:text-6xl">{hero.title}</h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">{hero.description}</p>
+          <ul className="mt-10 grid max-w-3xl gap-3 border-t border-white/15 pt-8 sm:grid-cols-2">
             {service.features.map((f) => (
               <li key={f} className="flex items-start gap-2 text-sm text-white/90">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand-blue" />

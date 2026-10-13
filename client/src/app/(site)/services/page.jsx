@@ -1,6 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ServiceCards } from "@/components/ServiceCards";
+import { SectionHeading } from "@/components/SectionHeading";
+import { CallToAction } from "@/components/CallToAction";
+import { Reveal } from "@/components/Reveal";
+import { SERVICES } from "@/lib/services";
 
 export const metadata = {
   title: "Services — Nkem Aeronautics",
@@ -33,86 +38,91 @@ export default function ServicesPage() {
   return (
     <main className="flex-1">
       {/* Page hero */}
-      <section className="bg-brand-navy px-6 py-20 text-white">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
+      <section className="relative isolate overflow-hidden bg-brand-navy-dark px-6 pt-20 pb-16 text-white sm:pt-28">
+        <Image
+          src="/images/hero/hero-crop-spray.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="-z-20 object-cover opacity-45"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-navy-dark via-brand-navy-dark/85 to-brand-navy-dark/40" />
+        <div className="mx-auto max-w-6xl">
+          <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.2em] text-brand-blue-light uppercase">
+            <span className="h-px w-8 bg-brand-blue-light" />
             What We Offer
           </p>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            Drone Services for{" "}
-            <span className="text-white">Every Sector</span>
+          <h1 className="mt-5 max-w-3xl text-4xl leading-[1.05] font-semibold tracking-[-0.025em] text-balance sm:text-6xl">
+            Drone Services for <span className="text-white/55">Every Sector</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
             From precision agricultural spraying to wildlife surveillance and infrastructure
             inspection — Nkem Aeronautics delivers UAV solutions across Zambia and Africa.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
+              className="group inline-flex items-center gap-2 rounded-full bg-brand-blue px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-blue-dark"
             >
               Get Started
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               Contact Us
             </Link>
           </div>
+
+          {/* Jump list to each service row below */}
+          <nav aria-label="Services on this page" className="mt-14 border-t border-white/15 pt-6">
+            <ul className="flex flex-wrap gap-2">
+              {SERVICES.map((s) => (
+                <li key={s.slug}>
+                  <a
+                    href={`#${s.slug}`}
+                    className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/85 backdrop-blur-sm transition-colors hover:border-white/50 hover:text-white"
+                  >
+                    {s.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </section>
 
-      {/* Services grid */}
-      <section className="bg-white px-6 py-20">
+      {/* Services */}
+      <section className="bg-white px-6 py-20 sm:py-28">
         <div className="mx-auto max-w-6xl">
           <ServiceCards />
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-brand-gray-light px-6 py-20">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-12 text-center">
-            <p className="text-xs font-semibold tracking-widest text-brand-blue uppercase">
-              Simple Process
-            </p>
-            <h2 className="mt-2 text-3xl font-bold text-brand-navy-dark">How It Works</h2>
-          </div>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {HOW_IT_WORKS.map((step) => (
-              <div key={step.step} className="text-center">
-                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-brand-blue text-xl font-bold text-white">
-                  {step.step}
-                </div>
-                <h3 className="font-semibold text-brand-navy-dark">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {step.description}
-                </p>
-              </div>
+      <section className="bg-brand-paper px-6 py-20 sm:py-28">
+        <div className="mx-auto max-w-6xl">
+          <SectionHeading eyebrow="Simple Process" title="How It Works" />
+          <ol className="mt-12 grid gap-4 md:grid-cols-3">
+            {HOW_IT_WORKS.map((step, i) => (
+              <Reveal
+                as="li"
+                key={step.step}
+                delay={i * 100}
+                className="flex flex-col rounded-2xl border border-brand-line bg-white p-7"
+              >
+                <span className="font-mono text-4xl font-medium text-brand-blue">{step.step}</span>
+                <h3 className="mt-6 text-lg font-semibold text-brand-ink">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-600">{step.description}</p>
+              </Reveal>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-brand-navy px-6 py-20 text-white">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold">Ready to get started?</h2>
-          <p className="mt-4 text-white/70">
-            Register your account today and start requesting drone services through your personal
-            portal.
-          </p>
-          <Link
-            href="/signup"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand-blue px-10 py-3.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
-          >
-            Create Your Account
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
-      </section>
+      <CallToAction title="Ready to get started?" />
     </main>
   );
 }

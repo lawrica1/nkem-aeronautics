@@ -1,5 +1,6 @@
-import { BarChart3, Droplets, FileWarning } from "lucide-react";
+import { ArrowRight, BarChart3, Droplets, FileWarning } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
 
 const CHALLENGES = [
   {
@@ -7,57 +8,52 @@ const CHALLENGES = [
     title: "Inaccurate Distribution",
     description:
       "Resource allocation for chemicals and equipment is based on estimates, not real farmer counts per region.",
+    answer: "Registered farmer base",
   },
   {
     icon: Droplets,
     title: "Manual Spraying Limits",
     description:
       "Ground-based spraying is slow, uneven, and struggles to cover large or hard-to-reach farmland.",
+    answer: "Precision aerial spraying",
   },
   {
     icon: FileWarning,
     title: "Disconnected Records",
     description:
       "Without a shared logbook, firms and the ministry can't verify who's farming what, or where.",
+    answer: "One shared logbook",
   },
 ];
 
 export function Challenges() {
   return (
-    <section className="flex min-h-screen flex-col justify-center border-t border-white/10 bg-brand-navy px-6 py-24 text-white">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
-            <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
-              The Challenge
-            </p>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Struggling with inaccurate survey, mapping, security, delivery, distribution,
-              manual spraying limits, or disconnected farms with data?
-            </h2>
-          </Reveal>
-          <Reveal delay={100} className="flex items-center">
-            <p className="text-lg text-white/70">
-              Estimates instead of real data lead to chemicals and equipment landing in the wrong
-              places. Nkem Aeronautics replaces guesswork with a registered farmer base, aerial
-              spraying, and a shared logbook firms and government bodies can actually rely on.
-            </p>
-          </Reveal>
-        </div>
+    <section className="bg-white px-6 py-20 sm:py-28">
+      <div className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <SectionHeading
+          eyebrow="The Challenge"
+          title="Struggling with inaccurate survey, mapping, security, delivery, distribution, manual spraying limits, or disconnected farms with data?"
+          intro="Estimates instead of real data lead to chemicals and equipment landing in the wrong places. Nkem Aeronautics replaces guesswork with a registered farmer base, aerial spraying, and a shared logbook firms and government bodies can actually rely on."
+          className="lg:sticky lg:top-8 lg:self-start"
+        />
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-3">
-          {CHALLENGES.map(({ icon: Icon, title, description }, index) => (
-            <Reveal key={title} delay={index * 120}>
-              <div className="h-full rounded-lg border border-white/10 bg-white/5 p-6">
-                <div className="flex size-10 items-center justify-center rounded-md border border-white/20 bg-white/10">
-                  <Icon className="size-5 text-white/80" />
-                </div>
-                <h3 className="mt-4 font-semibold">{title}</h3>
-                <p className="mt-2 text-sm text-white/60">{description}</p>
+        <ul className="divide-y divide-brand-line border-y border-brand-line">
+          {CHALLENGES.map(({ icon: Icon, title, description, answer }, index) => (
+            <Reveal as="li" key={title} delay={index * 100} className="grid gap-5 py-8 sm:grid-cols-[3rem_1fr] sm:gap-6">
+              <div className="flex size-12 items-center justify-center rounded-xl bg-brand-gray-light text-brand-blue">
+                <Icon className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-semibold text-brand-ink">{title}</h3>
+                <p className="mt-2 leading-relaxed text-neutral-600">{description}</p>
+                <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue">
+                  <ArrowRight className="size-4" />
+                  {answer}
+                </p>
               </div>
             </Reveal>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
