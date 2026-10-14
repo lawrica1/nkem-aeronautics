@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { ArrowRight, BarChart3, Droplets, FileWarning } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { SectionHeading } from "@/components/SectionHeading";
+import { Eyebrow } from "@/components/SectionHeading";
+import { FIRM_OPTIONS } from "@/lib/firms";
 
 const CHALLENGES = [
   {
@@ -26,34 +28,72 @@ const CHALLENGES = [
   },
 ];
 
+// Affiliations a farmer can declare at sign-up, shown as a name row along the band's foot.
+const AFFILIATIONS = FIRM_OPTIONS.filter((f) => !["none", "other"].includes(f.value)).map((f) =>
+  f.label.replace(" / Plantations Haut Penja (PHP)", " / PHP"),
+);
+
 export function Challenges() {
   return (
-    <section className="bg-white px-6 py-20 sm:py-28">
-      <div className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-        <SectionHeading
-          eyebrow="The Challenge"
-          title="Struggling with inaccurate survey, mapping, security, delivery, distribution, manual spraying limits, or disconnected farms with data?"
-          intro="Estimates instead of real data lead to chemicals and equipment landing in the wrong places. Nkem Aeronautics replaces guesswork with a registered farmer base, aerial spraying, and a shared logbook firms and government bodies can actually rely on."
-          className="lg:sticky lg:top-8 lg:self-start"
-        />
+    <section className="bg-white px-4 pt-8 sm:px-6">
+      <div className="relative mx-auto max-w-6xl">
+        {/* Tab that rises out of the band's top edge */}
+        <div className="clip-tab absolute -top-9 left-1/2 flex h-10 w-72 -translate-x-1/2 items-center justify-center bg-brand-black sm:w-80">
+          <Eyebrow tone="dark">The Challenge</Eyebrow>
+        </div>
 
-        <ul className="divide-y divide-brand-line border-y border-brand-line">
-          {CHALLENGES.map(({ icon: Icon, title, description, answer }, index) => (
-            <Reveal as="li" key={title} delay={index * 100} className="grid gap-5 py-8 sm:grid-cols-[3rem_1fr] sm:gap-6">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-brand-gray-light text-brand-blue">
-                <Icon className="size-5" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="text-lg font-semibold text-brand-ink">{title}</h3>
-                <p className="mt-2 leading-relaxed text-neutral-600">{description}</p>
-                <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-blue">
-                  <ArrowRight className="size-4" />
+        <div className="rounded-3xl bg-brand-black px-6 pt-16 pb-10 text-white sm:px-12 sm:pt-20">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <h2 className="font-display text-xl leading-snug font-light tracking-[-0.01em] text-balance sm:text-3xl">
+              Struggling with inaccurate survey, mapping, security, delivery, distribution, manual
+              spraying limits, or disconnected farms with data?
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
+              Estimates instead of real data lead to chemicals and equipment landing in the wrong
+              places. Nkem Aeronautics replaces guesswork with a registered farmer base, aerial
+              spraying, and a shared logbook firms and government bodies can actually rely on.
+            </p>
+            <Link
+              href="/signup"
+              className="group mt-8 inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-brand-blue-dark"
+            >
+              Join Us Now
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Reveal>
+
+          <ul className="mt-14 grid gap-4 md:grid-cols-3">
+            {CHALLENGES.map(({ icon: Icon, title, description, answer }, index) => (
+              <Reveal
+                as="li"
+                key={title}
+                delay={index * 100}
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+              >
+                <Icon className="size-5 text-brand-blue-light" />
+                <h3 className="mt-4 font-display text-sm font-normal tracking-tight">{title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-white/60">{description}</p>
+                <p className="mt-5 inline-flex items-center gap-2 border-t border-white/10 pt-4 text-xs font-semibold tracking-[0.12em] text-brand-blue-light uppercase">
+                  <ArrowRight className="size-3.5" />
                   {answer}
                 </p>
-              </div>
-            </Reveal>
-          ))}
-        </ul>
+              </Reveal>
+            ))}
+          </ul>
+
+          <div className="mt-14 border-t border-white/10 pt-8">
+            <p className="text-center text-[11px] tracking-[0.18em] text-white/45 uppercase">
+              Farmer affiliations supported at sign-up
+            </p>
+            <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+              {AFFILIATIONS.map((name) => (
+                <li key={name} className="font-display text-sm font-medium tracking-tight text-white/80 sm:text-base">
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   );

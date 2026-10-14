@@ -1,6 +1,7 @@
 import { Hero } from "@/components/Hero";
 import { Challenges } from "@/components/Challenges";
 import { ServicesOverview } from "@/components/ServicesOverview";
+import { FleetCapabilities } from "@/components/FleetCapabilities";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { ManufacturingProcess, ProjectLifecycle } from "@/components/ProjectLifecycle";
@@ -17,12 +18,13 @@ export default function HomePage() {
   return (
     <main className="flex-1">
       <Hero />
-      <Challenges />
       <ServicesOverview />
+      <Challenges />
+      <FleetCapabilities />
       <HowItWorks />
+      <WhyChooseUs />
       <ProjectLifecycle />
       <ManufacturingProcess />
-      <WhyChooseUs />
       <NewsSection />
       <CallToAction />
     </main>

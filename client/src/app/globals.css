@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/unbounded";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -97,6 +98,8 @@
   --color-brand-paper: #f5f6fa;
   --color-brand-line: #dfe3ee;
   --color-brand-ink: #0a1a2f;
+  --color-brand-black: #0b0d12;
+  --font-display: "Unbounded Variable", "Geist Variable", system-ui, sans-serif;
 
   --animate-float: float 5s ease-in-out infinite;
   --animate-gradient: gradient-pan 14s ease infinite;
@@ -154,4 +157,28 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+/* Chamfered "notch" shapes from the site's aero UI language (hero card, image frames, band tabs). */
+@utility clip-notch {
+  clip-path: polygon(
+    0 1.5rem, 32% 1.5rem, calc(32% + 1.5rem) 0, calc(68% - 1.5rem) 0, 68% 1.5rem, 100% 1.5rem,
+    100% calc(100% - 1.5rem), 68% calc(100% - 1.5rem), calc(68% - 1.5rem) 100%,
+    calc(32% + 1.5rem) 100%, 32% calc(100% - 1.5rem), 0 calc(100% - 1.5rem)
+  );
+}
+@utility clip-corner {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 3.5rem 100%, 0 calc(100% - 3.5rem));
+}
+@utility clip-tab {
+  clip-path: polygon(1.75rem 0, calc(100% - 1.75rem) 0, 100% 100%, 0 100%);
+}
+/* Instrument-style tick scale used along the hero card edges. */
+@utility hud-ticks {
+  background-image:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.4) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.7) 0 1px, transparent 1px 60px);
+  background-size: 100% 6px, 100% 12px;
+  background-repeat: no-repeat;
+  background-position: left bottom, left bottom;
 }

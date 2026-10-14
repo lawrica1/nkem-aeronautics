@@ -1,6 +1,24 @@
 import { Reveal } from "@/components/Reveal";
 import { cn } from "@/lib/utils";
 
+// ">>> LABEL" eyebrow used above every section heading.
+export function Eyebrow({ children, tone = "light", className }) {
+  return (
+    <p
+      className={cn(
+        "flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase",
+        tone === "dark" ? "text-white/70" : "text-brand-black/70",
+        className,
+      )}
+    >
+      <span aria-hidden="true" className="font-display tracking-[-0.1em] text-brand-blue">
+        &rsaquo;&rsaquo;&rsaquo;
+      </span>
+      {children}
+    </p>
+  );
+}
+
 // Shared eyebrow + heading + intro block so every home/services section opens the same way.
 export function SectionHeading({ eyebrow, title, intro, tone = "light", align = "left", className, children }) {
   const dark = tone === "dark";
@@ -12,29 +30,17 @@ export function SectionHeading({ eyebrow, title, intro, tone = "light", align = 
         className,
       )}
     >
-      {eyebrow && (
-        <p
-          className={cn(
-            "flex items-center gap-3 text-xs font-semibold tracking-[0.2em] uppercase",
-            dark ? "text-brand-blue-light" : "text-brand-blue",
-          )}
-        >
-          <span className={cn("h-px w-8", dark ? "bg-brand-blue-light" : "bg-brand-blue")} />
-          {eyebrow}
-        </p>
-      )}
+      {eyebrow && <Eyebrow tone={tone}>{eyebrow}</Eyebrow>}
       <h2
         className={cn(
-          "text-3xl font-semibold tracking-tight text-balance sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]",
-          dark ? "text-white" : "text-brand-ink",
+          "font-display text-[1.75rem] leading-[1.15] font-normal tracking-[-0.02em] text-balance sm:text-4xl lg:text-[2.6rem]",
+          dark ? "text-white" : "text-brand-black",
         )}
       >
         {title}
       </h2>
       {intro && (
-        <p className={cn("text-base leading-relaxed sm:text-lg", dark ? "text-white/65" : "text-neutral-600")}>
-          {intro}
-        </p>
+        <p className={cn("text-base leading-relaxed", dark ? "text-white/65" : "text-neutral-600")}>{intro}</p>
       )}
       {children}
     </Reveal>

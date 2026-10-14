@@ -1,6 +1,7 @@
-import { Boxes, CheckCircle2, ClipboardList, Cog, Factory, Network, ShieldCheck, Wrench } from "lucide-react";
+import Image from "next/image";
+import { Boxes, CheckCircle2, ClipboardList, Cog, Network, Wrench } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
-import { SectionHeading } from "@/components/SectionHeading";
+import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 
 const LIFECYCLE_STEPS = [
   {
@@ -39,34 +40,32 @@ const MANUFACTURING_STEPS = [
 
 export function ProjectLifecycle() {
   return (
-    <section className="bg-white px-6 py-20 sm:py-28">
+    <section className="bg-white px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto w-full max-w-6xl">
         <SectionHeading
           eyebrow="Project Lifecycle"
-          title="From concept to delivery"
+          title="From Concept to Delivery"
           intro="A streamlined workflow from concept development to final delivery."
+          align="center"
         />
 
-        <div className="relative mt-14">
-          {/* Connector line behind the step markers on wide screens */}
-          <span aria-hidden="true" className="absolute top-6 right-[10%] left-6 hidden h-px bg-brand-line lg:block" />
-          <ol className="relative grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
+        <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {LIFECYCLE_STEPS.map(({ icon: Icon, title, description }, index) => (
-            <Reveal as="li" key={title} delay={index * 90} className="relative flex flex-col gap-4">
-              <div className="relative flex size-12 items-center justify-center rounded-full border border-brand-line bg-white text-brand-blue shadow-sm">
-                <Icon className="size-5" />
+            <Reveal
+              as="li"
+              key={title}
+              delay={index * 90}
+              className="flex flex-col rounded-2xl border border-neutral-200 p-5 transition-colors hover:border-brand-blue"
+            >
+              <div className="flex items-center justify-between">
+                <Icon className="size-5 text-brand-blue" />
+                <span className="font-display text-xs text-neutral-400">{String(index + 1).padStart(2, "0")}</span>
               </div>
-              <div>
-                <p className="font-mono text-xs tracking-widest text-neutral-400">
-                  STEP {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3 className="mt-1 font-semibold text-brand-ink">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-600">{description}</p>
-              </div>
+              <h3 className="mt-6 font-display text-sm font-normal tracking-tight text-brand-black">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-600">{description}</p>
             </Reveal>
           ))}
-          </ol>
-        </div>
+        </ol>
       </div>
     </section>
   );
@@ -74,67 +73,65 @@ export function ProjectLifecycle() {
 
 export function ManufacturingProcess() {
   return (
-    <section className="relative overflow-hidden bg-brand-navy-dark px-6 py-20 text-white sm:py-28">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-[0.07]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
-      <div className="relative mx-auto grid w-full max-w-6xl gap-14 lg:grid-cols-[1fr_1fr] lg:gap-20">
-        <div>
-          <SectionHeading eyebrow="Manufacturing" title="Manufacturing Process" tone="dark" />
-          <ol className="mt-10 divide-y divide-white/10 border-y border-white/10">
-            {MANUFACTURING_STEPS.map(([number, title, description], i) => (
-              <Reveal as="li" key={number} delay={i * 90} className="grid grid-cols-[3.5rem_1fr] gap-4 py-6">
-                <p className="font-mono text-2xl font-medium text-brand-blue-light">{number}</p>
-                <div>
-                  <h3 className="font-semibold">{title}</h3>
-                  <p className="mt-1 text-sm text-white/60">{description}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
+    <section className="bg-white px-4 pt-10 pb-4 sm:px-6">
+      <div className="relative mx-auto max-w-6xl">
+        <div className="clip-tab absolute -top-9 left-1/2 flex h-10 w-72 -translate-x-1/2 items-center justify-center bg-brand-black sm:w-80">
+          <Eyebrow tone="dark">Manufacturing</Eyebrow>
         </div>
 
-        <Reveal delay={150} className="flex flex-col justify-center gap-4">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-brand-blue">
-                <ShieldCheck className="size-5 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold tracking-tight">Global Quality Control</h3>
-            </div>
-            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-              {["Quality System", "Manufacturing Control"].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium"
-                >
-                  <CheckCircle2 className="size-4 text-brand-blue-light" />
-                  {item}
-                </li>
+        <div className="grid gap-10 overflow-hidden rounded-3xl bg-brand-black p-6 text-white sm:p-10 lg:grid-cols-2 lg:gap-14 lg:p-12">
+          <div>
+            <h2 className="font-display text-[1.75rem] leading-[1.15] font-normal tracking-[-0.02em] sm:text-4xl">
+              Manufacturing Process
+            </h2>
+            <ol className="mt-8 divide-y divide-white/10 border-y border-white/10">
+              {MANUFACTURING_STEPS.map(([number, title, description], i) => (
+                <Reveal as="li" key={number} delay={i * 90} className="grid grid-cols-[3rem_1fr] gap-4 py-5">
+                  <p className="font-display text-lg text-brand-blue-light">{number}</p>
+                  <div>
+                    <h3 className="font-display text-sm font-normal">{title}</h3>
+                    <p className="mt-1 text-sm text-white/60">{description}</p>
+                  </div>
+                </Reveal>
               ))}
-            </ul>
-            <p className="mt-6 text-sm leading-6 text-white/70">
-              Strict quality control applied across design, production, and final inspection to
-              ensure consistent UAV performance and reliability.
-            </p>
-          </div>
-
-          <div className="flex items-start gap-4 rounded-2xl bg-brand-blue p-7">
-            <Factory className="mt-1 size-6 shrink-0" />
-            <div>
-              <h3 className="text-2xl font-semibold tracking-tight">In-Factory Video Tour</h3>
-              <p className="mt-2 text-sm leading-6 text-white/85">
-                Explore manufacturing facilities, production processes, and quality control systems.
+            </ol>
+            <div className="mt-8">
+              <h3 className="font-display text-base font-normal">Global Quality Control</h3>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {["Quality System", "Manufacturing Control"].map((item) => (
+                  <li
+                    key={item}
+                    className="inline-flex items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-2 text-xs font-medium"
+                  >
+                    <CheckCircle2 className="size-3.5 text-brand-blue-light" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-sm leading-6 text-white/65">
+                Strict quality control applied across design, production, and final inspection to
+                ensure consistent UAV performance and reliability.
               </p>
             </div>
           </div>
-        </Reveal>
+
+          <Reveal delay={150} className="relative min-h-80 overflow-hidden rounded-2xl">
+            <Image
+              src="/images/about/manufacturing-facility.jpeg"
+              alt="VTOL drones on the Nkem Aeronautics factory floor"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-black/85 via-transparent to-transparent" />
+            <div className="absolute inset-x-5 bottom-5">
+              <h3 className="font-display text-lg font-normal">In-Factory Video Tour</h3>
+              <p className="mt-1.5 text-sm leading-6 text-white/80">
+                Explore manufacturing facilities, production processes, and quality control systems.
+              </p>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

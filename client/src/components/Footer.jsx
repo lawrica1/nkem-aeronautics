@@ -31,7 +31,7 @@ const SOCIAL_LINKS = [
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-brand-navy text-white">
+    <footer className="mt-auto border-t border-white/10 bg-brand-black text-white">
       <div className="mx-auto w-full max-w-6xl px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-3">
           <div>
