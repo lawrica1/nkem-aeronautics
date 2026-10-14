@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, Home, Wrench, BookOpen, Mail, Building2 } from "lucide-react";
+import { Menu, X, ChevronDown, Home, Wrench, BookOpen, Mail, Building2, Package } from "lucide-react";
 import { getToken } from "@/lib/api";
 import { NotificationBell } from "@/components/NotificationBell";
 import { SERVICES } from "@/lib/services";
@@ -49,14 +49,14 @@ export function Navbar() {
           />
           <div className="min-w-0">
             <p className="truncate font-display text-sm font-medium tracking-tight sm:text-lg">NKEM AERONAUTICS</p>
-            <p className="mt-0.5 hidden text-xs text-neutral-500 italic sm:block">
+            <p className="mt-0.5 hidden text-xs text-neutral-500 italic sm:block lg:hidden 2xl:block">
               "Where fate and human glory lead, we are always there."
             </p>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-7 text-[12px] font-semibold tracking-[0.12em] uppercase lg:flex [&>li>a:hover]:text-brand-blue [&>li>button:hover]:text-brand-blue">
+        <ul className="hidden items-center gap-5 whitespace-nowrap xl:gap-7 text-[11.5px] font-semibold tracking-[0.12em] uppercase lg:flex [&>li>a:hover]:text-brand-blue [&>li>button:hover]:text-brand-blue">
           <li>
             <Link href="/">Home</Link>
           </li>
@@ -87,6 +87,9 @@ export function Navbar() {
             </ul>
           </li>
           <li>
+            <Link href="/products">Products</Link>
+          </li>
+          <li>
             <Link href="/logbook">Logbook Portal</Link>
           </li>
           <li>
@@ -98,6 +101,14 @@ export function Navbar() {
             </li>
           )}
           <li>{dashboardLink}</li>
+          <li>
+            <Link
+              href="/contact"
+              className="rounded-md bg-brand-blue px-4 py-2.5 text-white transition-colors hover:bg-brand-blue-dark hover:text-white!"
+            >
+              Get a Quote
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile controls */}
@@ -169,6 +180,12 @@ export function Navbar() {
                       ))}
                     </ul>
                   )}
+                </li>
+                <li>
+                  <Link href="/products" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-brand-gray-light">
+                    <Package className="size-4.5 text-brand-blue" />
+                    Products
+                  </Link>
                 </li>
                 <li>
                   <Link href="/logbook" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-brand-gray-light">

@@ -35,20 +35,16 @@ const AFFILIATIONS = FIRM_OPTIONS.filter((f) => !["none", "other"].includes(f.va
 
 export function Challenges() {
   return (
-    <section className="bg-white px-4 pt-8 sm:px-6">
+    <section className="bg-white px-4 py-8 sm:px-6">
       <div className="relative mx-auto max-w-6xl">
-        {/* Tab that rises out of the band's top edge */}
-        <div className="clip-tab absolute -top-9 left-1/2 flex h-10 w-72 -translate-x-1/2 items-center justify-center bg-brand-black sm:w-80">
-          <Eyebrow tone="dark">The Challenge</Eyebrow>
-        </div>
-
-        <div className="rounded-3xl bg-brand-black px-6 pt-16 pb-10 text-white sm:px-12 sm:pt-20">
-          <Reveal className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-xl leading-snug font-light tracking-[-0.01em] text-balance sm:text-3xl">
+        <div className="rounded-3xl border border-neutral-200 bg-brand-paper px-6 pt-12 pb-10 sm:px-12 sm:pt-16">
+          <Reveal className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <Eyebrow>The Challenge</Eyebrow>
+            <h2 className="mt-5 font-display text-xl leading-snug font-light tracking-[-0.01em] text-balance text-brand-black sm:text-3xl">
               Struggling with inaccurate survey, mapping, security, delivery, distribution, manual
               spraying limits, or disconnected farms with data?
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/65 sm:text-base">
+            <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:text-base">
               Estimates instead of real data lead to chemicals and equipment landing in the wrong
               places. Nkem Aeronautics replaces guesswork with a registered farmer base, aerial
               spraying, and a shared logbook firms and government bodies can actually rely on.
@@ -68,12 +64,12 @@ export function Challenges() {
                 as="li"
                 key={title}
                 delay={index * 100}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+                className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-6"
               >
-                <Icon className="size-5 text-brand-blue-light" />
-                <h3 className="mt-4 font-display text-sm font-normal tracking-tight">{title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-white/60">{description}</p>
-                <p className="mt-5 inline-flex items-center gap-2 border-t border-white/10 pt-4 text-xs font-semibold tracking-[0.12em] text-brand-blue-light uppercase">
+                <Icon className="size-5 text-brand-blue" />
+                <h3 className="mt-4 font-display text-sm font-normal tracking-tight text-brand-black">{title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-neutral-600">{description}</p>
+                <p className="mt-5 inline-flex items-center gap-2 border-t border-neutral-200 pt-4 text-xs font-semibold tracking-[0.12em] text-brand-blue uppercase">
                   <ArrowRight className="size-3.5" />
                   {answer}
                 </p>
@@ -81,13 +77,13 @@ export function Challenges() {
             ))}
           </ul>
 
-          <div className="mt-14 border-t border-white/10 pt-8">
-            <p className="text-center text-[11px] tracking-[0.18em] text-white/45 uppercase">
+          <div className="mt-14 border-t border-neutral-200 pt-8">
+            <p className="text-center text-[11px] tracking-[0.18em] text-neutral-500 uppercase">
               Farmer affiliations supported at sign-up
             </p>
             <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {AFFILIATIONS.map((name) => (
-                <li key={name} className="font-display text-sm font-medium tracking-tight text-white/80 sm:text-base">
+                <li key={name} className="font-display text-sm font-medium tracking-tight text-brand-black/80 sm:text-base">
                   {name}
                 </li>
               ))}

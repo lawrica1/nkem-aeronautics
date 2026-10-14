@@ -7,6 +7,7 @@ import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { ManufacturingProcess, ProjectLifecycle } from "@/components/ProjectLifecycle";
 import { NewsSection } from "@/components/NewsSection";
 import { CallToAction } from "@/components/CallToAction";
+import { FeaturedProducts } from "@/components/FeaturedProducts";
 
 export const metadata = {
   title: "Nkem Aeronautics — Aerial UAV Solutions",
@@ -19,6 +20,7 @@ export default function HomePage() {
     <main className="flex-1">
       <Hero />
       <ServicesOverview />
+      <FeaturedProducts />
       <Challenges />
       <FleetCapabilities />
       <HowItWorks />

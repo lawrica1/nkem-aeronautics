@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ServiceCards } from "@/components/ServiceCards";
@@ -6,6 +5,7 @@ import { ServicesOverview } from "@/components/ServicesOverview";
 import { SectionHeading } from "@/components/SectionHeading";
 import { CallToAction } from "@/components/CallToAction";
 import { Reveal } from "@/components/Reveal";
+import { PageHero, BTN_PRIMARY, BTN_SECONDARY } from "@/components/PageHero";
 
 export const metadata = {
   title: "Services — Nkem Aeronautics",
@@ -37,54 +37,21 @@ const HOW_IT_WORKS = [
 export default function ServicesPage() {
   return (
     <main className="flex-1">
-      {/* Page hero */}
-      <section className="bg-white px-4 pt-6 sm:px-6 sm:pt-8">
-        <div className="clip-notch relative isolate mx-auto flex min-h-[26rem] max-w-6xl items-center overflow-hidden rounded-3xl bg-brand-black px-6 py-24 text-white sm:px-14">
-          <Image
-            src="/images/hero/hero-crop-spray.jpg"
-            alt=""
-            fill
-            priority
-            sizes="(max-width: 1200px) 100vw, 1152px"
-            className="-z-20 object-cover opacity-60"
-          />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-black/95 via-brand-black/70 to-brand-black/20" />
-          <div className="grid w-full gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
-            <div>
-              <p className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] text-white/70 uppercase">
-                <span aria-hidden="true" className="font-display tracking-[-0.1em] text-brand-blue-light">
-                  &rsaquo;&rsaquo;&rsaquo;
-                </span>
-                What We Offer
-              </p>
-              <h1 className="mt-5 font-display text-4xl leading-[1.1] font-light tracking-[-0.02em] text-balance sm:text-6xl">
-                Drone Services for Every Sector
-              </h1>
-            </div>
-            <div className="flex flex-col gap-6">
-              <p className="text-sm leading-relaxed text-white/80 sm:text-base">
-                From precision agricultural spraying to wildlife surveillance and infrastructure
-                inspection — Nkem Aeronautics delivers UAV solutions across Zambia and Africa.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/signup"
-                  className="group inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-brand-blue-dark"
-                >
-                  Get Started
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 rounded-md border border-white/30 px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-white/10"
-                >
-                  Contact Us
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        image="/images/hero/hero-crop-spray.jpg"
+        eyebrow="What We Offer"
+        title="Drone Services for Every Sector"
+        intro="From precision agricultural spraying to wildlife surveillance and infrastructure inspection — Nkem Aeronautics delivers UAV solutions across Zambia and Africa."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
+      >
+        <Link href="/signup" className={BTN_PRIMARY}>
+          Get Started
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+        <Link href="/contact" className={BTN_SECONDARY}>
+          Contact Us
+        </Link>
+      </PageHero>
 
       <ServicesOverview />
 

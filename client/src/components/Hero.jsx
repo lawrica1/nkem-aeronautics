@@ -1,33 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { MessageCircle, ArrowRight } from "lucide-react";
 import { hasAccount } from "@/lib/api";
+import { Eyebrow } from "@/components/SectionHeading";
 
 const WHATSAPP_NUMBER = "237670439117";
 
-// Jump links under the hero card, styled as the template's feature tabs.
-const HIGHLIGHTS = [
-  { label: "Precision Aerial Spraying", href: "#services" },
-  { label: "Farmer Logbook IDs", href: "#logbook" },
-  { label: "Fleet Capabilities", href: "#fleet" },
+// Photo links under the title card, styled after the catalog cover strip.
+const STRIP = [
+  { label: "Precision Aerial Spraying", href: "/services/agricultural", image: "/images/services/agricultural-spraying.jpg" },
+  { label: "Wildlife & Surveillance", href: "/services/wildlife", image: "/images/services/wildlife-surveillance.jpg" },
+  { label: "Product Catalog 2026", href: "/products", image: "/images/about/manufacturing-facility.jpeg" },
 ];
-
-function HudScale({ flip }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`absolute inset-x-[8%] flex items-center gap-3 ${flip ? "bottom-10 sm:bottom-12" : "top-10 sm:top-12"}`}
-    >
-      <span className={`hud-ticks h-3 flex-1 ${flip ? "rotate-180" : ""}`} />
-      <span className="rounded border border-white/30 bg-white/10 px-2 py-0.5 font-mono text-[10px] tracking-widest text-white/80 backdrop-blur-sm">
-        {flip ? "28.28°E" : "15.42°S"}
-      </span>
-      <span className={`hud-ticks h-3 flex-1 ${flip ? "rotate-180" : ""}`} />
-    </div>
-  );
-}
 
 export function Hero() {
   // Starts false to match the server render, then syncs after mount —
@@ -39,69 +26,73 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="bg-white px-4 pt-6 sm:px-6 sm:pt-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="clip-notch relative isolate flex min-h-[34rem] items-center overflow-hidden rounded-3xl bg-brand-black text-white sm:min-h-[36rem]">
-          {/* Background video only — no poster, so the card's dark fill shows until the first frame loads. */}
-          <video
-            className="absolute inset-0 -z-20 size-full object-cover"
-            src="/videos/hero-background.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-brand-black/90 via-brand-black/55 to-brand-black/30" />
+    <section className="relative isolate bg-brand-paper">
+      <div className="relative h-[24rem] w-full overflow-hidden sm:h-[34rem] lg:h-[38rem]">
+        {/* Poster keeps a real photograph on screen until the video's first frame loads. */}
+        <video
+          className="absolute inset-0 size-full object-cover"
+          src="/videos/hero-background.mp4"
+          poster="/images/products/family-fixed-wing.jpg"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      </div>
 
-          <HudScale />
-          <HudScale flip />
-
-          <div className="grid w-full gap-10 px-6 py-28 sm:px-12 lg:grid-cols-[1.35fr_1fr] lg:items-end lg:px-16">
-            <h1 className="animate-fade-up font-display text-[2.1rem] leading-[1.12] font-light tracking-[-0.02em] text-balance sm:text-5xl lg:text-[3.6rem]">
+      <div className="relative mx-auto -mt-32 max-w-6xl px-4 pb-14 sm:-mt-48 sm:px-6">
+        <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr] lg:items-end">
+          <div className="animate-fade-up rounded-2xl bg-white p-6 shadow-[0_24px_60px_-30px_rgba(11,13,18,0.45)] sm:p-10">
+            <Eyebrow>Zambia &middot; Africa</Eyebrow>
+            <h1 className="mt-5 font-display text-[2rem] leading-[1.1] font-light tracking-[-0.02em] text-balance text-brand-black sm:text-5xl">
               Advanced Aerial Solutions &amp; Unmanned Aerial Vehicles Manufacturer
             </h1>
-
-            <div className="animate-fade-up flex flex-col gap-6" style={{ animationDelay: "150ms" }}>
-              <p className="text-sm leading-relaxed text-white/80 sm:text-base">
-                Providing cutting-edge UAV technology, site preparation equipment, and autonomous
-                surveillance operations tailored across Zambia and Africa.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href={returning ? "/login" : "/signup"}
-                  className="group inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-brand-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  {returning ? "Log In to Portal" : "Sign Up — Nkem Portal"}
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md border border-white/30 bg-white/5 px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  <MessageCircle className="size-4" />
-                  WhatsApp
-                </a>
-              </div>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-neutral-600">
+              Providing cutting-edge UAV technology, site preparation equipment, and autonomous
+              surveillance operations tailored across Zambia and Africa.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href={returning ? "/login" : "/signup"}
+                className="group inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-brand-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue"
+              >
+                {returning ? "Log In to Portal" : "Sign Up — Nkem Portal"}
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 rounded-md border border-neutral-300 px-6 py-3 text-xs font-semibold tracking-[0.12em] text-brand-black uppercase transition-colors hover:border-brand-blue hover:text-brand-blue"
+              >
+                View Products
+              </Link>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.12em] text-brand-black uppercase hover:text-brand-blue"
+              >
+                <MessageCircle className="size-4" />
+                WhatsApp
+              </a>
             </div>
           </div>
-        </div>
 
-        <nav aria-label="Highlights" className="mt-6 grid grid-cols-3 border-b border-neutral-200 text-center">
-          {HIGHLIGHTS.map(({ label, href }, i) => (
-            <a
-              key={href}
-              href={href}
-              className={`relative px-2 pb-4 text-[10px] font-semibold tracking-[0.14em] uppercase transition-colors hover:text-brand-blue sm:text-xs ${
-                i === 0 ? "text-brand-black" : "text-neutral-500"
-              }`}
-            >
-              {label}
-              {i === 0 && <span className="absolute inset-x-[15%] -bottom-px h-0.5 bg-brand-blue" />}
-            </a>
-          ))}
-        </nav>
+          <ul className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+            {STRIP.map((s) => (
+              <li key={s.href}>
+                <Link
+                  href={s.href}
+                  className="group relative flex h-24 items-end overflow-hidden rounded-xl border-2 border-white bg-white shadow-md sm:h-28 lg:h-[5.6rem]"
+                >
+                  <Image src={s.image} alt="" fill sizes="(max-width: 1024px) 33vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <span className="relative m-2 rounded-md bg-white/95 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] text-brand-black uppercase sm:text-[11px]">
+                    {s.label}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
