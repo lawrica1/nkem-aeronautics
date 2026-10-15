@@ -27,6 +27,7 @@ export const env = {
   adminEmail: process.env.ADMIN_EMAIL || "",
   adminPhone: process.env.ADMIN_PHONE || "",
   adminSignupCode: process.env.ADMIN_SIGNUP_CODE || "",
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY,
 };
 
 export function requireEnv(name, value) {

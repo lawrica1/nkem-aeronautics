@@ -65,6 +65,8 @@ services:
         sync: false
       - key: ADMIN_SIGNUP_CODE # leave empty to keep public admin sign-up disabled
         sync: false
+      - key: ANTHROPIC_API_KEY # website assistant; leave empty to keep the chat bubble showing contact options only
+        sync: false
 
   - type: web
     name: nkem-web

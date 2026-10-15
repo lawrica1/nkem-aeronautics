@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
+import { assistantRouter } from "./modules/assistant/assistant.routes.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { catalogRouter } from "./modules/catalog/catalog.routes.js";
 import { droneRouter } from "./modules/drones/drone.routes.js";
@@ -27,6 +28,9 @@ import { notFound } from "./shared/middleware/notFound.js";
 
 export function createApp() {
   const app = express();
+  // Behind Render's (or any single) proxy, req.ip must come from X-Forwarded-For, or every
+  // visitor shares the proxy's address in per-IP rate limits (e.g. the website assistant).
+  if (env.nodeEnv === "production") app.set("trust proxy", 1);
 
   app.use(helmet());
   // In dev, Next.js picks whatever port is free (3000, 3001, ...), so CLIENT_ORIGIN alone
@@ -65,6 +69,7 @@ export function createApp() {
   app.use("/api/payments", paymentRouter);
   app.use("/api/quotes", quoteRouter);
   app.use("/api/telemetry", telemetryRouter);
+  app.use("/api/assistant", assistantRouter);
 
   app.use(notFound);
   app.use(errorHandler);
