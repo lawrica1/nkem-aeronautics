@@ -26,6 +26,14 @@ import { telemetryRouter } from "./modules/telemetry/telemetry.routes.js";
 import { errorHandler } from "./shared/middleware/errorHandler.js";
 import { notFound } from "./shared/middleware/notFound.js";
 
+// A CORS_ORIGINS entry may use * for one host label, e.g.
+// https://nkem-web-*-team.vercel.app to allow every Vercel preview of the site.
+export function originPattern(origin) {
+  if (!origin.includes("*")) return origin;
+  const escaped = origin.split("*").map((part) => part.replace(/[.+?^${}()|[\]\\]/g, "\\$&"));
+  return new RegExp(`^${escaped.join("[a-z0-9-]+")}$`);
+}
+
 export function createApp() {
   const app = express();
   // Behind Render's (or any single) proxy, req.ip must come from X-Forwarded-For, or every
@@ -37,7 +45,7 @@ export function createApp() {
   // is too brittle. Allow any localhost port in dev; stay locked to the real origin in prod.
   const corsOrigin =
     env.nodeEnv === "production"
-      ? [env.clientOrigin, ...env.corsOrigins]
+      ? [env.clientOrigin, ...env.corsOrigins.map(originPattern)]
       : (origin, callback) => {
           if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) return callback(null, true);
           callback(new Error("Not allowed by CORS"));
