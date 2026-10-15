@@ -33,7 +33,7 @@ export function createApp() {
   // is too brittle. Allow any localhost port in dev; stay locked to the real origin in prod.
   const corsOrigin =
     env.nodeEnv === "production"
-      ? env.clientOrigin
+      ? [env.clientOrigin, ...env.corsOrigins]
       : (origin, callback) => {
           if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) return callback(null, true);
           callback(new Error("Not allowed by CORS"));

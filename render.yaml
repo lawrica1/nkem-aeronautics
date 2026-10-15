@@ -1,0 +1,84 @@
+# Render Blueprint for Nkem Aeronautics: the Express API (server/) and the Next.js site (client/).
+# Deploy: Render dashboard -> New -> Blueprint -> pick this repository. Render reads this file,
+# creates both services and asks for every value marked `sync: false` (secrets are entered
+# there, never committed). Full steps: docs/DEPLOY-RENDER.md.
+#
+# The database stays on Neon; paste its pooled connection string into DATABASE_URL.
+
+services:
+  - type: web
+    name: nkem-api
+    runtime: node
+    rootDir: server
+    region: frankfurt
+    plan: starter # free also works, but sleeps after 15 idle minutes (first request then takes ~1 min)
+    buildCommand: npm ci && npx prisma generate
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL # Neon connection string, keep ?sslmode=require&connect_timeout=15
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN # main site address used in emails and payment redirects, e.g. https://nkemaeronautics.com
+        sync: false
+      - key: CORS_ORIGINS # other site addresses, comma-separated, e.g. https://www.nkemaeronautics.com,https://nkem-web.onrender.com
+        sync: false
+      - key: TERMII_API_KEY # SMS codes are sent only when this is set; otherwise they are logged
+        sync: false
+      - key: TERMII_SENDER_ID
+        sync: false
+      - key: TERMII_CHANNEL
+        value: generic
+      - key: BREVO_API_KEY
+        sync: false
+      - key: SMTP_USER
+        value: nkem@nkemaeronautics.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_PASS
+        sync: false
+      - key: R2_ENDPOINT
+        sync: false
+      - key: R2_BUCKET
+        value: nkem-aeronautics-media
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_PUBLIC_BASE_URL
+        sync: false
+      - key: FLUTTERWAVE_SECRET_KEY
+        sync: false
+      - key: FLUTTERWAVE_WEBHOOK_HASH
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PHONE
+        sync: false
+      - key: ADMIN_SIGNUP_CODE # leave empty to keep public admin sign-up disabled
+        sync: false
+
+  - type: web
+    name: nkem-web
+    runtime: node
+    rootDir: client
+    region: frankfurt
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: NEXT_PUBLIC_API_URL # the API address plus /api, e.g. https://nkem-api.onrender.com/api (baked in at build time)
+        sync: false

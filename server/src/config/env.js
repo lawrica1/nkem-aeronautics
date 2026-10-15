@@ -5,6 +5,9 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
   clientOrigin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+  // Extra site addresses allowed to call the API (comma-separated), e.g. the www and
+  // onrender.com hosts. CLIENT_ORIGIN stays the single address used in email links.
+  corsOrigins: (process.env.CORS_ORIGINS || "").split(",").map((o) => o.trim().replace(/\/$/, "")).filter(Boolean),
   nodeEnv: process.env.NODE_ENV || "development",
   r2Endpoint: process.env.R2_ENDPOINT,
   r2Bucket: process.env.R2_BUCKET,
