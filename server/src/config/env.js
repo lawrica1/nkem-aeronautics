@@ -23,7 +23,6 @@ export const env = {
   flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
   adminEmail: process.env.ADMIN_EMAIL || "",
   adminPhone: process.env.ADMIN_PHONE || "",
-  adminSignupCode: process.env.ADMIN_SIGNUP_CODE || "",
 };
 
 export function requireEnv(name, value) {

@@ -26,7 +26,18 @@ export async function getBySlug(slug) {
   return product;
 }
 
-const EXTRA_FIELDS = ["slug", "description", "specs", "images", "featureBadges", "applications"];
+const EXTRA_FIELDS = [
+  "slug",
+  "description",
+  "specs",
+  "images",
+  "featureBadges",
+  "applications",
+  "highlight",
+  "tags",
+  "crops",
+  "service",
+];
 
 export async function create(body) {
   if (!body.name) throw new HttpError(400, "name is required.");

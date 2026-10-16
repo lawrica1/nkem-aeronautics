@@ -314,3 +314,15 @@ export function adminNewVerifiedUser({ userName, email, logbookId }) {
     ${btn("View in Admin Portal", `${env.clientOrigin}/admin/users`)}
   `);
 }
+
+export function adminNewAdminAlert({ name, email }) {
+  return base(`
+    ${badge("Security Notice", "#dc2626")}
+    <div style="margin-top:16px;">
+      ${heading("A new admin account was created")}
+      ${subheading("Someone signed up on the public admin signup page. If you don't recognise them, demote them on the Users page.")}
+    </div>
+    ${table(`${row("Name", name)}${row("Email", email)}`)}
+    ${btn("Review users", `${env.clientOrigin}/admin/users`)}
+  `);
+}
