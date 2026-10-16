@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import ExcelJS from "exceljs";
 import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
@@ -9,7 +8,8 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 import { signAdminToken } from "../../shared/middleware/auth.js";
 import { notify } from "../notifications/notification.service.js";
 import { sendEmail } from "../notifications/email.service.js";
-import { logbookVerifiedEmail, adminNewVerifiedUser } from "../notifications/email.templates.js";
+import { logbookVerifiedEmail, adminNewVerifiedUser, adminNewAdminAlert } from "../notifications/email.templates.js";
+import { escapeHtml } from "../../shared/utils/html.js";
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
@@ -69,22 +69,29 @@ export async function createAdmin({ name, email, password } = {}, actor) {
   // Never take over an existing account here; promote it from the Users page instead.
   if (!admin) throw new HttpError(409, "An account with this email already exists. Change its role on the Users page.");
 
-  console.info(`[audit] ${actor ? `admin ${actor.id}` : "signup code"} created admin ${admin.id}`);
+  console.info(`[audit] ${actor ? `admin ${actor.id}` : "public signup"} created admin ${admin.id}`);
   return serializeUser(admin);
 }
 
-const sha256 = (value) => crypto.createHash("sha256").update(String(value)).digest();
-
-// Public signup, gated by ADMIN_SIGNUP_CODE. Unset code = signup disabled.
-export async function signup({ code, ...body } = {}) {
-  if (!env.adminSignupCode) throw new HttpError(403, "Admin signup is disabled.");
+// Public signup: anyone who reaches /admin/signup can become an admin (owner's decision).
+// Disabled when ADMIN_EMAIL is unset; that inbox is alerted on every new admin.
+export async function signup(body = {}) {
+  if (!env.adminEmail) throw new HttpError(403, "Admin signup is disabled.");
   // Global key: signups are rare, and a per-IP key is trivially rotated around.
   enforce("admin-signup", { limit: 10, windowMs: 15 * 60_000 }, "Too many admin signup attempts.");
-  if (!crypto.timingSafeEqual(sha256(code), sha256(env.adminSignupCode))) {
-    throw new HttpError(403, "Invalid signup code.");
-  }
 
-  const admin = await createAdmin(body, null);
+  const admin = await createAdmin(body, null).catch((err) => {
+    // createAdmin's 409 text points at the Users page, which a signup visitor can't reach.
+    if (err instanceof HttpError && err.status === 409) {
+      throw new HttpError(409, "An account with this email already exists. Sign in instead.");
+    }
+    throw err;
+  });
+  sendEmail(
+    env.adminEmail,
+    "New admin account created",
+    adminNewAdminAlert({ name: escapeHtml(admin.name), email: escapeHtml(admin.email) }),
+  ).catch(() => {});
   return { token: signAdminToken(admin) };
 }
 
