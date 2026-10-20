@@ -1,4 +1,3 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { enforce } from "../../shared/utils/rateLimit.js";
 import { streamAnswer, validateMessages } from "./assistant.service.js";
 
@@ -12,7 +11,13 @@ const ERROR_TEXT =
 export async function chat(req, res) {
   enforce(`assistant:${req.ip}`, { limit: 30, windowMs: 60 * 60_000 }, "You've sent a lot of messages.");
   const messages = validateMessages(req.body?.messages);
-  const stream = streamAnswer(messages);
+
+  // Stop generating (and paying for) tokens when the visitor closes the chat mid-answer.
+  const abort = new AbortController();
+  res.on("close", () => {
+    if (!res.writableFinished) abort.abort();
+  });
+  const answer = streamAnswer(messages, abort.signal);
 
   let started = false;
   const start = () => {
@@ -25,33 +30,26 @@ export async function chat(req, res) {
     res.flushHeaders();
   };
 
-  // Stop generating (and paying for) tokens when the visitor closes the chat mid-answer.
-  res.on("close", () => {
-    if (!res.writableFinished) stream.abort();
-  });
-
-  stream.on("text", (text) => {
-    start();
-    res.write(text);
-  });
-
   try {
-    const message = await stream.finalMessage();
-    if (message.stop_reason === "refusal") {
-      const hadText = started;
-      start();
-      res.write(hadText ? `\n\n${FALLBACK_TEXT}` : FALLBACK_TEXT);
+    for await (const part of answer) {
+      if (part.done) {
+        if (part.refused) {
+          const hadText = started;
+          start();
+          res.write(hadText ? `\n\n${FALLBACK_TEXT}` : FALLBACK_TEXT);
+        }
+        console.log(`[assistant] ${part.log}`);
+      } else {
+        start();
+        res.write(part.text);
+      }
     }
-    const u = message.usage;
-    console.log(
-      `[assistant] model=${message.model} stop=${message.stop_reason} in=${u.input_tokens} cache_read=${u.cache_read_input_tokens ?? 0} cache_write=${u.cache_creation_input_tokens ?? 0} out=${u.output_tokens}`,
-    );
     start();
     res.end();
   } catch (err) {
-    if (err instanceof Anthropic.APIUserAbortError) return; // visitor left; nothing to send
+    if (abort.signal.aborted) return; // visitor left; nothing to send
     if (!started) throw err;
-    console.error("[assistant] stream failed:", err instanceof Anthropic.APIError ? `${err.status} ${err.message}` : err);
+    console.error("[assistant] stream failed:", err?.status ? `${err.status} ${err.message}` : err);
     res.end(ERROR_TEXT);
   }
 }

@@ -65,7 +65,9 @@ services:
         sync: false
       - key: ADMIN_SIGNUP_CODE # leave empty to keep public admin sign-up disabled
         sync: false
-      - key: ANTHROPIC_API_KEY # website assistant; leave empty to keep the chat bubble showing contact options only
+      - key: ANTHROPIC_API_KEY # website assistant (Claude); set this or GEMINI_API_KEY, or neither to show contact options only
+        sync: false
+      - key: GEMINI_API_KEY # website assistant (Gemini), used when ANTHROPIC_API_KEY is empty
         sync: false
 
   - type: web

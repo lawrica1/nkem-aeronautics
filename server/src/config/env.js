@@ -29,6 +29,9 @@ export const env = {
   adminPhone: process.env.ADMIN_PHONE || "",
   adminSignupCode: process.env.ADMIN_SIGNUP_CODE || "",
   anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+  // Fallback provider for the website assistant when ANTHROPIC_API_KEY is not set.
+  geminiApiKey: process.env.GEMINI_API_KEY,
+  geminiModel: process.env.GEMINI_MODEL || "gemini-flash-latest",
 };
 
 export function requireEnv(name, value) {

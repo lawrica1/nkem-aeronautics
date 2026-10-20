@@ -85,7 +85,7 @@ export function AssistantWidget() {
       });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => null);
-        appendToLast(res.status === 503 || !data?.message ? UNAVAILABLE : data.message);
+        appendToLast(res.status >= 500 || !data?.message ? UNAVAILABLE : data.message);
         return;
       }
       const reader = res.body.getReader();

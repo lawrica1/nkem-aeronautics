@@ -61,7 +61,7 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 - `server/src/modules/payments`: Flutterwave online checkout (card/MTN MoMo/Orange Money), server-side transaction verification, webhook handling — feeds into the same `recordPayment` as manual admin-confirmed payments.
 - `server/src/modules/partRequests`: customer part-identification requests with photo/video attachments.
 - `server/src/modules/notifications`: outbound email (Gmail SMTP), currently used for receipt emails.
-- `server/src/modules/assistant`: public website chatbot (`POST /api/assistant/chat`) on the Claude API, streamed as plain text, rate-limited per IP. It answers only from `knowledge/company.md` (hand-edited) and `knowledge/catalog.md` (generated: `cd client && npm run build:assistant-knowledge`). Needs `ANTHROPIC_API_KEY`; without it the endpoint returns 503 and the widget shows contact details.
+- `server/src/modules/assistant`: public website chatbot (`POST /api/assistant/chat`) on the Claude API, streamed as plain text, rate-limited per IP. It answers only from `knowledge/company.md` (hand-edited) and `knowledge/catalog.md` (generated: `cd client && npm run build:assistant-knowledge`). Uses Claude when `ANTHROPIC_API_KEY` is set, otherwise Gemini when `GEMINI_API_KEY` is set (model `GEMINI_MODEL`, default `gemini-flash-latest`); with neither the endpoint returns 503 and the widget shows contact details.
 
 ## Known Production Gaps
 
