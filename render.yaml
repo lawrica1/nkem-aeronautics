@@ -12,7 +12,8 @@ services:
     rootDir: server
     region: frankfurt
     plan: starter # free also works, but sleeps after 15 idle minutes (first request then takes ~1 min)
-    buildCommand: npm ci && npx prisma generate
+    # db:sync creates/updates the tables; it refuses changes that would drop data, failing the deploy instead.
+    buildCommand: npm ci && npx prisma generate && npm run db:sync
     startCommand: npm start
     healthCheckPath: /health
     autoDeploy: true

@@ -46,6 +46,8 @@ The database stays on **Neon**. Nothing in Render stores data.
 
 ## 3. Check it works
 
+0. The `nkem-api` build runs `npm run db:sync`, which creates the database tables on a new (empty)
+   database and adds new columns later. It never drops data: a change that would, fails the deploy instead.
 1. Open `https://nkem-api.onrender.com/health`. It should answer with a short JSON status.
 2. Open the `nkem-web` address, sign up, and confirm you receive the code by SMS.
 3. Create the first admin from the `nkem-api` **Shell** tab:

@@ -10,6 +10,7 @@
     "test": "node --test \"test/**/*.test.js\"",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
+    "db:sync": "prisma db push --skip-generate",
     "create-admin": "node scripts/create-admin.mjs",
     "seed-drones": "node scripts/seed-drones.mjs",
     "seed-catalog": "node scripts/seed-catalog.mjs"
