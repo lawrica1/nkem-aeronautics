@@ -95,6 +95,16 @@ export async function signup(body = {}) {
   return { token: signAdminToken(admin) };
 }
 
+// groupBy keeps null and "" as separate groups; both mean "(none)", so merge them into one row.
+function countByLabel(rows, field) {
+  const counts = new Map();
+  for (const row of rows) {
+    const value = row[field] || "(none)";
+    counts.set(value, (counts.get(value) ?? 0) + row._count._all);
+  }
+  return [...counts].map(([value, count]) => ({ value, count }));
+}
+
 export async function getStats() {
   const verified = { isVerified: true };
   const [totalUsers, bySector, byCountry, byRegion, byCrop, byFirm, totalRequests, byStatus] =
@@ -122,9 +132,9 @@ export async function getStats() {
     totalRequests,
     bySector: bySector.map((row) => ({ value: row.sector, count: row._count._all })),
     byCountry: byCountry.map((row) => ({ value: row.country, count: row._count._all })),
-    byRegion: byRegion.map((row) => ({ value: row.region || "(none)", count: row._count._all })),
-    byCrop: byCrop.map((row) => ({ value: row.crop || "(none)", count: row._count._all })),
-    byFirm: byFirm.map((row) => ({ value: row.firm || "(none)", count: row._count._all })),
+    byRegion: countByLabel(byRegion, "region"),
+    byCrop: countByLabel(byCrop, "crop"),
+    byFirm: countByLabel(byFirm, "firm"),
     byStatus: byStatus.map((row) => ({ value: row.status, count: row._count._all })),
   };
 }
