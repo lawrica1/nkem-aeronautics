@@ -9,34 +9,47 @@ const body = { name: "New Admin", email: "New@x.com", password: "password123" };
 let created;
 prisma.user.create = async ({ data }) => (created = { id: "u1", ...data });
 env.jwtSecret ||= "test-secret";
+env.brevoApiKey = undefined;
+env.smtpPass = undefined;
 
-test("signup is disabled when no code is configured", async () => {
-  env.adminSignupCode = "";
-  reset("admin-signup");
-  await assert.rejects(signup({ ...body, code: "" }), /disabled/);
-});
-
-test("wrong code is rejected and creates nothing", async () => {
-  env.adminSignupCode = "s3cret";
+function fresh() {
+  env.adminEmail = "inbox@x.com";
   reset("admin-signup");
   created = undefined;
-  await assert.rejects(signup({ ...body, code: "wrong" }), /Invalid signup code/);
+}
+
+test("signup is disabled when no ADMIN_EMAIL is configured", async () => {
+  fresh();
+  env.adminEmail = "";
+  await assert.rejects(signup(body), /disabled/);
   assert.equal(created, undefined);
 });
 
-test("right code creates a verified admin and returns a token", async () => {
-  env.adminSignupCode = "s3cret";
-  reset("admin-signup");
-  const { token } = await signup({ ...body, code: "s3cret", role: "farmer" });
+test("signup creates a verified admin and returns a token", async () => {
+  fresh();
+  const { token } = await signup({ ...body, role: "farmer" });
   assert.ok(token);
   assert.equal(created.role, "admin");
   assert.equal(created.email, "new@x.com");
   assert.equal(created.isVerified, true);
 });
 
-test("repeated guesses are rate limited", async () => {
-  env.adminSignupCode = "s3cret";
-  reset("admin-signup");
-  for (let i = 0; i < 10; i++) await assert.rejects(signup({ ...body, code: "wrong" }), /Invalid/);
-  await assert.rejects(signup({ ...body, code: "s3cret" }), /Too many/);
+test("repeated signups are rate limited", async () => {
+  fresh();
+  for (let i = 0; i < 10; i++) await signup(body);
+  await assert.rejects(signup(body), /Too many/);
+});
+
+test("existing email tells the visitor to sign in", async () => {
+  fresh();
+  const { Prisma } = await import("@prisma/client");
+  const original = prisma.user.create;
+  prisma.user.create = async () => {
+    throw new Prisma.PrismaClientKnownRequestError("dup", { code: "P2002", clientVersion: "x" });
+  };
+  try {
+    await assert.rejects(signup(body), /Sign in instead/);
+  } finally {
+    prisma.user.create = original;
+  }
 });

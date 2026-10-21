@@ -31,7 +31,8 @@ function getTransporter() {
     transporter = nodemailer.createTransport({
       host: env.smtpHost,
       port: env.smtpPort,
-      secure: false,
+      // 465 is implicit TLS; 587 upgrades via STARTTLS. Wrong pairing just hangs until timeout.
+      secure: env.smtpPort === 465,
       auth: { user: env.smtpUser, pass: env.smtpPass },
     });
   }

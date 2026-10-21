@@ -12,7 +12,7 @@ import { apiRequest, setAdminToken } from "@/lib/api";
 
 export default function AdminSignupPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", password: "", code: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +43,7 @@ export default function AdminSignupPage() {
         <Image src="/images/logo.png" alt="Nkem Aeronautics" width={48} height={48} className="size-12 rounded-full" />
         <h1 className="mt-5 text-2xl font-bold text-brand-navy-dark">Admin Sign Up</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Internal use only. You need the admin signup code to create an account.
+          Internal use only.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -80,11 +80,6 @@ export default function AdminSignupPage() {
             </div>
             <p className="text-xs text-muted-foreground">At least 8 characters.</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="code">Signup code</Label>
-            <Input id="code" name="code" type="password" required autoComplete="off" value={form.code} onChange={handleChange} />
-          </div>
-
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <Button type="submit" className="h-10 w-full bg-brand-blue text-white hover:bg-brand-blue-dark" disabled={isPending}>
