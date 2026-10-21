@@ -59,6 +59,18 @@ export function AssistantWidget() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  // The free API host sleeps when idle and takes ~50s to wake. Nudge it once per visit when the
+  // page loads, so it is usually awake by the time someone opens the chat.
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("nkem_api_woken")) return;
+      sessionStorage.setItem("nkem_api_woken", "1");
+    } catch {
+      // storage unavailable (private mode): still send the nudge
+    }
+    fetch(`${new URL(getApiBaseUrl()).origin}/health`, { mode: "no-cors" }).catch(() => {});
+  }, []);
+
   async function send(text) {
     const question = text.trim();
     if (!question || busy) return;

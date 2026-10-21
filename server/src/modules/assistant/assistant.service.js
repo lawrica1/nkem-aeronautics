@@ -76,11 +76,21 @@ async function* streamClaude(messages, signal) {
 
 async function* streamGemini(messages, signal) {
   gemini ??= new GoogleGenAI({ apiKey: env.geminiApiKey });
-  const stream = await gemini.models.generateContentStream({
-    model: env.geminiModel,
-    contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
-    config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 4096, abortSignal: signal },
-  });
+  const request = (config) =>
+    gemini.models.generateContentStream({
+      model: env.geminiModel,
+      contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+      config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 4096, abortSignal: signal, ...config },
+    });
+  // Catalog questions don't need long reasoning, and thinking delays the first word by seconds.
+  // Models that don't accept a thinking level reject it with a 400, so retry once without it.
+  let stream;
+  try {
+    stream = await request({ thinkingConfig: { thinkingLevel: "MINIMAL" } });
+  } catch (err) {
+    if (err?.status !== 400 || signal?.aborted) throw err;
+    stream = await request({});
+  }
   let last;
   for await (const chunk of stream) {
     last = chunk;
