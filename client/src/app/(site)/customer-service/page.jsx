@@ -1,5 +1,6 @@
 import { Phone, Mail } from "lucide-react";
 import { ContactMessageForm } from "@/components/ContactMessageForm";
+import { PageHero } from "@/components/PageHero";
 
 export const metadata = {
   title: "Customer Service — Nkem Aeronautics",
@@ -14,17 +15,13 @@ const QUICK_CONTACTS = [
 export default function CustomerServicePage() {
   return (
     <main className="flex-1">
-      <section className="bg-brand-navy px-6 py-20 text-white">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
-            We&apos;re Here To Help
-          </p>
-          <h1 className="text-4xl font-bold sm:text-5xl">Customer Service</h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-white/70">
-            Reach our team directly, or drop a message below and we&apos;ll get back to you.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        image="/images/about/manufacturing-facility.jpeg"
+        eyebrow="We're Here To Help"
+        title="Customer Service"
+        intro="Reach our team directly, or drop a message below and we'll get back to you."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Customer Service" }]}
+      />
 
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl">

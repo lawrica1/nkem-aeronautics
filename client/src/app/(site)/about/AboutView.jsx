@@ -3,6 +3,7 @@
 import { MapPin, Users, FileText, ShieldCheck, Rocket, BadgeCheck } from "lucide-react";
 import { useNews } from "@/hooks/useNews";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PageHero } from "@/components/PageHero";
 
 // Milestone figures reused from the About copy (founding year, patent counts, qualifications) —
 // no separate Milestone copy was supplied by the client; confirm this is the intended presentation.
@@ -151,17 +152,13 @@ function CompanyTab() {
 export function AboutView() {
   return (
     <main className="flex-1">
-      {/* Page hero */}
-      <section className="bg-brand-navy px-6 py-20 text-white">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
-            Lusaka, Zambia
-          </p>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            About <span className="text-white">Nkem Aeronautics</span>
-          </h1>
-        </div>
-      </section>
+      <PageHero
+        image="/images/products/family-fixed-wing.jpg"
+        eyebrow="Lusaka, Zambia"
+        title="About Nkem Aeronautics"
+        intro="Advanced aerial solutions and UAV manufacturing for agriculture, conservation, survey, mining and logistics across Africa."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Company" }]}
+      />
 
       <section className="px-6">
         <Tabs defaultValue="about" className="mx-auto w-full max-w-6xl">
