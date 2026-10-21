@@ -80,48 +80,92 @@ async function* streamClaude(messages, signal) {
   };
 }
 
+// Gemini's free tier sometimes queues requests for 30s+ at busy times. If the first word hasn't
+// arrived by then, the same question also goes to the fallback model and the faster one wins.
+const HEDGE_AFTER_MS = 6000;
+
+const visibleText = (chunk) =>
+  chunk?.candidates?.[0]?.content?.parts
+    ?.filter((p) => typeof p.text === "string" && !p.thought)
+    .map((p) => p.text)
+    .join("") ?? "";
+
 async function* streamGemini(messages, signal) {
   gemini ??= new GoogleGenAI({ apiKey: env.geminiApiKey });
-  const request = (model, config) =>
+  const contents = messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
+  const request = (model, config, abortSignal) =>
     gemini.models.generateContentStream({
       model,
-      contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
-      config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 4096, abortSignal: signal, ...config },
+      contents,
+      config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 4096, abortSignal, ...config },
     });
-  // Catalog questions don't need long reasoning, and thinking delays the first word by seconds.
-  // Models that don't accept a thinking level reject it with a 400, so retry once without it.
-  const start = async (model) => {
+
+  // Opens a stream on one model and waits for its first visible text (or its end), so callers
+  // can tell which model is actually answering. Each attempt can be cancelled on its own.
+  const open = async (model, ctrl = new AbortController()) => {
+    if (signal?.aborted) ctrl.abort();
+    signal?.addEventListener("abort", () => ctrl.abort(), { once: true });
     try {
-      return await request(model, { thinkingConfig: { thinkingLevel: "MINIMAL" } });
+      // Catalog questions don't need long reasoning, and thinking delays the first word.
+      // Models that don't accept a thinking level reject it with a 400, so retry without it.
+      let stream;
+      try {
+        stream = await request(model, { thinkingConfig: { thinkingLevel: "MINIMAL" } }, ctrl.signal);
+      } catch (err) {
+        if (err?.status !== 400 || ctrl.signal.aborted) throw err;
+        stream = await request(model, {}, ctrl.signal);
+      }
+      const it = stream[Symbol.asyncIterator]();
+      for (;;) {
+        const { value, done } = await it.next();
+        if (done) return { model, ctrl, it, first: "", last: undefined, ended: true };
+        const text = visibleText(value);
+        if (text || value?.candidates?.[0]?.finishReason || value?.promptFeedback?.blockReason) {
+          return { model, ctrl, it, first: text, last: value, ended: false };
+        }
+      }
     } catch (err) {
-      if (err?.status !== 400 || signal?.aborted) throw err;
-      return request(model, {});
+      ctrl.abort();
+      throw err;
     }
   };
-  // The free tier is the first to be turned away when Google is busy (503/429). Retry the main
-  // model once after a short pause, then try the lighter fallback model before giving up.
-  const attempts = [env.geminiModel, env.geminiModel, env.geminiFallbackModel].filter(Boolean);
-  let stream;
-  let model;
-  for (const [i, candidate] of attempts.entries()) {
-    try {
-      model = candidate;
-      stream = await start(candidate);
-      break;
-    } catch (err) {
-      const busy = [429, 500, 503].includes(err?.status);
-      if (!busy || signal?.aborted || i === attempts.length - 1) throw err;
-      console.warn(`[assistant] ${candidate} busy (${err.status}), retrying`);
-      await sleep(i === 0 ? 1500 : 500, signal);
+
+  const [main, backup] = [env.geminiModel, env.geminiFallbackModel];
+  const ctrls = [new AbortController()];
+  const tries = [open(main, ctrls[0])];
+  if (backup) {
+    // Start the backup model when the main one fails (e.g. 503 "high demand") or is slow.
+    const settled = await Promise.race([
+      tries[0].then(() => "ok", () => "failed"),
+      sleep(HEDGE_AFTER_MS, signal).then(() => "slow"),
+    ]);
+    if (settled !== "ok" && !signal?.aborted) {
+      console.warn(`[assistant] ${main} ${settled}, also asking ${backup}`);
+      ctrls.push(new AbortController());
+      tries.push(open(backup, ctrls[1]));
     }
   }
-  let last;
-  for await (const chunk of stream) {
-    last = chunk;
-    const text = chunk.candidates?.[0]?.content?.parts
-      ?.filter((p) => typeof p.text === "string" && !p.thought)
-      .map((p) => p.text)
-      .join("");
+  let winner;
+  try {
+    winner = await Promise.any(tries);
+  } catch (err) {
+    const first = err.errors?.[0] ?? err;
+    // Both busy: one last try on the main model after a short pause.
+    if (signal?.aborted || ![429, 500, 503].includes(first?.status)) throw first;
+    await sleep(1000, signal);
+    winner = await open(main);
+  }
+  // Cancel the slower attempt right away so it stops using quota.
+  for (const ctrl of ctrls) if (ctrl !== winner.ctrl) ctrl.abort();
+
+  const model = winner.model;
+  let last = winner.last;
+  if (winner.first) yield { text: winner.first };
+  while (!winner.ended) {
+    const { value, done } = await winner.it.next();
+    if (done) break;
+    last = value;
+    const text = visibleText(value);
     if (text) yield { text };
   }
   const finish = last?.candidates?.[0]?.finishReason ?? "none";
