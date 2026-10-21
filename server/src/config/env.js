@@ -31,7 +31,10 @@ export const env = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY,
   // Fallback provider for the website assistant when ANTHROPIC_API_KEY is not set.
   geminiApiKey: process.env.GEMINI_API_KEY,
-  geminiModel: process.env.GEMINI_MODEL || "gemini-flash-latest",
+  // Flash-Lite starts answering fastest, which suits short catalog questions.
+  geminiModel: process.env.GEMINI_MODEL || "gemini-flash-lite-latest",
+  // Model tried when the main one is overloaded; set GEMINI_FALLBACK_MODEL= (empty) to disable.
+  geminiFallbackModel: process.env.GEMINI_FALLBACK_MODEL ?? "gemini-flash-latest",
 };
 
 export function requireEnv(name, value) {

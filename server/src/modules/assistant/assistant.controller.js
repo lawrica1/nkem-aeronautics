@@ -18,6 +18,8 @@ export async function chat(req, res) {
     if (!res.writableFinished) abort.abort();
   });
   const answer = streamAnswer(messages, abort.signal);
+  const startedAt = Date.now();
+  let firstTextMs;
 
   let started = false;
   const start = () => {
@@ -38,8 +40,9 @@ export async function chat(req, res) {
           start();
           res.write(hadText ? `\n\n${FALLBACK_TEXT}` : FALLBACK_TEXT);
         }
-        console.log(`[assistant] ${part.log}`);
+        console.log(`[assistant] ${part.log} first_ms=${firstTextMs ?? "none"} total_ms=${Date.now() - startedAt}`);
       } else {
+        firstTextMs ??= Date.now() - startedAt;
         start();
         res.write(part.text);
       }
