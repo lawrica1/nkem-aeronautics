@@ -12,6 +12,12 @@ const MAX_TOTAL_CHARS = 16000;
 // Gemini finish reasons that mean the answer was blocked rather than completed.
 const GEMINI_BLOCKED = new Set(["SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"]);
 
+const sleep = (ms, signal) =>
+  new Promise((resolve) => {
+    const t = setTimeout(resolve, ms);
+    signal?.addEventListener("abort", () => (clearTimeout(t), resolve()), { once: true });
+  });
+
 let anthropic;
 let gemini;
 
@@ -76,20 +82,38 @@ async function* streamClaude(messages, signal) {
 
 async function* streamGemini(messages, signal) {
   gemini ??= new GoogleGenAI({ apiKey: env.geminiApiKey });
-  const request = (config) =>
+  const request = (model, config) =>
     gemini.models.generateContentStream({
-      model: env.geminiModel,
+      model,
       contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
       config: { systemInstruction: SYSTEM_PROMPT, maxOutputTokens: 4096, abortSignal: signal, ...config },
     });
   // Catalog questions don't need long reasoning, and thinking delays the first word by seconds.
   // Models that don't accept a thinking level reject it with a 400, so retry once without it.
+  const start = async (model) => {
+    try {
+      return await request(model, { thinkingConfig: { thinkingLevel: "MINIMAL" } });
+    } catch (err) {
+      if (err?.status !== 400 || signal?.aborted) throw err;
+      return request(model, {});
+    }
+  };
+  // The free tier is the first to be turned away when Google is busy (503/429). Retry the main
+  // model once after a short pause, then try the lighter fallback model before giving up.
+  const attempts = [env.geminiModel, env.geminiModel, env.geminiFallbackModel].filter(Boolean);
   let stream;
-  try {
-    stream = await request({ thinkingConfig: { thinkingLevel: "MINIMAL" } });
-  } catch (err) {
-    if (err?.status !== 400 || signal?.aborted) throw err;
-    stream = await request({});
+  let model;
+  for (const [i, candidate] of attempts.entries()) {
+    try {
+      model = candidate;
+      stream = await start(candidate);
+      break;
+    } catch (err) {
+      const busy = [429, 500, 503].includes(err?.status);
+      if (!busy || signal?.aborted || i === attempts.length - 1) throw err;
+      console.warn(`[assistant] ${candidate} busy (${err.status}), retrying`);
+      await sleep(i === 0 ? 1500 : 500, signal);
+    }
   }
   let last;
   for await (const chunk of stream) {
@@ -106,6 +130,6 @@ async function* streamGemini(messages, signal) {
   yield {
     done: true,
     refused: Boolean(blocked) || GEMINI_BLOCKED.has(finish),
-    log: `model=${env.geminiModel} stop=${blocked ?? finish} in=${u.promptTokenCount ?? 0} out=${u.candidatesTokenCount ?? 0}`,
+    log: `model=${model} stop=${blocked ?? finish} in=${u.promptTokenCount ?? 0} out=${u.candidatesTokenCount ?? 0}`,
   };
 }

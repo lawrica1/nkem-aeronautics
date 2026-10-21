@@ -32,6 +32,8 @@ export const env = {
   // Fallback provider for the website assistant when ANTHROPIC_API_KEY is not set.
   geminiApiKey: process.env.GEMINI_API_KEY,
   geminiModel: process.env.GEMINI_MODEL || "gemini-flash-latest",
+  // Lighter model tried when the main one is overloaded; set GEMINI_FALLBACK_MODEL= (empty) to disable.
+  geminiFallbackModel: process.env.GEMINI_FALLBACK_MODEL ?? "gemini-flash-lite-latest",
 };
 
 export function requireEnv(name, value) {
