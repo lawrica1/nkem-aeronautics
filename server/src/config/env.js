@@ -20,6 +20,8 @@ export const env = {
   smtpUser: process.env.SMTP_USER || "nkem@nkemaeronautics.com",
   smtpPass: process.env.SMTP_PASS,
   brevoApiKey: process.env.BREVO_API_KEY,
+  emailFromAddress: process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER || "nkem@nkemaeronautics.com",
+  emailFromName: process.env.EMAIL_FROM_NAME || "Nkem Aeronautics",
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
   flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
   adminEmail: process.env.ADMIN_EMAIL || "",
