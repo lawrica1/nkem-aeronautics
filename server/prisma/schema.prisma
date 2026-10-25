@@ -237,7 +237,7 @@ model PaymentAttempt {
   id           String   @id @default(cuid())
   orderId      String
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  provider     String   @default("flutterwave")
+  provider     String   @default("unconfigured")
   txRef        String   @unique
   providerTxId String?
   status       String   @default("pending")

@@ -3,35 +3,11 @@
 import Link from "next/link";
 import { Package } from "lucide-react";
 import { useMyOrders } from "@/hooks/useOrders";
-import { useStartCheckout } from "@/hooks/usePayments";
 import { formatXAF } from "@/lib/currency";
-import { Button } from "@/components/ui/button";
 
 function formatDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-}
-
-function PayOnlineButton({ orderId }) {
-  const startCheckout = useStartCheckout();
-
-  return (
-    <div>
-      <Button
-        size="sm"
-        disabled={startCheckout.isPending}
-        onClick={() =>
-          startCheckout.mutate(orderId, {
-            onSuccess: (data) => { window.location.href = data.checkoutUrl; },
-          })
-        }
-        className="bg-brand-navy text-white hover:bg-brand-navy/90"
-      >
-        {startCheckout.isPending ? "Redirecting…" : "Pay Online"}
-      </Button>
-      {startCheckout.isError && <p className="mt-1 text-xs text-destructive">{startCheckout.error.message}</p>}
-    </div>
-  );
 }
 
 export function OrdersList() {
@@ -58,7 +34,6 @@ export function OrdersList() {
               <th className="px-4 py-3 font-medium">Date</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Receipt</th>
-              <th className="px-4 py-3 font-medium"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -81,11 +56,6 @@ export function OrdersList() {
                     </Link>
                   ) : (
                     "—"
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  {order.status === "pending_payment" && order.channel === "online" && (
-                    <PayOnlineButton orderId={order.id} />
                   )}
                 </td>
               </tr>

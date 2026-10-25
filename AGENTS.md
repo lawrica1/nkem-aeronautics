@@ -58,7 +58,6 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 - `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.
 - `server/src/modules/operations`: pilot/drone assignment against a service request, results, farmer reviews.
 - `server/src/modules/products`, `server/src/modules/orders`: sellable catalogue, orders, manually-recorded payments, auto-issued receipts.
-- `server/src/modules/payments`: Flutterwave online checkout (card/MTN MoMo/Orange Money), server-side transaction verification, webhook handling — feeds into the same `recordPayment` as manual admin-confirmed payments.
 - `server/src/modules/partRequests`: customer part-identification requests with photo/video attachments.
 - `server/src/modules/notifications`: outbound email (Gmail SMTP), currently used for receipt emails.
 
@@ -66,7 +65,7 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 
 - Signup and password-reset verification are email-only through Brevo. Telephone is stored strictly as contact information.
 - Receipt emails use Gmail SMTP (`SMTP_PASS`) with the same console-log fallback; no other email/notification types are wired yet (request-status changes, operation completed, etc.) and there's no in-portal notification list.
-- Online checkout is live via Flutterwave (card/MTN MoMo/Orange Money) alongside the existing admin-confirmed methods (cash, bank transfer). `FLUTTERWAVE_SECRET_KEY`/`FLUTTERWAVE_WEBHOOK_HASH` need real (sandbox or live) values before checkout will actually work — until then, starting a checkout fails loudly rather than pretending to succeed.
+- Online checkout is intentionally disabled until a payment provider is selected. Admin-confirmed cash and bank-transfer records remain available.
 - Pilot accounts are profile records only, not login accounts — no pilot self-service portal yet.
 - Firm dashboard is not implemented.
 - Product media files for the pasted eVTOL images still need to be added to the repo.

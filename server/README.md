@@ -22,8 +22,6 @@ CLIENT_ORIGIN=http://localhost:3000
 BREVO_API_KEY=replace-with-brevo-api-key
 EMAIL_FROM_ADDRESS=nkem@nkemaeronautics.com
 EMAIL_FROM_NAME=Nkem Aeronautics
-FLUTTERWAVE_SECRET_KEY=replace-with-flutterwave-secret-key
-FLUTTERWAVE_WEBHOOK_HASH=replace-with-a-random-webhook-secret
 ```
 
 Do not commit real database URLs or secrets.

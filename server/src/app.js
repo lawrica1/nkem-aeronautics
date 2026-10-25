@@ -15,7 +15,6 @@ import { orderRouter } from "./modules/orders/order.routes.js";
 import { organizationRouter } from "./modules/organizations/organization.routes.js";
 import { partRequestRouter } from "./modules/partRequests/partRequest.routes.js";
 import { partnerRouter } from "./modules/partners/partner.routes.js";
-import { paymentRouter } from "./modules/payments/payment.routes.js";
 import { pilotRouter } from "./modules/pilots/pilot.routes.js";
 import { productRouter } from "./modules/products/product.routes.js";
 import { quoteRouter } from "./modules/quotes/quote.routes.js";
@@ -62,7 +61,6 @@ export function createApp() {
   app.use("/api/news", newsRouter);
   app.use("/api/organizations", organizationRouter);
   app.use("/api/partners", partnerRouter);
-  app.use("/api/payments", paymentRouter);
   app.use("/api/quotes", quoteRouter);
   app.use("/api/telemetry", telemetryRouter);
 
