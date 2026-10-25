@@ -19,14 +19,9 @@ PORT=5000
 DATABASE_URL=postgresql://USER:PASSWORD@HOST/neondb?sslmode=require
 JWT_SECRET=replace-with-a-long-random-string
 CLIENT_ORIGIN=http://localhost:3000
-OTP_PROVIDER=console
-TERMII_API_KEY=replace-with-termii-api-key
-TERMII_SENDER_ID=N-Alert
-TERMII_CHANNEL=generic
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=nkemaeronautics@gmail.com
-SMTP_PASS=replace-with-a-gmail-app-password
+BREVO_API_KEY=replace-with-brevo-api-key
+EMAIL_FROM_ADDRESS=nkem@nkemaeronautics.com
+EMAIL_FROM_NAME=Nkem Aeronautics
 FLUTTERWAVE_SECRET_KEY=replace-with-flutterwave-secret-key
 FLUTTERWAVE_WEBHOOK_HASH=replace-with-a-random-webhook-secret
 ```

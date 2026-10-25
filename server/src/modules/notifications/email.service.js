@@ -41,6 +41,7 @@ function getTransporter() {
 
 export async function sendEmail(to, subject, html, { throwOnError = false } = {}) {
   if (!env.brevoApiKey && !env.smtpPass) {
+    if (throwOnError) throw new Error("No email provider is configured.");
     console.log(`[email] ${subject} -> ${to}`);
     return;
   }

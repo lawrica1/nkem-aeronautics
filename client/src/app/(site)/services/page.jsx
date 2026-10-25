@@ -13,7 +13,7 @@ const HOW_IT_WORKS = [
     step: "01",
     title: "Create Your Account",
     description:
-      "Register on the Nkem platform, select your sector, and verify your account via SMS to receive your unique ID.",
+      "Register on the Nkem platform, select your sector, and verify your account by email to receive your unique ID.",
   },
   {
     step: "02",

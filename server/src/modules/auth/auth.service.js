@@ -24,17 +24,14 @@ export async function signup(body) {
   validateSignup(body);
 
   const normalized = normalizeSignup(body);
-  const existing = normalized.email
-    ? await prisma.user.findUnique({ where: { email: normalized.email } })
-    : await prisma.user.findFirst({ where: { telephone: normalized.telephone } });
+  const existing = await prisma.user.findUnique({ where: { email: normalized.email } });
   if (existing?.isVerified) {
     throw new HttpError(409, "An account with this contact already exists. Try logging in.");
   }
 
-  // Send OTP to phone if provided, otherwise fall back to email
-  const otpChannel = normalized.telephone ? "sms" : "email";
-  const otpContact = otpChannel === "sms" ? normalized.telephone : normalized.email;
-  limitOtpSend(otpChannel, otpContact);
+  const otpChannel = "email";
+  const otpContact = normalized.email;
+  limitOtpSend(otpContact);
 
   const otp = generateOtp();
   const passwordHash = body.password ? await bcrypt.hash(body.password, 10) : null;
@@ -60,12 +57,9 @@ export async function signup(body) {
   }
 
   try {
-    await sendOtp(otpChannel, otpContact, otp);
+    await sendOtp(otpContact, otp);
   } catch (err) {
     console.error(`[signup] OTP delivery failed (${otpChannel} → ${otpContact}): ${err.message}`);
-    if (otpChannel === "sms") {
-      throw new HttpError(503, "SMS delivery is currently unavailable. Please sign up with an email address instead.");
-    }
     throw new HttpError(503, "Failed to send verification code. Please try again.");
   }
   return {
@@ -76,13 +70,15 @@ export async function signup(body) {
   };
 }
 
-export async function verifySignupOtp({ channel, contact, otp }) {
-  if (!channel || !contact || !otp) {
-    throw new HttpError(400, "channel, contact, and otp are required.");
+export async function verifySignupOtp({ email, otp }) {
+  if (!email || !otp) {
+    throw new HttpError(400, "email and otp are required.");
   }
 
+  const contact = email.toLowerCase().trim();
+
   const user = await prisma.user.findFirst({
-    where: { isVerified: false, otpChannel: channel, otpContact: contact },
+    where: { isVerified: false, otpChannel: "email", otpContact: contact },
   });
   if (!user?.otpHash) throw new HttpError(400, "No pending verification found for this contact.");
   if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
@@ -91,13 +87,13 @@ export async function verifySignupOtp({ channel, contact, otp }) {
 
   const valid = await verifyOtp(String(otp), user.otpHash);
   if (!valid) {
-    if (recordOtpFailure(channel, contact)) {
+    if (recordOtpFailure(contact)) {
       await prisma.user.update({ where: { id: user.id }, data: { otpHash: null, otpExpiresAt: null } });
       throw new HttpError(429, "Too many incorrect codes. Request a new verification code.");
     }
     throw new HttpError(400, "Invalid verification code.");
   }
-  clearOtpFailures(channel, contact);
+  clearOtpFailures(contact);
 
   const verifiedUser = await prisma.user.update({
     where: { id: user.id },
@@ -130,25 +126,25 @@ export async function verifySignupOtp({ channel, contact, otp }) {
   };
 }
 
-export async function resendSignupOtp({ channel, contact }) {
-  if (!channel || !contact) throw new HttpError(400, "channel and contact are required.");
-  if (!["sms", "email"].includes(channel)) throw new HttpError(400, "channel must be sms or email.");
+export async function resendSignupOtp({ email }) {
+  if (!email) throw new HttpError(400, "email is required.");
+  const contact = email.toLowerCase().trim();
 
   const user = await prisma.user.findFirst({
     where: {
       isVerified: false,
-      OR: [{ otpContact: contact }, { telephone: contact }, { email: contact.toLowerCase() }],
+      email: contact,
     },
   });
   if (!user) throw new HttpError(400, "No pending verification found for this contact.");
-  limitOtpSend(channel, contact);
+  limitOtpSend(contact);
 
   const otp = generateOtp();
   await prisma.user.update({
     where: { id: user.id },
     data: {
       otpHash: await hashOtp(otp),
-      otpChannel: channel,
+      otpChannel: "email",
       otpContact: contact,
       otpExpiresAt: otpExpiryDate(),
       otpResendCount: { increment: 1 },
@@ -157,12 +153,9 @@ export async function resendSignupOtp({ channel, contact }) {
   });
 
   try {
-    await sendOtp(channel, contact, otp);
+    await sendOtp(contact, otp);
   } catch (err) {
-    console.error(`[resend] OTP delivery failed (${channel} → ${contact}): ${err.message}`);
-    if (channel === "sms") {
-      throw new HttpError(503, "SMS delivery is currently unavailable. Please use the 'Send it to my email instead' option.");
-    }
+    console.error(`[resend] OTP email delivery failed for ${contact}: ${err.message}`);
     throw new HttpError(503, "Failed to send verification code. Please try again.");
   }
   return {
@@ -171,29 +164,27 @@ export async function resendSignupOtp({ channel, contact }) {
   };
 }
 
-export async function forgotPassword({ email, telephone }) {
-  if (!email && !telephone) throw new HttpError(400, "email or phone number is required.");
+export async function forgotPassword({ email }) {
+  if (!email) throw new HttpError(400, "email is required.");
+  const contact = email.toLowerCase().trim();
 
   const user = await prisma.user.findFirst({
     where: {
       isVerified: true,
-      ...(email ? { email: email.toLowerCase() } : { telephone }),
+      email: contact,
     },
   });
 
   // Always respond with success to prevent user enumeration
   if (!user) return { message: "If an account exists, a reset code has been sent." };
 
-  const channel = telephone && user.telephone === telephone ? "sms" : "email";
-  const contact = channel === "sms" ? user.telephone : user.email;
-
-  limitOtpSend(channel, contact);
+  limitOtpSend(contact);
   const otp = generateOtp();
   await prisma.user.update({
     where: { id: user.id },
     data: {
       otpHash: await hashOtp(otp),
-      otpChannel: channel,
+      otpChannel: "email",
       otpContact: contact,
       otpExpiresAt: otpExpiryDate(),
       otpLastSentAt: new Date(),
@@ -201,32 +192,28 @@ export async function forgotPassword({ email, telephone }) {
   });
 
   try {
-    await sendOtp(channel, contact, otp);
+    await sendOtp(contact, otp);
   } catch (err) {
-    console.error(`[forgot-password] OTP delivery failed (${channel} → ${contact}): ${err.message}`);
-    if (channel === "sms") {
-      throw new HttpError(503, "SMS delivery is currently unavailable. Please reset your password using your email address.");
-    }
+    console.error(`[forgot-password] OTP email delivery failed for ${contact}: ${err.message}`);
     throw new HttpError(503, "Failed to send reset code. Please try again.");
   }
   return {
     message: "If an account exists, a reset code has been sent.",
-    otpChannel: channel,
-    otpContact: contact,
+    email: contact,
     ...(env.nodeEnv !== "production" ? { otpDebug: otp } : {}),
   };
 }
 
-export async function resetPassword({ contact, otp, newPassword }) {
-  if (!contact || !otp || !newPassword) {
-    throw new HttpError(400, "contact, otp, and newPassword are required.");
+export async function resetPassword({ email, otp, newPassword }) {
+  if (!email || !otp || !newPassword) {
+    throw new HttpError(400, "email, otp, and newPassword are required.");
   }
   if (newPassword.length < 8) throw new HttpError(400, "Password must be at least 8 characters.");
 
   const user = await prisma.user.findFirst({
     where: {
       isVerified: true,
-      OR: [{ email: contact.toLowerCase() }, { telephone: contact }],
+      email: email.toLowerCase().trim(),
     },
   });
   if (!user?.otpHash) throw new HttpError(400, "No reset request found. Please request a new code.");
@@ -236,14 +223,14 @@ export async function resetPassword({ contact, otp, newPassword }) {
 
   const valid = await verifyOtp(String(otp), user.otpHash);
   if (!valid) {
-    if (recordOtpFailure(user.otpChannel, user.otpContact)) {
+    if (recordOtpFailure(user.otpContact)) {
       await prisma.user.update({ where: { id: user.id }, data: { otpHash: null, otpExpiresAt: null } });
       throw new HttpError(429, "Too many incorrect codes. Please request a new one.");
     }
     throw new HttpError(400, "Invalid code.");
   }
 
-  clearOtpFailures(user.otpChannel, user.otpContact);
+  clearOtpFailures(user.otpContact);
   await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -268,14 +255,14 @@ export async function resetPassword({ contact, otp, newPassword }) {
   return { message: "Password updated successfully. You can now log in." };
 }
 
-export async function login({ email, telephone, password, sector }) {
-  if (!email && !telephone) throw new HttpError(400, "email or phone number is required.");
+export async function login({ email, password, sector }) {
+  if (!email) throw new HttpError(400, "email is required.");
   if (!password) throw new HttpError(400, "password is required.");
 
   const user = await prisma.user.findFirst({
     where: {
       isVerified: true,
-      ...(email ? { email: email.toLowerCase() } : { telephone }),
+      email: email.toLowerCase().trim(),
     },
   });
 
@@ -283,8 +270,7 @@ export async function login({ email, telephone, password, sector }) {
     throw new HttpError(400, "This account was created without a password. Please set a password through your profile settings.");
   }
 
-  const identifier = email || telephone;
-  await checkPassword("user", identifier, user?.passwordHash, password);
+  await checkPassword("user", email, user?.passwordHash, password);
 
   // Persist the sector chosen at login time so the portal personalises correctly
   const sessionSector =

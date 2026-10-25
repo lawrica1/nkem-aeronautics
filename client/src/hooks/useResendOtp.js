@@ -3,7 +3,7 @@ import { apiRequest } from "@/lib/api";
 
 export function useResendOtp() {
   return useMutation({
-    mutationFn: ({ channel, contact }) =>
-      apiRequest("/auth/resend-otp", { method: "POST", body: { channel, contact } }),
+    mutationFn: ({ email }) =>
+      apiRequest("/auth/resend-otp", { method: "POST", body: { email } }),
   });
 }

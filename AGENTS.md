@@ -64,7 +64,7 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 
 ## Known Production Gaps
 
-- OTP delivery uses Termii SMS when `TERMII_API_KEY` is set; falls back to console logging otherwise (dev/testing) or if a send fails.
+- Signup and password-reset verification are email-only through Brevo. Telephone is stored strictly as contact information.
 - Receipt emails use Gmail SMTP (`SMTP_PASS`) with the same console-log fallback; no other email/notification types are wired yet (request-status changes, operation completed, etc.) and there's no in-portal notification list.
 - Online checkout is live via Flutterwave (card/MTN MoMo/Orange Money) alongside the existing admin-confirmed methods (cash, bank transfer). `FLUTTERWAVE_SECRET_KEY`/`FLUTTERWAVE_WEBHOOK_HASH` need real (sandbox or live) values before checkout will actually work — until then, starting a checkout fails loudly rather than pretending to succeed.
 - Pilot accounts are profile records only, not login accounts — no pilot self-service portal yet.

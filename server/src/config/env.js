@@ -12,9 +12,6 @@ export const env = {
   storageSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY,
   storageRegion: process.env.AWS_REGION || "auto",
   storageSignedUrlTtl: Number(process.env.STORAGE_SIGNED_URL_TTL) || 900,
-  termiiApiKey: process.env.TERMII_API_KEY,
-  termiiSenderId: process.env.TERMII_SENDER_ID ?? "",
-  termiiChannel: process.env.TERMII_CHANNEL || "generic",
   smtpHost: process.env.SMTP_HOST || "smtp.gmail.com",
   smtpPort: Number(process.env.SMTP_PORT) || 465,
   smtpUser: process.env.SMTP_USER || "nkem@nkemaeronautics.com",
@@ -25,7 +22,6 @@ export const env = {
   flutterwaveSecretKey: process.env.FLUTTERWAVE_SECRET_KEY,
   flutterwaveWebhookHash: process.env.FLUTTERWAVE_WEBHOOK_HASH,
   adminEmail: process.env.ADMIN_EMAIL || "",
-  adminPhone: process.env.ADMIN_PHONE || "",
 };
 
 export function requireEnv(name, value) {
