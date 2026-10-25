@@ -30,7 +30,7 @@ export async function listForUser(user) {
     include: { files: { orderBy: { createdAt: "asc" } }, operation: OPERATION_INCLUDE },
     orderBy: { createdAt: "desc" },
   });
-  return requests.map(serializeRequest);
+  return Promise.all(requests.map(serializeRequest));
 }
 
 export async function createForUser(user, body) {
@@ -106,11 +106,11 @@ export async function listForAdmin({ status, firm, country } = {}) {
     take: 100,
   });
 
-  return requests.map((request) => ({
-    ...serializeRequest(request),
+  return Promise.all(requests.map(async (request) => ({
+    ...(await serializeRequest(request)),
     user: request.user,
     partner: request.partner,
-  }));
+  })));
 }
 
 export async function assignPartner(id, body) {
@@ -133,7 +133,7 @@ export async function assignPartner(id, body) {
     });
   if (!request) throw new HttpError(404, "Service request not found.");
 
-  return { ...serializeRequest(request), partner: request.partner };
+  return { ...(await serializeRequest(request)), partner: request.partner };
 }
 
 // Partners get read-only visibility of what Nkem has explicitly shared with them —
