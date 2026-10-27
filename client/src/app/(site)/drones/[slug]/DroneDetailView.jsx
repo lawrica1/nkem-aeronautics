@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useProductBySlug } from "@/hooks/useProducts";
 import { APPLICATIONS } from "@/lib/applications";
+import { specEntries } from "@/lib/catalog";
 import { ProductRow } from "@/components/portal/ProductRow";
 
 export function DroneDetailView({ slug }) {
@@ -60,11 +61,11 @@ export function DroneDetailView({ slug }) {
             <ProductRow product={product} />
           </div>
 
-          {product.specs && Object.keys(product.specs).length > 0 && (
+          {specEntries(product.specs).length > 0 && (
             <div className="mt-8">
               <h2 className="font-semibold text-brand-navy-dark">Specifications</h2>
               <dl className="mt-3 divide-y divide-border rounded-xl border border-border text-sm">
-                {Object.entries(product.specs).map(([key, value]) => (
+                {specEntries(product.specs).map(([key, value]) => (
                   <div key={key} className="flex justify-between gap-4 px-4 py-2.5">
                     <dt className="text-muted-foreground">{key}</dt>
                     <dd className="font-medium text-brand-navy-dark">{value}</dd>

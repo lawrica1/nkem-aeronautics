@@ -1,9 +1,14 @@
+import { specEntries } from "@/lib/catalog";
+
 export function ProductCard({ product }) {
+  const image = product.images?.[0];
+  const specs = specEntries(product.specs);
+
   return (
     <div className="flex h-full flex-col rounded-lg border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      {product.image && (
+      {image && (
         <div className="mb-5 aspect-[4/3] overflow-hidden rounded-md bg-brand-input">
-          <img src={product.image} alt={product.name} className="size-full object-contain" />
+          <img src={image} alt={product.name} className="size-full object-contain" />
         </div>
       )}
 
@@ -23,15 +28,15 @@ export function ProductCard({ product }) {
       </p>
       <h3 className="mt-4 text-lg font-semibold text-brand-navy-dark">{product.name}</h3>
       <p className="mt-2 text-sm text-muted-foreground">{product.description}</p>
-      <p className="mt-4 text-sm font-medium text-brand-green">{product.spec}</p>
+      <p className="mt-4 text-sm font-medium text-brand-green">{product.highlight}</p>
 
       {product.availability && (
         <p className="mt-2 text-sm font-medium text-brand-navy-dark">{product.availability}</p>
       )}
 
-      {product.specs?.length > 0 && (
+      {specs.length > 0 && (
         <dl className="mt-5 grid gap-3 border-t border-border pt-5 text-sm">
-          {product.specs.map(([label, value]) => (
+          {specs.map(([label, value]) => (
             <div key={label} className="grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-3">
               <dt className="text-muted-foreground">{label}</dt>
               <dd className="font-medium text-brand-navy-dark">{value}</dd>
