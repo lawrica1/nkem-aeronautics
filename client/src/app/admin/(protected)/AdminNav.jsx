@@ -92,20 +92,17 @@ function Brand({ onClose }) {
 }
 
 function NavList({ pathname }) {
-  const [open, setOpen] = useState(() => new Set([groupOf(pathname)]));
+  // Accordion: only one group open at a time.
+  const [open, setOpen] = useState(() => groupOf(pathname));
 
   // Navigating into a collapsed group opens it, so the active page is always visible.
   useEffect(() => {
     const active = groupOf(pathname);
-    if (active) setOpen((prev) => (prev.has(active) ? prev : new Set(prev).add(active)));
+    if (active) setOpen(active);
   }, [pathname]);
 
   function toggle(title) {
-    setOpen((prev) => {
-      const next = new Set(prev);
-      next.has(title) ? next.delete(title) : next.add(title);
-      return next;
-    });
+    setOpen((prev) => (prev === title ? null : title));
   }
 
   return (
@@ -130,7 +127,7 @@ function NavList({ pathname }) {
               </li>
             );
           }
-          const isOpen = open.has(group.title);
+          const isOpen = open === group.title;
           const hasActive = group.title === groupOf(pathname);
           return (
             <li key={group.title}>
