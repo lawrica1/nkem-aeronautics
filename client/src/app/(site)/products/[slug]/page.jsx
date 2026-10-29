@@ -42,7 +42,7 @@ export default async function ProductDetailPage({ params }) {
           <ProductImage product={product} priority className="aspect-[4/3.2]" sizes="(max-width: 1024px) 100vw, 55vw" />
           <div className="flex flex-col">
             <Eyebrow>{family.name}</Eyebrow>
-            {product.model && (
+            {product.model && product.model !== product.name && (
               <p className="mt-5 text-xs font-semibold tracking-[0.14em] text-brand-blue uppercase">Model {product.model}</p>
             )}
             <h1 className="mt-2 font-display text-3xl leading-[1.12] font-normal tracking-[-0.02em] text-balance text-brand-black sm:text-4xl">

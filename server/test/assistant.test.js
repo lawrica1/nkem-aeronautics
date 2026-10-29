@@ -46,7 +46,7 @@ test("without an API key the assistant reports itself unavailable instead of cra
 });
 
 test("the system prompt carries the catalog and contact details", () => {
-  assert.match(SYSTEM_PROMPT, /\/products\/zam13e/);
+  assert.match(SYSTEM_PROMPT, /\/products\/nkm-agr-500/);
   assert.match(SYSTEM_PROMPT, /\+237 670 439 117/);
   assert.match(SYSTEM_PROMPT, /Agricultural Drone Services/);
 });

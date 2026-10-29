@@ -34,7 +34,7 @@ export function ProductCard({ product }) {
       <ProductImage product={product} className="aspect-[4/3]" />
       <div className="flex flex-1 flex-col px-2 pt-4 pb-2">
         <p className="min-h-4 text-[11px] font-semibold tracking-[0.14em] text-brand-blue uppercase">
-          {product.model ? `Model ${product.model}` : " "}
+          {product.model && product.model !== product.name ? `Model ${product.model}` : " "}
         </p>
         <h3 className="mt-1.5 font-display text-base leading-snug font-normal tracking-tight text-brand-black">
           {product.name}

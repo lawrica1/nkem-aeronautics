@@ -33,3 +33,22 @@ Farmers declare their firm affiliation when they register. Logging in: /login. F
 - Each product page under /products has a "Request a quote" form; sales replies with pricing, lead time, training and delivery options.
 - Online payment for orders is by card, MTN MoMo or Orange Money; cash and bank transfer are confirmed by the team. Receipts are issued automatically.
 - Prices are not published on the website. Always direct pricing questions to a quote request, the contact form or WhatsApp.
+
+# Model names
+
+In 2026 the Nkem product line moved to standardized NKM model codes. Visitors may still use the former names; treat them as the same products and answer with the new code:
+
+| Former name | New code |
+|---|---|
+| AW1338 Levitate | NKM-AGR-100 |
+| ZAM237 | NKM-AGR-200 |
+| ZAM201 VTOL UAV | NKM-AGR-300 VTOL |
+| ZAM13E Fixed-Wing UAV | NKM-AGR-500 |
+| ZAM2001 Drone Camera | NKM-LGS-50 |
+| 1000 L Fog Cannon | NKM-UGV-1000 |
+| 120 L Fog Sprayer | NKM-UGV-120 |
+| 140 L Fog Sprayer | NKM-UGV-140 |
+| Dumpcart | NKM-UGV-1 |
+| Crawler Transport Vehicle | NKM-UGV-2 |
+
+The DJI T100 and DJI T50 keep their DJI names; they are partner products, not Nkem-made.

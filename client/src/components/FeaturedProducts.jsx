@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/products/ProductCard";
 import { PRODUCT_FAMILIES, findProduct } from "@/lib/productRange";
 
 // One flagship per family for the home page; the full range lives on /products.
-const FEATURED = ["aw1338-levitate", "zam2001", "fog-cannon-sprayer-1000l", "crawler-transport-vehicle"];
+const FEATURED = ["nkm-agr-100", "nkm-lgs-50", "nkm-ugv-1000", "nkm-ugv-2"];
 
 export function FeaturedProducts() {
   return (
