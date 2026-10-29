@@ -5,23 +5,33 @@ import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import { BTN_SECONDARY } from "@/components/PageHero";
 import { ProductCard, ProductImage } from "@/components/products/ProductCard";
 import { QuoteRequestForm } from "@/components/QuoteRequestForm";
-import { CATALOG_PDF, PRODUCT_RANGE, findFamily, findProduct, productsInFamily } from "@/lib/productRange";
+import { CATALOG_PDF, PRODUCT_RANGE, findFamily } from "@/lib/productRange";
+import { getCatalogProducts, inFamily } from "@/lib/productSource";
 
-export function generateStaticParams() {
-  return PRODUCT_RANGE.map((p) => ({ slug: p.slug }));
+// Re-read the admin-managed catalogue every 5 minutes; products added later render on first visit.
+export const revalidate = 300;
+
+async function loadProduct(slug) {
+  const products = await getCatalogProducts();
+  return { product: products.find((p) => p.slug === slug), products };
+}
+
+export async function generateStaticParams() {
+  const slugs = new Set([...PRODUCT_RANGE, ...(await getCatalogProducts())].map((p) => p.slug));
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }) {
-  const product = findProduct((await params).slug);
+  const { product } = await loadProduct((await params).slug);
   if (!product) return {};
   return { title: `${product.name} — Nkem Aeronautics`, description: product.tagline };
 }
 
 export default async function ProductDetailPage({ params }) {
-  const product = findProduct((await params).slug);
+  const { product, products } = await loadProduct((await params).slug);
   if (!product) notFound();
   const family = findFamily(product.family);
-  const related = productsInFamily(family.id).filter((p) => p.slug !== product.slug);
+  const related = inFamily(products, family.id).filter((p) => p.slug !== product.slug);
 
   return (
     <main className="flex-1 bg-white">
@@ -52,14 +62,16 @@ export default async function ProductDetailPage({ params }) {
             {product.description && (
               <p className="mt-4 rounded-xl bg-brand-gray-light p-4 text-sm leading-relaxed text-brand-black">{product.description}</p>
             )}
+            {product.keyFigures.length > 0 && (
             <dl className="mt-8 grid grid-cols-3 border-t-2 border-brand-black pt-4">
-              {product.keyFigures.map((k, i) => (
+              {product.keyFigures.slice(0, 3).map((k, i) => (
                 <div key={k.label} className={`flex flex-col-reverse ${i > 0 ? "border-l border-neutral-200 pl-4" : ""}`}>
                   <dt className="mt-1 text-[10px] tracking-[0.1em] text-neutral-500 uppercase sm:text-[11px]">{k.label}</dt>
                   <dd className="font-display text-lg text-brand-black sm:text-xl">{k.value}</dd>
                 </div>
               ))}
             </dl>
+            )}
             <div className="mt-8 flex flex-wrap gap-2">
               {product.applications.map((a) => (
                 <span key={a} className="rounded-full border border-neutral-200 bg-brand-paper px-3 py-1 text-xs text-brand-black">
@@ -81,6 +93,7 @@ export default async function ProductDetailPage({ params }) {
       </section>
 
       {/* Specifications */}
+      {product.specs.length > 0 && (
       <section className="bg-brand-paper px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="Technical data" title="Specifications" />
@@ -110,6 +123,7 @@ export default async function ProductDetailPage({ params }) {
           </p>
         </div>
       </section>
+      )}
 
       {/* Quote */}
       <section id="quote" className="scroll-mt-6 px-4 py-16 sm:px-6">

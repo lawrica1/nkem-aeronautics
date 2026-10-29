@@ -202,6 +202,15 @@ model Product {
   tags          String[]    @default([])
   crops         String[]    @default([])
   service       String?
+  // Products pages (/products): the catalogue family it is listed under (null = not listed there),
+  // display order within the family, a one-line tagline, headline figures and the family's
+  // "At a glance" comparison values. thirdParty marks partner products (e.g. DJI).
+  family        String?
+  sortOrder     Int         @default(0)
+  tagline       String      @default("")
+  keyFigures    Json?
+  compare       Json?
+  thirdParty    Boolean     @default(false)
   active        Boolean     @default(true)
   orderItems    OrderItem[]
   createdAt     DateTime    @default(now())
