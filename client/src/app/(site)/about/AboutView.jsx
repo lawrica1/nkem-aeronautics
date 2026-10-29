@@ -4,6 +4,7 @@ import { MapPin, Users, FileText, ShieldCheck, Rocket, BadgeCheck } from "lucide
 import { useNews } from "@/hooks/useNews";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PageHero } from "@/components/PageHero";
+import { TeamSection } from "@/components/TeamSection";
 
 // Milestone figures reused from the About copy (founding year, patent counts, qualifications) —
 // no separate Milestone copy was supplied by the client; confirm this is the intended presentation.
@@ -172,6 +173,8 @@ export function AboutView() {
           <TabsContent value="company"><CompanyTab /></TabsContent>
         </Tabs>
       </section>
+
+      <TeamSection />
     </main>
   );
 }
