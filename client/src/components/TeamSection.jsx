@@ -13,7 +13,7 @@ const TEAM = [
   { name: "Bekono Akono Marthe Lunya Lawrica", role: "Software Engineer", photo: "/images/team/bekono-akono-marthe-lunya-lawrica.jpg" },
   { name: "Chuye Princely Tata", role: "Software Engineer", photo: "/images/team/chuye-princely-tata.jpg" },
   { name: "Emarman Marie Virgine", role: "Digital Marketing", photo: "/images/team/emarman-marie-virgine.jpg" },
-  { name: "Kang Fritz Andie", role: null, photo: "/images/team/kang-fritz-andie.jpg" },
+  { name: "Kang Fritz Andie", role: "Cybersecurity Engineer", photo: "/images/team/kang-fritz-andie.jpg" },
 ];
 
 const initials = (name) =>
