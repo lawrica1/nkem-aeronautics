@@ -218,8 +218,8 @@ Section: /products#fixed-wing-vtol
 
 Long-range fixed-wing and vertical take-off platforms for mapping, survey, forestry and cargo missions, built in Lusaka.
 
-### AW1338 Levitate (model AW1338)
-Page: /products/aw1338-levitate
+### NKM-AGR-100 (model NKM-AGR-100)
+Page: /products/nkm-agr-100
 
 Long-distance fixed-wing mapping drone with HD 4K camera and GPS.
 
@@ -227,7 +227,7 @@ Headline figures: Wingspan 3,600 mm; Payload 2–2.5 kg; Practical ceiling 5,000
 Airframe: Wingspan 3,600 mm; Fuselage length 1,800 mm; Material Carbon fibre
 Performance: Cruising speed 20 m/s; Practical ceiling 5,000 m; Wind resistance Level 5; Payload 2–2.5 kg
 Control: Control type Remote control; Operator skill level Beginner; Gyro On request
-Commercial: Model AW1338; Place of origin Lusaka, Zambia; Private mould No
+Commercial: Model NKM-AGR-100; Place of origin Lusaka, Zambia; Private mould No
 Applications: Mapping
 
 ### AW1338 Levitate VTOL (model AW1749)
@@ -241,19 +241,19 @@ Power & control: Power source Gasoline; Controller power Battery; Remote distanc
 Commercial: Model AW1749; Place of origin Lusaka, Zambia
 Applications: Long-range survey, Aerial photography
 
-### ZAM237 (model ZAM237)
-Page: /products/zam237
+### NKM-AGR-200 (model NKM-AGR-200)
+Page: /products/nkm-agr-200
 
 High-quality carbon-fibre fixed-wing drone kit, a reliable choice for long-distance missions.
 
 Headline figures: Image transmission 2 km; Max flight time ≤ 10 min; Minimum order 1 pc
 Airframe: Product Drone airframe kit; Material Carbon fibre / polymer; Colour Customisable; Motor Brushed; Gyro 2-axis
 Performance: Max flight time ≤ 10 min; Image transmission 2 km; Still image 2 MP; Function Altitude hold; Take-off Sliding (runway)
-Commercial: Model ZAM237; Category Beginner; Control type Remote control; Private mould Yes; MOQ 1 pc
+Commercial: Model NKM-AGR-200; Category Beginner; Control type Remote control; Private mould Yes; MOQ 1 pc
 Applications: Cargo delivery
 
-### ZAM201 VTOL UAV (model ZAM201)
-Page: /products/zam201-vtol
+### NKM-AGR-300 VTOL (model NKM-AGR-300 VTOL)
+Page: /products/nkm-agr-300-vtol
 
 General-purpose fixed-wing aircraft for robust aerial mapping, survey training and commercial work.
 
@@ -261,11 +261,11 @@ Headline figures: Transmission 1 km; Power Electric; Airframe Waterproof
 Airframe: Material Wood; Gyro Yes; Feature Waterproof; Private mould Yes
 Performance: Max flight time Customisable; Transmission 1 km; Functions Altitude hold, one-key operation
 Power & control: Engine type Electric; Control type Remote control
-Commercial: Model ZAM201; Category Commercial; Place of origin Lusaka, Zambia; MOQ 1 set
+Commercial: Model NKM-AGR-300 VTOL; Category Commercial; Place of origin Lusaka, Zambia; MOQ 1 set
 Applications: Aerial mapping, Survey training, Commercial
 
-### ZAM13E Fixed-Wing UAV (model ZAM13E)
-Page: /products/zam13e
+### NKM-AGR-500 (model NKM-AGR-500)
+Page: /products/nkm-agr-500
 
 Long-range survey platform with a 2,700 mm wingspan for professional forest surveys and aerial mapping.
 
@@ -273,7 +273,7 @@ Headline figures: Wingspan 2,700 mm; Transmission 1 km; Gross weight 70 kg
 Airframe: Wingspan 2,700 mm; Material Wood; Gross weight 70 kg; Package size 120 × 45 × 50 cm; Gyro Yes
 Performance: Max flight time Customisable; Transmission 1 km
 Power & control: Engine type Electric; Control type Remote control; Operator skill level Beginner
-Commercial: Model ZAM13E; Category Commercial; Place of origin Lusaka, Zambia; Private mould Yes
+Commercial: Model NKM-AGR-500; Category Commercial; Place of origin Lusaka, Zambia; Private mould Yes
 Applications: Forest survey, Aerial mapping
 
 ## Family 02: Multirotor UAVs
@@ -281,15 +281,15 @@ Section: /products#multirotor
 
 Multirotor platforms for camera work, monitoring and light cargo, with vertical take-off from any clearing.
 
-### ZAM2001 Drone Camera (model ZAM2001)
-Page: /products/zam2001
+### NKM-LGS-50 (model NKM-LGS-50)
+Page: /products/nkm-lgs-50
 
 High-performance professional drone with advanced 8K camera capability, GPS and cargo carriage.
 
 Headline figures: Max flight time 31–40 min; Transmission 1 km; Gross weight 70 kg
 Platform: Product name XH15E Cargo UAV; Material Wood; Gyro Yes; Gross weight 70 kg; Package size 120 × 45 × 50 cm
 Performance: Max flight time 31–40 min; Transmission 1 km; Engine type Electric
-Commercial: Model ZAM2001; Category Commercial; Operator level Beginner; Place of origin Lusaka, Zambia; MOQ 1 set
+Commercial: Model NKM-LGS-50; Category Commercial; Operator level Beginner; Place of origin Lusaka, Zambia; MOQ 1 set
 Applications: Aerial imaging, Cargo
 
 ## Family 03: Agricultural Spraying Equipment
@@ -297,8 +297,8 @@ Section: /products#spraying-equipment
 
 Remote-controlled ground sprayers for orchards and open fields, from a compact 120 L unit to a 1,000 L air-blast fog cannon.
 
-### 1000 L Air-Blast Fog Cannon Sprayer
-Page: /products/fog-cannon-sprayer-1000l
+### NKM-UGV-1000 (model NKM-UGV-1000)
+Page: /products/nkm-ugv-1000
 
 Industrial tracked/wheeled air-blast sprayer engineered for large-scale crop protection, orchards and pest control.
 
@@ -309,8 +309,8 @@ Drive: Engine 195F; Travel motors 2 × 2,200 W; Travel speed 20–70 m/min
 Control: Control mode Remote control (RC); Remote distance 200 m
 Applications: Orchards, Open fields, Pest control
 
-### Compact Wheeled Fog Sprayer 120 L
-Page: /products/compact-fog-sprayer-120l
+### NKM-UGV-120 (model NKM-UGV-120)
+Page: /products/nkm-ugv-120
 
 Agile sprayer with variable-rate output that matches spray volume to travel speed for zero crop waste.
 
@@ -319,8 +319,8 @@ Spraying: Tank capacity 120 L; Max flow rate 8 L/min; Droplet size 60–200 µm;
 Vehicle: Vehicle width 80 cm; Curb weight 80 kg; Max travel speed 1.5 m/s; Max gradeability 20% (8°)
 Applications: Orchards, Row crops
 
-### Advanced Wheeled Fog Sprayer 140 L
-Page: /products/advanced-fog-sprayer-140l
+### NKM-UGV-140 (model NKM-UGV-140)
+Page: /products/nkm-ugv-140
 
 Heavy-duty multi-fan sprayer delivering superior coverage with a 140 L tank and 34 m reach per side.
 
@@ -334,8 +334,8 @@ Section: /products#ground-robotics
 
 Battery-electric tracked carriers that move up to 1.8 t across slopes, plantations and work sites by remote control.
 
-### Dumpcart
-Page: /products/dumpcart
+### NKM-UGV-1 (model NKM-UGV-1)
+Page: /products/nkm-ugv-1
 
 Remote-controlled tracked dump carrier for moving heavy loads over rough and sloped ground.
 
@@ -345,8 +345,8 @@ Drive & power: Travel motors 2 × 1,500 W; Travel speed 20–70 m/min; Climbing 
 Control: Control mode Remote control (RC); Remote distance 200 m
 Applications: Plantations, Construction, Site logistics
 
-### Crawler Transport Vehicle
-Page: /products/crawler-transport-vehicle
+### NKM-UGV-2 (model NKM-UGV-2)
+Page: /products/nkm-ugv-2
 
 Remote-controlled tracked transport vehicle with an open cargo bed for harvest and materials handling.
 

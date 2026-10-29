@@ -79,10 +79,10 @@ export const PRODUCT_FAMILIES = [
 
 export const PRODUCT_RANGE = [
   {
-    "slug": "aw1338-levitate",
+    "slug": "nkm-agr-100",
     "family": "fixed-wing-vtol",
-    "model": "AW1338",
-    "name": "AW1338 Levitate",
+    "model": "NKM-AGR-100",
+    "name": "NKM-AGR-100",
     "image": "/images/products/aw1338-levitate.jpg",
     "tagline": "Long-distance fixed-wing mapping drone with HD 4K camera and GPS.",
     "keyFigures": [
@@ -160,7 +160,7 @@ export const PRODUCT_RANGE = [
         "rows": [
           [
             "Model",
-            "AW1338"
+            "NKM-AGR-100"
           ],
           [
             "Place of origin",
@@ -273,10 +273,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "zam237",
+    "slug": "nkm-agr-200",
     "family": "fixed-wing-vtol",
-    "model": "ZAM237",
-    "name": "ZAM237",
+    "model": "NKM-AGR-200",
+    "name": "NKM-AGR-200",
     "image": "/images/products/zam237.jpg",
     "tagline": "High-quality carbon-fibre fixed-wing drone kit, a reliable choice for long-distance missions.",
     "keyFigures": [
@@ -349,7 +349,7 @@ export const PRODUCT_RANGE = [
         "rows": [
           [
             "Model",
-            "ZAM237"
+            "NKM-AGR-200"
           ],
           [
             "Category",
@@ -381,10 +381,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "zam201-vtol",
+    "slug": "nkm-agr-300-vtol",
     "family": "fixed-wing-vtol",
-    "model": "ZAM201",
-    "name": "ZAM201 VTOL UAV",
+    "model": "NKM-AGR-300 VTOL",
+    "name": "NKM-AGR-300 VTOL",
     "image": "/images/products/zam201-vtol.jpg",
     "tagline": "General-purpose fixed-wing aircraft for robust aerial mapping, survey training and commercial work.",
     "keyFigures": [
@@ -458,7 +458,7 @@ export const PRODUCT_RANGE = [
         "rows": [
           [
             "Model",
-            "ZAM201"
+            "NKM-AGR-300 VTOL"
           ],
           [
             "Category",
@@ -488,10 +488,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "zam13e",
+    "slug": "nkm-agr-500",
     "family": "fixed-wing-vtol",
-    "model": "ZAM13E",
-    "name": "ZAM13E Fixed-Wing UAV",
+    "model": "NKM-AGR-500",
+    "name": "NKM-AGR-500",
     "image": "/images/products/zam13e.jpg",
     "tagline": "Long-range survey platform with a 2,700 mm wingspan for professional forest surveys and aerial mapping.",
     "keyFigures": [
@@ -569,7 +569,7 @@ export const PRODUCT_RANGE = [
         "rows": [
           [
             "Model",
-            "ZAM13E"
+            "NKM-AGR-500"
           ],
           [
             "Category",
@@ -598,10 +598,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "zam2001",
+    "slug": "nkm-lgs-50",
     "family": "multirotor",
-    "model": "ZAM2001",
-    "name": "ZAM2001 Drone Camera",
+    "model": "NKM-LGS-50",
+    "name": "NKM-LGS-50",
     "image": "/images/products/zam2001.jpg",
     "tagline": "High-performance professional drone with advanced 8K camera capability, GPS and cargo carriage.",
     "keyFigures": [
@@ -666,7 +666,7 @@ export const PRODUCT_RANGE = [
         "rows": [
           [
             "Model",
-            "ZAM2001"
+            "NKM-LGS-50"
           ],
           [
             "Category",
@@ -699,10 +699,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "fog-cannon-sprayer-1000l",
+    "slug": "nkm-ugv-1000",
     "family": "spraying-equipment",
-    "model": null,
-    "name": "1000 L Air-Blast Fog Cannon Sprayer",
+    "model": "NKM-UGV-1000",
+    "name": "NKM-UGV-1000",
     "image": "/images/products/fog-cannon-sprayer-1000l.jpg",
     "tagline": "Industrial tracked/wheeled air-blast sprayer engineered for large-scale crop protection, orchards and pest control.",
     "keyFigures": [
@@ -798,10 +798,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "compact-fog-sprayer-120l",
+    "slug": "nkm-ugv-120",
     "family": "spraying-equipment",
-    "model": null,
-    "name": "Compact Wheeled Fog Sprayer 120 L",
+    "model": "NKM-UGV-120",
+    "name": "NKM-UGV-120",
     "image": "/images/products/compact-fog-sprayer-120l.png",
     "tagline": "Agile sprayer with variable-rate output that matches spray volume to travel speed for zero crop waste.",
     "keyFigures": [
@@ -878,10 +878,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "advanced-fog-sprayer-140l",
+    "slug": "nkm-ugv-140",
     "family": "spraying-equipment",
-    "model": null,
-    "name": "Advanced Wheeled Fog Sprayer 140 L",
+    "model": "NKM-UGV-140",
+    "name": "NKM-UGV-140",
     "image": "/images/products/advanced-fog-sprayer-140l.png",
     "tagline": "Heavy-duty multi-fan sprayer delivering superior coverage with a 140 L tank and 34 m reach per side.",
     "keyFigures": [
@@ -958,10 +958,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "dumpcart",
+    "slug": "nkm-ugv-1",
     "family": "ground-robotics",
-    "model": null,
-    "name": "Dumpcart",
+    "model": "NKM-UGV-1",
+    "name": "NKM-UGV-1",
     "image": "/images/products/dumpcart.jpg",
     "tagline": "Remote-controlled tracked dump carrier for moving heavy loads over rough and sloped ground.",
     "keyFigures": [
@@ -1052,10 +1052,10 @@ export const PRODUCT_RANGE = [
     }
   },
   {
-    "slug": "crawler-transport-vehicle",
+    "slug": "nkm-ugv-2",
     "family": "ground-robotics",
-    "model": null,
-    "name": "Crawler Transport Vehicle",
+    "model": "NKM-UGV-2",
+    "name": "NKM-UGV-2",
     "image": "/images/products/crawler-transport-vehicle.jpg",
     "tagline": "Remote-controlled tracked transport vehicle with an open cargo bed for harvest and materials handling.",
     "keyFigures": [
