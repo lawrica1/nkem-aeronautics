@@ -16,7 +16,7 @@ export async function list({ sector, q, application } = {}, { includeInactive = 
         ],
       }),
     },
-    orderBy: { name: "asc" },
+    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
   });
 }
 
@@ -37,7 +37,31 @@ const EXTRA_FIELDS = [
   "tags",
   "crops",
   "service",
+  "family",
+  "sortOrder",
+  "tagline",
+  "keyFigures",
+  "compare",
+  "thirdParty",
 ];
+
+export const slugify = (text) =>
+  String(text)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "product";
+
+// Products get a page address from their name (e.g. "NKM-AGR-600" → nkm-agr-600), made unique.
+async function uniqueSlug(name) {
+  const base = slugify(name);
+  for (let n = 1; ; n += 1) {
+    const slug = n === 1 ? base : `${base}-${n}`;
+    if (!(await prisma.product.findUnique({ where: { slug }, select: { id: true } }))) return slug;
+  }
+}
 
 export async function create(body) {
   if (!body.name) throw new HttpError(400, "name is required.");
@@ -54,6 +78,9 @@ export async function create(body) {
   for (const key of EXTRA_FIELDS) {
     if (body[key] !== undefined) data[key] = body[key];
   }
+  if (data.sortOrder !== undefined) data.sortOrder = Number(data.sortOrder) || 0;
+  if (data.family === "") data.family = null;
+  data.slug = data.slug ? slugify(data.slug) : await uniqueSlug(data.name);
 
   return prisma.product.create({ data });
 }
@@ -63,6 +90,8 @@ export async function update(id, body) {
   for (const key of ["sector", "name", "type", "model", "availability", "active", ...EXTRA_FIELDS]) {
     if (body[key] !== undefined) data[key] = body[key];
   }
+  if (data.sortOrder !== undefined) data.sortOrder = Number(data.sortOrder) || 0;
+  if (data.family === "") data.family = null;
   if (body.price !== undefined) {
     data.price = body.price === "" || body.price === null ? null : Number(body.price);
   }

@@ -6,7 +6,11 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { ProductCard } from "@/components/products/ProductCard";
 import { CallToAction } from "@/components/CallToAction";
-import { CATALOG_PDF, PRODUCT_FAMILIES, PRODUCT_RANGE, productsInFamily } from "@/lib/productRange";
+import { CATALOG_PDF, PRODUCT_FAMILIES } from "@/lib/productRange";
+import { getCatalogProducts, inFamily } from "@/lib/productSource";
+
+// Re-read the admin-managed catalogue every 5 minutes.
+export const revalidate = 300;
 
 export const metadata = {
   title: "Products — Nkem Aeronautics",
@@ -14,8 +18,9 @@ export const metadata = {
     "Fixed-wing and VTOL UAVs, multirotor drones, agricultural sprayers and tracked ground robotics, built and supported in Lusaka, Zambia.",
 };
 
-function FamilySection({ family, index }) {
-  const items = productsInFamily(family.id);
+function FamilySection({ family, index, products }) {
+  const items = inFamily(products, family.id);
+  if (items.length === 0) return null;
   return (
     <section id={family.id} className={`scroll-mt-28 px-4 py-16 sm:px-6 sm:py-20 ${index % 2 ? "bg-brand-paper" : "bg-white"}`}>
       <div className="mx-auto max-w-6xl">
@@ -81,14 +86,16 @@ function FamilySection({ family, index }) {
   );
 }
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await getCatalogProducts();
+  const families = PRODUCT_FAMILIES.filter((f) => inFamily(products, f.id).length > 0);
   return (
     <main className="flex-1">
       <PageHero
         image="/images/products/family-fixed-wing.jpg"
         eyebrow="Product Catalog 2026"
         title="Unmanned aircraft, spraying equipment & ground robotics"
-        intro={`${PRODUCT_RANGE.length} products across ${PRODUCT_FAMILIES.length} families, built and supported in Lusaka, Zambia, for agriculture, survey, conservation, mining and logistics across Africa.`}
+        intro={`${products.length} products across ${families.length} families, built and supported in Lusaka, Zambia, for agriculture, survey, conservation, mining and logistics across Africa.`}
         crumbs={[{ label: "Home", href: "/" }, { label: "Products" }]}
       >
         <a href={CATALOG_PDF} download className={BTN_PRIMARY}>
@@ -103,7 +110,7 @@ export default function ProductsPage() {
       {/* Family jump bar */}
       <nav aria-label="Product families" className="sticky top-0 z-30 border-y border-neutral-200 bg-white/95 backdrop-blur">
         <ul className="mx-auto flex max-w-6xl gap-6 overflow-x-auto px-4 text-xs font-semibold tracking-[0.12em] whitespace-nowrap uppercase sm:px-6">
-          {PRODUCT_FAMILIES.map((f) => (
+          {families.map((f) => (
             <li key={f.id}>
               <a href={`#${f.id}`} className="flex items-center gap-2 border-b-2 border-transparent py-4 text-neutral-600 hover:border-brand-blue hover:text-brand-blue">
                 <span className="font-display text-brand-blue">{f.code}</span>
@@ -114,8 +121,8 @@ export default function ProductsPage() {
         </ul>
       </nav>
 
-      {PRODUCT_FAMILIES.map((f, i) => (
-        <FamilySection key={f.id} family={f} index={i} />
+      {families.map((f, i) => (
+        <FamilySection key={f.id} family={f} index={i} products={products} />
       ))}
 
       <section className="bg-white px-4 pt-16 sm:px-6">
