@@ -33,7 +33,9 @@ npm install
 npm run prisma:generate
 npm run prisma:push
 npm run dev
-npm run create-admin -- admin@example.com "change-me" "Admin"
+read -rsp "Admin password: " ADMIN_PASSWORD; echo
+ADMIN_PASSWORD="$ADMIN_PASSWORD" npm run create-admin -- admin@example.com "Admin"
+unset ADMIN_PASSWORD
 ```
 
 Local API URL: `http://localhost:5000/api`

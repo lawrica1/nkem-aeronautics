@@ -34,7 +34,10 @@ Never commit real `.env` files, database URLs, JWT secrets, API keys, OTP creden
 ## Admin Account
 
 ```bash
-cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
+cd server
+read -rsp "Admin password: " ADMIN_PASSWORD; echo
+ADMIN_PASSWORD="$ADMIN_PASSWORD" npm run create-admin -- admin@example.com "Admin"
+unset ADMIN_PASSWORD
 ```
 
 ## Domain Rules
@@ -52,7 +55,7 @@ cd server && npm run create-admin -- admin@example.com "change-me" "Admin"
 - `server/src/modules/auth`: signup, OTP verification, resend OTP, login.
 - `server/src/modules/farmers`: authenticated profile and own requests.
 - `server/src/modules/requests`: service request create/list/update.
-- `server/src/modules/admin`: admin login, public admin signup (no code — open to anyone; `ADMIN_EMAIL` alerted on each new admin, disabled when unset), admin-only creation of other admins, stats, logbook export, user search/role/verify management.
+- `server/src/modules/admin`: admin login, admin-only creation of other admins, stats, logbook export, user search/role/verify management. There is no public admin signup route.
 - `server/src/modules/catalog`: public catalog data (marketing display only — see `products` for the sellable catalogue).
 - `server/src/modules/logbooks`: collision-safe logbook counter and receipt-number counter.
 - `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.

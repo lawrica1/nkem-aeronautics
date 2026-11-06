@@ -8,12 +8,10 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 import { signAdminToken } from "../../shared/middleware/auth.js";
 import { notify } from "../notifications/notification.service.js";
 import { sendEmail } from "../notifications/email.service.js";
-import { logbookVerifiedEmail, adminNewVerifiedUser, adminNewAdminAlert } from "../notifications/email.templates.js";
-import { escapeHtml } from "../../shared/utils/html.js";
+import { logbookVerifiedEmail, adminNewVerifiedUser } from "../notifications/email.templates.js";
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
-import { enforce } from "../../shared/utils/rateLimit.js";
 
 const EXPORT_COLUMNS = [
   { key: "identificationNumber", header: "Logbook ID" },
@@ -69,30 +67,8 @@ export async function createAdmin({ name, email, password } = {}, actor) {
   // Never take over an existing account here; promote it from the Users page instead.
   if (!admin) throw new HttpError(409, "An account with this email already exists. Change its role on the Users page.");
 
-  console.info(`[audit] ${actor ? `admin ${actor.id}` : "public signup"} created admin ${admin.id}`);
+  console.info(`[audit] admin ${actor.id} created admin ${admin.id}`);
   return serializeUser(admin);
-}
-
-// Public signup: anyone who reaches /admin/signup can become an admin (owner's decision).
-// Disabled when ADMIN_EMAIL is unset; that inbox is alerted on every new admin.
-export async function signup(body = {}) {
-  if (!env.adminEmail) throw new HttpError(403, "Admin signup is disabled.");
-  // Global key: signups are rare, and a per-IP key is trivially rotated around.
-  enforce("admin-signup", { limit: 10, windowMs: 15 * 60_000 }, "Too many admin signup attempts.");
-
-  const admin = await createAdmin(body, null).catch((err) => {
-    // createAdmin's 409 text points at the Users page, which a signup visitor can't reach.
-    if (err instanceof HttpError && err.status === 409) {
-      throw new HttpError(409, "An account with this email already exists. Sign in instead.");
-    }
-    throw err;
-  });
-  sendEmail(
-    env.adminEmail,
-    "New admin account created",
-    adminNewAdminAlert({ name: escapeHtml(admin.name), email: escapeHtml(admin.email) }),
-  ).catch(() => {});
-  return { token: signAdminToken(admin) };
 }
 
 export async function getStats() {
