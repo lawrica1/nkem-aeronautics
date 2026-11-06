@@ -2,6 +2,7 @@ import "dotenv/config";
 
 export const env = {
   port: process.env.PORT || 5000,
+  host: process.env.HOST || "127.0.0.1",
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET,
   clientOrigin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
