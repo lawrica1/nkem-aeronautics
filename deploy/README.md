@@ -20,9 +20,10 @@ Both files must be owned by `deploy` with mode `600`.
 ## Service Installation
 
 Copy the unit templates from `deploy/systemd/` into `/etc/systemd/system/`, then
-run `systemctl daemon-reload` and enable the services. Copy the Nginx template
-from `deploy/nginx/` into `/etc/nginx/sites-available/`, enable it, validate with
-`nginx -t`, and obtain certificates with Certbot.
+run `systemctl daemon-reload` and enable the services. Install the frontend and
+API Nginx sites independently from `deploy/nginx/`, validate with `nginx -t`,
+and obtain certificates with Certbot. Keeping the sites separate prevents a
+change to one service from replacing the other's certificate configuration.
 
 ## Frontend Deployment
 
