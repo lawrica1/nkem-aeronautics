@@ -34,3 +34,7 @@ local HTTP endpoint.
 
 Backend deployments use `npm ci`, `npm run prisma:generate`, the relevant
 integration checks, and a controlled `systemctl restart nkem-backend`.
+
+Run `deploy/scripts/smoke-production.sh` after a release. It checks the public
+frontend, canonical redirect, API health, CORS boundary, protected admin route,
+and the absence of public admin signup without creating production data.
