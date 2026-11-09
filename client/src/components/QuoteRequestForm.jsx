@@ -17,7 +17,7 @@ const INTEREST_OPTIONS = [
   { value: "general", label: "General Inquiry" },
 ];
 
-export function QuoteRequestForm({ sector, className = "" }) {
+export function QuoteRequestForm({ sector, defaultProduct = "", className = "" }) {
   const createQuote = useCreateQuote();
   const [open, setOpen] = useState(false);
   const { data: productOptions = [] } = useProducts(sector);
@@ -28,8 +28,8 @@ export function QuoteRequestForm({ sector, className = "" }) {
     whatsapp: "",
     company: "",
     targetCountry: "",
-    interestedProduct: "",
-    interestedIn: "",
+    interestedProduct: defaultProduct,
+    interestedIn: defaultProduct ? "purchase" : "",
     message: "",
   });
 
@@ -49,8 +49,8 @@ export function QuoteRequestForm({ sector, className = "" }) {
             whatsapp: "",
             company: "",
             targetCountry: "",
-            interestedProduct: "",
-            interestedIn: "",
+            interestedProduct: defaultProduct,
+            interestedIn: defaultProduct ? "purchase" : "",
             message: "",
           });
         },
@@ -144,7 +144,18 @@ export function QuoteRequestForm({ sector, className = "" }) {
                   />
                 </div>
 
-                {productOptions.length > 0 && (
+                {defaultProduct && !productOptions.some((p) => p.name === defaultProduct) && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`${sector}-quote-product`}>Interested Product</Label>
+                    <Input
+                      id={`${sector}-quote-product`}
+                      value={form.interestedProduct}
+                      onChange={(e) => set("interestedProduct", e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {productOptions.length > 0 && !(defaultProduct && !productOptions.some((p) => p.name === defaultProduct)) && (
                   <div className="space-y-1.5">
                     <Label htmlFor={`${sector}-quote-product`}>Interested Products</Label>
                     <Select value={form.interestedProduct} onValueChange={(v) => set("interestedProduct", v)}>
@@ -162,7 +173,7 @@ export function QuoteRequestForm({ sector, className = "" }) {
                   </div>
                 )}
 
-                <div className={cn("space-y-1.5", productOptions.length === 0 && "sm:col-span-2")}>
+                <div className={cn("space-y-1.5", productOptions.length === 0 && !defaultProduct && "sm:col-span-2")}>
                   <Label htmlFor={`${sector}-quote-interest`}>I am interested in</Label>
                   <Select value={form.interestedIn} onValueChange={(v) => set("interestedIn", v)}>
                     <SelectTrigger id={`${sector}-quote-interest`} className="w-full">

@@ -1,95 +1,63 @@
-import { Sprout, Binoculars, NotebookPen, Route } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { SectionHeading } from "@/components/SectionHeading";
+import { SERVICES } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
-const SERVICES = [
-  {
-    icon: Sprout,
-    title: "Agricultural Spraying",
-    description: "Precision UAV chemical spraying and crop monitoring for farms of any size.",
-    image: "/images/services/agricultural-spraying.jpg",
-  },
-  {
-    icon: Binoculars,
-    title: "Wildlife & Surveillance",
-    description: "Aerial monitoring drones for conservation, land security, and site oversight.",
-    image: "/images/services/wildlife-surveillance.jpg",
-  },
-  {
-    icon: NotebookPen,
-    title: "Farmer Registration & Logbook",
-    description: "Digital sign-up with a unique ID and operation logbook for every farmer.",
-    image: "/images/services/farmer-registration-logbook.jpg",
-    fit: "contain",
-  },
-  {
-    icon: Route,
-    title: "Firm Routing & Distribution",
-    description: "Service requests routed to affiliated firms for accurate resource allocation.",
-    image: "/images/services/firm-routing-distribution.jpg",
-    overlayClass: "bg-gradient-to-t from-brand-navy-dark/55 via-transparent to-transparent",
-  },
-];
+// Column spans for the 4-column "fleet" grid: two rows of 1·2·1 and 1·1·2.
+const SPANS = ["lg:col-span-1", "lg:col-span-2", "lg:col-span-1", "lg:col-span-1", "lg:col-span-1", "lg:col-span-2"];
 
-function ServiceCard({ icon: Icon, title, description, image, comingSoon, fit, overlayClass }) {
-  if (image) {
-    return (
-      <div className="group relative h-64 overflow-hidden rounded-lg bg-brand-gray-light">
-        <img
-          src={image}
-          alt=""
-          className={cn(
-            "absolute inset-0 size-full transition-transform duration-500 group-hover:scale-105",
-            fit === "contain" ? "object-contain p-8" : "object-cover",
-          )}
-        />
-        <div className={cn("absolute inset-0", overlayClass ?? "bg-gradient-to-t from-brand-navy-dark/90 via-brand-navy-dark/20 to-transparent")} />
-        {comingSoon && (
-          <span className="absolute top-4 right-4 rounded-full bg-brand-gray-light px-2.5 py-1 text-xs font-medium text-neutral-700">
-            Coming Soon
-          </span>
-        )}
-        <div className="absolute inset-x-0 bottom-0 p-6 text-white">
-          <h3 className="font-semibold">{title}</h3>
-          <p className="mt-1 text-sm text-white/80">{description}</p>
-        </div>
-      </div>
-    );
-  }
-
+function ServiceTile({ service, span, index }) {
+  const wide = span === "lg:col-span-2";
   return (
-    <div className="h-full rounded-lg border border-border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex size-10 items-center justify-center rounded-md bg-brand-green/10">
-        <Icon className="size-5 text-brand-green" />
-      </div>
-      <h3 className="mt-4 font-semibold text-brand-navy-dark">{title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-    </div>
+    <Reveal delay={index * 70} className={cn("flex", span)}>
+      <Link
+        href={`/services/${service.slug}`}
+        className="group relative isolate flex min-h-64 w-full flex-col justify-end overflow-hidden rounded-2xl bg-brand-black p-5 text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-blue sm:min-h-72 sm:p-6"
+      >
+        <Image
+          src={(wide && service.banner) || service.image}
+          alt=""
+          fill
+          sizes={wide ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"}
+          className="-z-20 object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-brand-black/90 via-brand-black/30 to-transparent" />
+        <h3 className="font-display text-base font-normal tracking-tight sm:text-lg">{service.title}</h3>
+        <p className={cn("mt-2 text-xs leading-relaxed text-white/75 sm:text-sm", wide ? "max-w-md" : "line-clamp-2")}>
+          {service.description}
+        </p>
+        <span className="mt-4 inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.14em] text-white uppercase opacity-80 transition-opacity group-hover:opacity-100">
+          Explore
+          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </Link>
+    </Reveal>
   );
 }
 
 export function ServicesOverview() {
   return (
-    <section className="flex min-h-screen flex-col justify-center border-t border-border bg-background px-6 py-24">
+    <section id="services" className="scroll-mt-6 bg-white px-4 py-20 sm:px-6 sm:py-24">
       <div className="mx-auto w-full max-w-6xl">
-        <Reveal className="max-w-2xl">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-brand-green uppercase">
-            Our Services
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight text-brand-navy-dark sm:text-4xl">
-            What We Offer
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            From aerial spraying to farmer data collection, every service works together to
-            replace guesswork with real, regional data.
-          </p>
-        </Reveal>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <SectionHeading eyebrow="The Nkem Difference" title="Discover Our Services" />
+          <Reveal>
+            <Link
+              href="/services"
+              className="group inline-flex items-center gap-2 rounded-md bg-brand-blue px-6 py-3 text-xs font-semibold tracking-[0.12em] text-white uppercase transition-colors hover:bg-brand-blue-dark"
+            >
+              All Services
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Reveal>
+        </div>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((service, index) => (
-            <Reveal key={service.title} delay={index * 100}>
-              <ServiceCard {...service} />
-            </Reveal>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {SERVICES.map((service, i) => (
+            <ServiceTile key={service.slug} service={service} span={SPANS[i % SPANS.length]} index={i} />
           ))}
         </div>
       </div>
