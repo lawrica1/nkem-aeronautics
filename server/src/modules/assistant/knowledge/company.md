@@ -21,7 +21,7 @@ More than 200 employees, 60% of them researchers and developers. Core R&D staff 
 
 # How the platform works
 
-1. Sign up at /signup with a phone number or email and verify it with a one-time code (OTP).
+1. Sign up at /signup with an email address and verify it with the one-time code sent by email.
 2. Get a unique Logbook ID, issued on verification.
 3. Request a service (spraying drones, machinery or another aerial service) from the Logbook Portal at /logbook.
 4. The request is routed to the farmer's affiliated firm, or to Nkem Aeronautics, which assigns a drone and pilot, carries out the operation and records the results in the portal.
@@ -31,7 +31,7 @@ Farmers declare their firm affiliation when they register. Logging in: /login. F
 # Buying and quotes
 
 - Each product page under /products has a "Request a quote" form; sales replies with pricing, lead time, training and delivery options.
-- Online payment for orders is by card, MTN MoMo or Orange Money; cash and bank transfer are confirmed by the team. Receipts are issued automatically.
+- Orders are paid by cash or bank transfer, which the team confirms. Receipts are issued automatically.
 - Prices are not published on the website. Always direct pricing questions to a quote request, the contact form or WhatsApp.
 
 # Model names

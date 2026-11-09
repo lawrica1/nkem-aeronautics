@@ -186,7 +186,7 @@ Backend behavior:
 - Hashes password.
 - Creates or updates an unverified farmer record.
 - Generates and hashes a 6-digit OTP.
-- Stores OTP channel/contact/expiry.
+- Stores the email OTP contact and expiry.
 - Returns `otpDebug` outside production for testing.
 
 Gaps:
@@ -205,7 +205,7 @@ Routes/hooks:
 Behavior:
 
 - User enters OTP after signup.
-- API validates pending unverified farmer by channel/contact.
+- API validates the pending unverified farmer by email.
 - Expired or invalid codes are rejected.
 - On success, farmer is marked verified.
 - Farmer receives a logbook ID.
@@ -214,7 +214,7 @@ Behavior:
 
 Status: built.
 
-Production blocker: no real SMS/email provider is connected.
+Email verification is connected through Brevo. Each deployed backend must provide its own Brevo credentials.
 
 ## 6. Farmer Identification / Logbook ID
 

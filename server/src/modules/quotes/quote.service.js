@@ -3,8 +3,6 @@ import { HttpError } from "../../shared/errors/HttpError.js";
 import { env } from "../../config/env.js";
 import { sendEmail } from "../notifications/email.service.js";
 
-const TERMII_SEND_URL = "https://v4.api.termii.com/api/sms/send";
-
 async function notifyAdmin(quote) {
   const name = quote.name || "Anonymous";
   const sector = quote.sector.replace("-", " & ");
@@ -29,21 +27,6 @@ async function notifyAdmin(quote) {
     );
   }
 
-  if (env.adminPhone && env.termiiApiKey) {
-    const sms = `New Nkem enquiry — ${name} (${sector}): "${quote.message.slice(0, 100)}"`;
-    fetch(TERMII_SEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: env.adminPhone.replace(/[^\d+]/g, "").replace(/^\+/, ""),
-        from: env.termiiSenderId,
-        sms,
-        type: "plain",
-        channel: env.termiiChannel,
-        api_key: env.termiiApiKey,
-      }),
-    }).catch((err) => console.error("[quote:notify:sms]", err.message));
-  }
 }
 
 // Mirrors the client's catalogue tabs (client/src/lib/catalog.js CATALOG_SECTORS), plus

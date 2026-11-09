@@ -11,6 +11,9 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "db:sync": "prisma db push --skip-generate",
+    "db:check": "node scripts/check-database.mjs",
+    "storage:check": "node scripts/check-storage.mjs",
+    "email:check": "node scripts/check-email.mjs",
     "create-admin": "node scripts/create-admin.mjs",
     "seed-drones": "node scripts/seed-drones.mjs",
     "seed-catalog": "node scripts/seed-catalog.mjs",
@@ -19,6 +22,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
     "@aws-sdk/client-s3": "^3.1125.0",
+    "@aws-sdk/s3-request-presigner": "^3.1156.0",
     "@google/genai": "^2.30.0",
     "@prisma/client": "^6.16.1",
     "bcryptjs": "^3.0.2",

@@ -54,7 +54,7 @@ export async function listForUser(user) {
     include: INCLUDE,
     orderBy: { createdAt: "desc" },
   });
-  return requests.map(serializePartRequest);
+  return Promise.all(requests.map(serializePartRequest));
 }
 
 export async function listForAdmin({ status } = {}) {
@@ -64,7 +64,7 @@ export async function listForAdmin({ status } = {}) {
     orderBy: { createdAt: "desc" },
     take: 200,
   });
-  return requests.map(serializePartRequest);
+  return Promise.all(requests.map(serializePartRequest));
 }
 
 export async function update(id, body) {

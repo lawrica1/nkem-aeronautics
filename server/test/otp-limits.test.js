@@ -8,28 +8,28 @@ import { verifySignupOtp } from "../src/modules/auth/auth.service.js";
 mock.timers.enable({ apis: ["Date"] });
 const minutes = (n) => mock.timers.tick(n * 60_000);
 
-test("a second code to the same number within a minute is refused", () => {
-  limitOtpSend("sms", "+237 670 000 001");
-  assert.throws(() => limitOtpSend("sms", "237670000001"), (e) => e.status === 429);
+test("a second code to the same email within a minute is refused", () => {
+  limitOtpSend("Farmer1@example.com");
+  assert.throws(() => limitOtpSend("farmer1@example.com"), (e) => e.status === 429);
 });
 
-test("more than 5 codes per hour to one number is refused, even spaced out", () => {
+test("more than 5 codes per hour to one email is refused, even spaced out", () => {
   for (let i = 0; i < 5; i++) {
-    limitOtpSend("sms", "+237670000002");
+    limitOtpSend("farmer2@example.com");
     minutes(2);
   }
-  assert.throws(() => limitOtpSend("sms", "+237670000002"), (e) => e.status === 429 && /Too many codes/.test(e.message));
+  assert.throws(() => limitOtpSend("farmer2@example.com"), (e) => e.status === 429 && /Too many codes/.test(e.message));
   minutes(60);
-  assert.doesNotThrow(() => limitOtpSend("sms", "+237670000002"));
+  assert.doesNotThrow(() => limitOtpSend("farmer2@example.com"));
 });
 
-test("different numbers have independent budgets", () => {
-  limitOtpSend("sms", "+237670000003");
-  assert.doesNotThrow(() => limitOtpSend("sms", "+237670000004"));
+test("different emails have independent budgets", () => {
+  limitOtpSend("farmer3@example.com");
+  assert.doesNotThrow(() => limitOtpSend("farmer4@example.com"));
 });
 
 test("the 5th wrong OTP guess burns the code; the right code then no longer works", async () => {
-  const pending = { id: "u1", isVerified: false, otpChannel: "sms", otpContact: "+237670000005", otpHash: await hashOtp("123456"), otpExpiresAt: new Date(Date.now() + 600_000) };
+  const pending = { id: "u1", isVerified: false, otpChannel: "email", otpContact: "farmer5@example.com", otpHash: await hashOtp("123456"), otpExpiresAt: new Date(Date.now() + 600_000) };
   Object.defineProperty(prisma, "user", {
     configurable: true,
     value: {
@@ -38,7 +38,7 @@ test("the 5th wrong OTP guess burns the code; the right code then no longer work
     },
   });
 
-  const guess = (otp) => verifySignupOtp({ channel: "sms", contact: "+237670000005", otp });
+  const guess = (otp) => verifySignupOtp({ email: "farmer5@example.com", otp });
   for (let i = 0; i < 4; i++) await assert.rejects(guess("000000"), (e) => e.status === 400);
   await assert.rejects(guess("000000"), (e) => e.status === 429);
   assert.equal(pending.otpHash, null);

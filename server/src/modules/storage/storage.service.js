@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import path from "node:path";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env, requireEnv } from "../../config/env.js";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
@@ -10,11 +11,11 @@ let client;
 function getStorageClient() {
   if (!client) {
     client = new S3Client({
-      region: "auto",
-      endpoint: requireEnv("R2_ENDPOINT", env.r2Endpoint),
+      region: env.storageRegion,
+      endpoint: requireEnv("AWS_ENDPOINT_URL_S3", env.storageEndpoint),
       credentials: {
-        accessKeyId: requireEnv("R2_ACCESS_KEY_ID", env.r2AccessKeyId),
-        secretAccessKey: requireEnv("R2_SECRET_ACCESS_KEY", env.r2SecretAccessKey),
+        accessKeyId: requireEnv("AWS_ACCESS_KEY_ID", env.storageAccessKeyId),
+        secretAccessKey: requireEnv("AWS_SECRET_ACCESS_KEY", env.storageSecretAccessKey),
       },
       forcePathStyle: true,
     });
@@ -31,8 +32,36 @@ function extensionFor(file) {
   return subtype ? `.${subtype.replace(/[^a-z0-9]/gi, "")}` : "";
 }
 
-export function publicUrlForKey(key) {
-  return `${requireEnv("R2_PUBLIC_BASE_URL", env.r2PublicBaseUrl).replace(/\/$/, "")}/${key}`;
+export function storageReferenceForKey(key) {
+  return `s3://${requireEnv("STORAGE_BUCKET", env.storageBucket)}/${key}`;
+}
+
+export async function signedUrlForKey(key) {
+  if (!key) return null;
+  return getSignedUrl(
+    getStorageClient(),
+    new GetObjectCommand({
+      Bucket: requireEnv("STORAGE_BUCKET", env.storageBucket),
+      Key: key,
+    }),
+    { expiresIn: env.storageSignedUrlTtl },
+  );
+}
+
+export async function serializeFileAsset(asset) {
+  return {
+    id: asset.id,
+    key: asset.key,
+    url: await signedUrlForKey(asset.key),
+    mimeType: asset.mimeType,
+    originalName: asset.originalName,
+    size: asset.size,
+    purpose: asset.purpose,
+  };
+}
+
+export async function serializeFileAssets(assets = []) {
+  return Promise.all(assets.map(serializeFileAsset));
 }
 
 export async function uploadFileToStorage(file, { ownerId, purpose = "general" } = {}) {
@@ -43,7 +72,7 @@ export async function uploadFileToStorage(file, { ownerId, purpose = "general" }
 
   await getStorageClient().send(
     new PutObjectCommand({
-      Bucket: requireEnv("R2_BUCKET", env.r2Bucket),
+      Bucket: requireEnv("STORAGE_BUCKET", env.storageBucket),
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype,
@@ -56,7 +85,7 @@ export async function uploadFileToStorage(file, { ownerId, purpose = "general" }
       purpose: safePurpose,
       originalName: file.originalname || key,
       key,
-      url: publicUrlForKey(key),
+      url: storageReferenceForKey(key),
       mimeType: file.mimetype,
       size: file.size,
     },

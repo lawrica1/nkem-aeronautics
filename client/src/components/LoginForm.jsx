@@ -6,7 +6,6 @@ import { Sprout, Binoculars, Pickaxe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PhoneInput } from "@/components/ui/PhoneInput";
 import { useLogin } from "@/hooks/useLogin";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -38,8 +37,7 @@ const SECTORS = [
 export function LoginForm({ onSuccess }) {
   const [step, setStep] = useState("sector"); // "sector" | "credentials"
   const [sector, setSector] = useState(null);
-  const [method, setMethod] = useState("email"); // "email" | "phone"
-  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
@@ -48,11 +46,7 @@ export function LoginForm({ onSuccess }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const body =
-      method === "email"
-        ? { email: contact, password, sector }
-        : { telephone: contact, password, sector };
-    login.mutate(body, { onSuccess });
+    login.mutate({ email, password, sector }, { onSuccess });
   }
 
   // ── Step 1: Sector selection ──────────────────────────────────────────────
@@ -127,57 +121,22 @@ export function LoginForm({ onSuccess }) {
         )}
       </div>
 
-      {/* Method toggle */}
-      <div className="flex rounded-lg border border-border bg-brand-input/60 p-1">
-        {[
-          { id: "email", label: "Email" },
-          { id: "phone", label: "Phone number" },
-        ].map((opt) => (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => { setMethod(opt.id); setContact(""); }}
-            className={cn(
-              "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
-              method === opt.id
-                ? "bg-white text-brand-navy-dark shadow-sm"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Contact field */}
         <div className="space-y-2">
-          <Label htmlFor="login-contact">
-            {method === "email" ? "Email" : "Phone number"}
-          </Label>
-          {method === "email" ? (
-            <div className="relative">
-              <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="login-contact"
-                type="email"
-                placeholder="you@example.com"
-                required
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                className="pl-9"
-                autoComplete="email"
-              />
-            </div>
-          ) : (
-            <PhoneInput
-              id="login-contact"
-              name="login-contact"
+          <Label htmlFor="login-email">Email</Label>
+          <div className="relative">
+            <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="login-email"
+              type="email"
+              placeholder="you@example.com"
               required
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="pl-9"
+              autoComplete="email"
             />
-          )}
+          </div>
         </div>
 
         {/* Password */}

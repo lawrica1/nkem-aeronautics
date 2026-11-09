@@ -15,6 +15,7 @@ const RENAMED_PRODUCTS = {
 };
 
 const nextConfig = {
+  output: "standalone",
   async redirects() {
     return Object.entries(RENAMED_PRODUCTS).map(([from, to]) => ({
       source: `/products/${from}`,

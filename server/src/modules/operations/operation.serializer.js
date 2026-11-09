@@ -1,4 +1,6 @@
-export function serializeOperation(operation) {
+import { serializeFileAssets } from "../storage/storage.service.js";
+
+export async function serializeOperation(operation) {
   if (!operation) return null;
 
   return {
@@ -18,7 +20,7 @@ export function serializeOperation(operation) {
     review: operation.review
       ? { id: operation.review.id, rating: operation.review.rating, comment: operation.review.comment }
       : null,
-    files: operation.files?.map((f) => ({ id: f.id, url: f.url, mimeType: f.mimeType, originalName: f.originalName })) ?? [],
+    files: await serializeFileAssets(operation.files),
     telemetry: operation.telemetry?.map((t) => ({
       id: t.id,
       latitude: t.latitude,

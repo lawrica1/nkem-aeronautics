@@ -17,7 +17,7 @@ const PATHS = [
   {
     label: "Buyers",
     title: "Drones & Parts",
-    points: ["Agricultural drone catalogue", "Request a quote", "Card, MTN MoMo or Orange Money"],
+    points: ["Agricultural drone catalogue", "Request a quote", "Cash or bank transfer"],
     href: "/services/agricultural",
     action: "Browse Drones",
   },

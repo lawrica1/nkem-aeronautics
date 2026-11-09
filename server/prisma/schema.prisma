@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -143,25 +144,25 @@ model NewsPost {
 }
 
 model Operation {
-  id               String         @id @default(cuid())
-  serviceRequestId String         @unique
-  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  id               String           @id @default(cuid())
+  serviceRequestId String           @unique
+  serviceRequest   ServiceRequest   @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
   userId           String
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   pilotId          String?
-  pilot            Pilot?         @relation(fields: [pilotId], references: [id], onDelete: SetNull)
+  pilot            Pilot?           @relation(fields: [pilotId], references: [id], onDelete: SetNull)
   droneId          String?
-  drone            Drone?         @relation(fields: [droneId], references: [id], onDelete: SetNull)
+  drone            Drone?           @relation(fields: [droneId], references: [id], onDelete: SetNull)
   scheduledAt      DateTime?
-  chemical         String         @default("")
-  region           String         @default("")
-  comments         String         @default("")
-  results          String         @default("")
+  chemical         String           @default("")
+  region           String           @default("")
+  comments         String           @default("")
+  results          String           @default("")
   review           Review?
   files            FileAsset[]
   telemetry        DroneTelemetry[]
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   @@index([userId, createdAt])
   @@index([pilotId])
@@ -218,13 +219,13 @@ model Product {
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status      OrderStatus @default(pending_payment)
-  channel     String      @default("online")
-  totalAmount Int         @default(0)
-  notes       String      @default("")
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          OrderStatus      @default(pending_payment)
+  channel         String           @default("online")
+  totalAmount     Int              @default(0)
+  notes           String           @default("")
   items           OrderItem[]
   payments        Payment[]
   paymentAttempts PaymentAttempt[]
@@ -245,7 +246,7 @@ model PaymentAttempt {
   id           String   @id @default(cuid())
   orderId      String
   order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  provider     String   @default("flutterwave")
+  provider     String   @default("unconfigured")
   txRef        String   @unique
   providerTxId String?
   status       String   @default("pending")

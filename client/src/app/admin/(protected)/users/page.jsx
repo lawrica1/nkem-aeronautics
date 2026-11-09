@@ -5,7 +5,7 @@ export default function AdminUsersPage() {
     <div>
       <h1 className="text-3xl font-bold tracking-tight text-brand-navy-dark">Users</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Search registered accounts, verify one manually if an SMS never arrived, or change a role.
+        Search registered accounts, verify one manually when necessary, or change a role.
       </p>
       <div className="mt-8">
         <UsersAdminView />

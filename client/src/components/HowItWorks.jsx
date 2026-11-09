@@ -77,7 +77,7 @@ export function HowItWorks() {
               <p className="mt-0.5 font-display text-sm text-brand-black">Issued on sign-up</p>
             </div>
             <span className="rounded bg-brand-blue px-2 py-1 text-[10px] font-semibold tracking-wider text-white uppercase">
-              SMS verified
+              Email verified
             </span>
           </div>
         </Reveal>

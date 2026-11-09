@@ -22,20 +22,18 @@ services:
         value: production
       - key: NODE_VERSION
         value: "22"
-      - key: DATABASE_URL # Neon connection string, keep ?sslmode=require&connect_timeout=15
+      - key: HOST # the server listens on 127.0.0.1 by default (VPS behind Nginx); Render needs all interfaces
+        value: 0.0.0.0
+      - key: DATABASE_URL # Neon pooled connection string, keep ?sslmode=require&connect_timeout=15
+        sync: false
+      - key: DIRECT_URL # Neon direct (non-pooled) connection string, used by prisma db push
         sync: false
       - key: JWT_SECRET
         generateValue: true
-      - key: CLIENT_ORIGIN # main site address used in emails and payment redirects, e.g. https://nkemaeronautics.com
+      - key: CLIENT_ORIGIN # main site address used in email links, e.g. https://nkemaeronautics.com
         sync: false
       - key: CORS_ORIGINS # other site addresses, comma-separated, e.g. https://www.nkemaeronautics.com,https://nkem-web.onrender.com
         sync: false
-      - key: TERMII_API_KEY # SMS codes are sent only when this is set; otherwise they are logged
-        sync: false
-      - key: TERMII_SENDER_ID
-        sync: false
-      - key: TERMII_CHANNEL
-        value: generic
       - key: BREVO_API_KEY
         sync: false
       - key: SMTP_USER
@@ -46,25 +44,15 @@ services:
         value: "465"
       - key: SMTP_PASS
         sync: false
-      - key: R2_ENDPOINT
+      - key: AWS_ENDPOINT_URL_S3 # Neon object storage (`neon env pull`), for photo and video uploads
         sync: false
-      - key: R2_BUCKET
-        value: nkem-aeronautics-media
-      - key: R2_ACCESS_KEY_ID
+      - key: AWS_ACCESS_KEY_ID
         sync: false
-      - key: R2_SECRET_ACCESS_KEY
+      - key: AWS_SECRET_ACCESS_KEY
         sync: false
-      - key: R2_PUBLIC_BASE_URL
-        sync: false
-      - key: FLUTTERWAVE_SECRET_KEY
-        sync: false
-      - key: FLUTTERWAVE_WEBHOOK_HASH
-        sync: false
+      - key: STORAGE_BUCKET
+        value: nkem-aeronautics-bucket
       - key: ADMIN_EMAIL
-        sync: false
-      - key: ADMIN_PHONE
-        sync: false
-      - key: ADMIN_SIGNUP_CODE # leave empty to keep public admin sign-up disabled
         sync: false
       - key: ANTHROPIC_API_KEY # website assistant (Claude); set this or GEMINI_API_KEY, or neither to show contact options only
         sync: false

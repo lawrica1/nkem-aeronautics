@@ -1,19 +1,25 @@
 import { serializeUser } from "../users/user.serializer.js";
 import { listForUser } from "../requests/request.service.js";
-import { uploadFileToStorage } from "../storage/storage.service.js";
+import { signedUrlForKey, uploadFileToStorage } from "../storage/storage.service.js";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { nextLogbookId } from "../logbooks/counter.model.js";
 import { FIRM_VALUES } from "../firms/firms.constants.js";
 
+async function serializeFarmer(user) {
+  const serialized = serializeUser(user);
+  serialized.profilePhotoUrl = user.profilePhotoKey ? await signedUrlForKey(user.profilePhotoKey) : null;
+  return serialized;
+}
+
 export function getProfile(user) {
-  return serializeUser(user);
+  return serializeFarmer(user);
 }
 
 export async function getLogbook(user) {
   const requests = await listForUser(user);
   return {
-    farmer: serializeUser(user),
+    farmer: await serializeFarmer(user),
     requests,
     operations: requests.map((r) => r.operation).filter(Boolean),
   };
@@ -27,7 +33,7 @@ export async function updateProfilePhoto(user, file) {
     data: { profilePhotoKey: asset.key, profilePhotoUrl: asset.url },
   });
 
-  return serializeUser(updated);
+  return serializeFarmer(updated);
 }
 
 export async function updateProfile(user, body) {
@@ -59,5 +65,5 @@ export async function updateProfile(user, body) {
   }
 
   const updated = await prisma.user.update({ where: { id: user.id }, data });
-  return serializeUser(updated);
+  return serializeFarmer(updated);
 }
