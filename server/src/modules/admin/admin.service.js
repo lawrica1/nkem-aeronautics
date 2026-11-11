@@ -1,5 +1,4 @@
 import ExcelJS from "exceljs";
-import bcrypt from "bcryptjs";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
@@ -9,6 +8,7 @@ import { signAdminToken } from "../../shared/middleware/auth.js";
 import { notify } from "../notifications/notification.service.js";
 import { sendEmail } from "../notifications/email.service.js";
 import { logbookVerifiedEmail, adminNewVerifiedUser } from "../notifications/email.templates.js";
+import { escapeHtml } from "../../shared/utils/html.js";
 import { serializeUser } from "../users/user.serializer.js";
 import { toCsv } from "../../shared/utils/csv.js";
 import { checkPassword } from "../../shared/utils/loginGuard.js";
@@ -45,9 +45,10 @@ export async function login({ email, password }) {
 }
 
 // Only an existing admin can create another; there is deliberately no public admin signup.
-export async function createAdmin({ name, email, password } = {}, actor) {
-  if (!name || !email || !password) throw new HttpError(400, "name, email and password are required.");
-  if (password.length < 8) throw new HttpError(400, "Password must be at least 8 characters.");
+// No password is set: the new admin can't sign in until they set one via forgot-password,
+// which emails a code to this address — proving they own it. The creator never knows it.
+export async function createAdmin({ name, email } = {}, actor) {
+  if (!name || !email) throw new HttpError(400, "name and email are required.");
 
   const admin = await prisma.user
     .create({
@@ -55,7 +56,7 @@ export async function createAdmin({ name, email, password } = {}, actor) {
         role: ROLES.ADMIN,
         name,
         email: email.toLowerCase(),
-        passwordHash: await bcrypt.hash(password, 10),
+        passwordHash: null,
         isVerified: true,
         isProfileComplete: true,
       },
@@ -68,6 +69,11 @@ export async function createAdmin({ name, email, password } = {}, actor) {
   if (!admin) throw new HttpError(409, "An account with this email already exists. Change its role on the Users page.");
 
   console.info(`[audit] admin ${actor.id} created admin ${admin.id}`);
+  sendEmail(
+    admin.email,
+    "You've been added as an admin — Nkem Aeronautics",
+    `<p>Hello ${escapeHtml(admin.name)},</p><p>You've been added as an admin. To activate your account, <a href="${env.clientOrigin}/forgot-password">set your password</a> using this email address, then sign in at <a href="${env.clientOrigin}/admin/login">${env.clientOrigin}/admin/login</a>.</p><p>If you weren't expecting this, ignore this email.</p><p>— Nkem Aeronautics Ltd</p>`,
+  ).catch((err) => console.error("[notify:admin_invite]", err.message));
   return serializeUser(admin);
 }
 

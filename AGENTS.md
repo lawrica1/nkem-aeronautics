@@ -55,7 +55,7 @@ unset ADMIN_PASSWORD
 - `server/src/modules/auth`: signup, OTP verification, resend OTP, login.
 - `server/src/modules/farmers`: authenticated profile and own requests.
 - `server/src/modules/requests`: service request create/list/update.
-- `server/src/modules/admin`: admin login, admin-only creation of other admins, stats, logbook export, user search/role/verify management. There is no public admin signup route.
+- `server/src/modules/admin`: admin login, admin-only creation of other admins (no public admin signup — bootstrap the first admin with `npm run create-admin`), stats, logbook export, user search/role/verify management.
 - `server/src/modules/catalog`: public catalog data (marketing display only — see `products` for the sellable catalogue).
 - `server/src/modules/logbooks`: collision-safe logbook counter and receipt-number counter.
 - `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.
