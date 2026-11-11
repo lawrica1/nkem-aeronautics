@@ -21,6 +21,7 @@ sudo install -o root -g root -m 644 \
   /etc/systemd/system/nkem-frontend.service
 
 sudo install -d -o root -g systemd-journal -m 2755 /var/log/journal
+sudo usermod -aG systemd-journal deploy
 sudo install -d -o root -g root -m 755 /etc/systemd/journald.conf.d
 sudo install -o root -g root -m 644 \
   deploy/systemd/60-nkem-journal.conf \
@@ -32,4 +33,5 @@ sudo systemctl enable --now nkem-healthcheck.timer
 sudo systemctl start nkem-healthcheck.service
 
 echo "Observability installation completed."
+echo "Reconnect the deploy SSH session once to activate journal group access."
 systemctl list-timers nkem-healthcheck.timer --no-pager

@@ -120,6 +120,9 @@ restarts only that service and verifies recovery. Results are written to the
 system journal. The journal is persistent, compressed, capped at 300 MB, keeps
 2 GB disk space free, and retains entries for no more than 30 days.
 
+The installer adds `deploy` to the `systemd-journal` group. Disconnect and open
+a new SSH session once after installation so journal access takes effect.
+
 Useful commands:
 
 ```bash
@@ -128,6 +131,17 @@ journalctl -u nkem-backend -f
 journalctl -u nkem-frontend -f
 journalctl -u nkem-healthcheck --since today
 systemctl list-timers nkem-healthcheck.timer
+```
+
+Successful deployments retain only the active release and one immediate
+fallback release. This bounds disk growth while preserving automatic rollback.
+After the release-layout migration is confirmed, old in-place build caches in
+the Git checkout may be removed once with:
+
+```bash
+rm -rf /var/www/nkem-aeronautics/client/node_modules \
+  /var/www/nkem-aeronautics/client/.next \
+  /var/www/nkem-aeronautics/server/node_modules
 ```
 
 The local supervisor provides recovery but cannot report a total VPS or network

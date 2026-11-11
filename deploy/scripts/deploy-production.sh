@@ -119,3 +119,22 @@ if [[ "$deployment_ok" != true ]]; then
 fi
 
 echo "Production deployment succeeded: $commit"
+
+# Keep the active release and one immediate fallback. Release directory names
+# are full Git SHAs, so unrelated paths can never enter this cleanup set.
+mapfile -t expired_releases < <(
+  find "$releases_dir" -mindepth 1 -maxdepth 1 -type d \
+    -regextype posix-extended -regex '.*/[0-9a-f]{40}' \
+    -printf '%T@ %p\n' \
+    | sort -rn \
+    | tail -n +3 \
+    | cut -d' ' -f2-
+)
+
+for expired_release in "${expired_releases[@]}"; do
+  if [[ "$expired_release" == "$releases_dir"/[0-9a-f]* \
+    && "$expired_release" != "$(readlink -f "$current_link")" ]]; then
+    echo "Removing expired release: $(basename "$expired_release")"
+    rm -rf -- "$expired_release"
+  fi
+done
