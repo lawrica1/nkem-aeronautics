@@ -33,5 +33,7 @@ sudo install -o root -g root -m 755 \
   /usr/local/sbin/nkem-github-deploy
 sudo systemctl daemon-reload
 
+deploy/scripts/install-observability.sh
+
 commit="$(git rev-parse HEAD)"
 exec deploy/scripts/deploy-production.sh "$commit"

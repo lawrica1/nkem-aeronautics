@@ -16,10 +16,18 @@ ExecStart=/usr/bin/node server.js
 Restart=always
 RestartSec=5
 TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nkem-frontend
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
 
 [Install]
 WantedBy=multi-user.target

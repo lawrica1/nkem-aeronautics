@@ -104,3 +104,53 @@ in-place frontend build procedure. Normal releases must use
 `deploy/scripts/smoke-production.sh` can be run independently. It checks the public
 frontend, canonical redirect, API health, CORS boundary, protected admin route,
 and the absence of public admin signup without creating production data.
+
+## Monitoring and Logs
+
+Install persistent logging and the local health supervisor once after deploying
+the observability files:
+
+```bash
+cd /var/www/nkem-aeronautics
+./deploy/scripts/install-observability.sh
+```
+
+The timer checks both loopback endpoints every five minutes. If one fails, it
+restarts only that service and verifies recovery. Results are written to the
+system journal. The journal is persistent, compressed, capped at 300 MB, keeps
+2 GB disk space free, and retains entries for no more than 30 days.
+
+Useful commands:
+
+```bash
+./deploy/scripts/production-status.sh
+journalctl -u nkem-backend -f
+journalctl -u nkem-frontend -f
+journalctl -u nkem-healthcheck --since today
+systemctl list-timers nkem-healthcheck.timer
+```
+
+The local supervisor provides recovery but cannot report a total VPS or network
+failure. Configure an external uptime service to check these public endpoints:
+
+```text
+https://nkemaeronautics.com/
+https://api.nkemaeronautics.com/health
+```
+
+Use a five-minute interval and email alerts to the operational mailbox.
+
+## Recovery Responsibilities
+
+- **Application source:** GitHub is the source of truth; immutable releases on
+  the VPS provide immediate application rollback.
+- **Database:** Neon PostgreSQL must have provider-side restore or point-in-time
+  recovery configured according to the selected Neon plan.
+- **Object storage:** Neon Object Storage holds uploaded media; database records
+  contain only object URLs and metadata. Confirm its retention and recovery
+  policy separately from PostgreSQL.
+- **VPS:** Enable recurring Spaceship snapshots after confirming the snapshot
+  schedule and retention. A snapshot is a secondary recovery layer, not a
+  replacement for Git, Neon recovery, or documented environment secrets.
+- **Secrets:** Back up the two shared environment files only in an encrypted
+  password manager or encrypted offline archive. Never commit them to Git.

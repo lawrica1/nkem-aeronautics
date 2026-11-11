@@ -13,10 +13,18 @@ ExecStart=/usr/bin/node /var/www/nkem-aeronautics-runtime/current/server/src/ser
 Restart=always
 RestartSec=5
 TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nkem-backend
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+[Unit]
+Description=Nkem Aeronautics local application health supervisor
+After=network-online.target nkem-backend.service nkem-frontend.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/nkem-health-supervisor
+User=root
+Group=root
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nkem-healthcheck
