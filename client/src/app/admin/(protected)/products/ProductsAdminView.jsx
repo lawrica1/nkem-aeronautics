@@ -7,7 +7,8 @@ import { useAdminProducts, useUpdateProduct } from "@/hooks/useProducts";
 import { TableCard, StatusPill, RowMenu, filterRows, pageRows, thClass, tdClass } from "@/components/admin/AdminTable";
 import { PRODUCT_SECTOR_OPTIONS } from "@/lib/adminOptions";
 import { formatXAF } from "@/lib/currency";
-import { specEntries } from "@/lib/catalog";
+import { specRows } from "@/lib/catalog";
+import { PRODUCT_FAMILIES } from "@/lib/productRange";
 import { CROP_OPTIONS, SERVICE_OPTIONS } from "@/components/AgriDroneFilter";
 import { FileUpload } from "@/components/portal/FileUpload";
 import { Button } from "@/components/ui/button";
@@ -29,18 +30,41 @@ function toForm(product) {
     tags: (product?.tags ?? []).join(", "),
     crops: product?.crops ?? [],
     service: product?.service ?? "",
-    specList: specEntries(product?.specs).map(([label, value]) => ({ label, value: String(value) })),
+    specList: specRows(product?.specs),
+    family: product?.family ?? "",
+    sortOrder: product?.sortOrder ?? 0,
+    tagline: product?.tagline ?? "",
+    thirdParty: product?.thirdParty ?? false,
+    keyFigures: [0, 1, 2].map((i) => ({ value: product?.keyFigures?.[i]?.value ?? "", label: product?.keyFigures?.[i]?.label ?? "" })),
     // FileUpload works with asset objects; stored products only keep the URLs.
     images: (product?.images ?? []).map((url) => ({ id: url, url, mimeType: "image/", originalName: url.split("/").pop() })),
   };
 }
 
-function toPayload({ specList, ...form }) {
+// Specs with a group name are saved as [{ group, rows }] (shown as separate tables on the Products
+// pages); without any group they stay simple [label, value] pairs.
+function specsPayload(specList) {
+  const rows = specList.filter((s) => s.label.trim());
+  if (!rows.some((s) => s.group.trim())) return rows.map((s) => [s.label.trim(), s.value.trim()]);
+  const groups = [];
+  for (const s of rows) {
+    const name = s.group.trim() || "Specifications";
+    let g = groups.find((x) => x.group === name);
+    if (!g) groups.push((g = { group: name, rows: [] }));
+    g.rows.push([s.label.trim(), s.value.trim()]);
+  }
+  return groups;
+}
+
+function toPayload({ specList, keyFigures, ...form }) {
   return {
     ...form,
     tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
     service: form.service || null,
-    specs: specList.filter((s) => s.label.trim()).map((s) => [s.label.trim(), s.value.trim()]),
+    family: form.family || null,
+    sortOrder: Number(form.sortOrder) || 0,
+    keyFigures: keyFigures.filter((k) => k.value.trim() && k.label.trim()).map((k) => ({ value: k.value.trim(), label: k.label.trim() })),
+    specs: specsPayload(specList),
     images: form.images.map((img) => img.url),
   };
 }
@@ -145,10 +169,47 @@ export function ProductForm({ product, mutation, submitLabel, onDone, onCancel }
         </>
       )}
 
+      <fieldset className="grid gap-4 rounded-xl border border-border p-4 sm:col-span-2 sm:grid-cols-2">
+        <legend className="px-1 text-sm font-semibold text-brand-navy-dark">Products pages (/products)</legend>
+        <div className="space-y-1.5">
+          <Label>Product family <span className="font-normal text-muted-foreground">— where it is listed</span></Label>
+          <select className={fieldClass} value={form.family} onChange={(e) => setForm({ ...form, family: e.target.value })}>
+            <option value="">Not listed on the Products pages</option>
+            {PRODUCT_FAMILIES.map((f) => (
+              <option key={f.id} value={f.id}>{f.code} · {f.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>Display order <span className="font-normal text-muted-foreground">— lower shows first</span></Label>
+          <input type="number" className={fieldClass} value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: e.target.value })} />
+        </div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label>Tagline <span className="font-normal text-muted-foreground">— one sentence under the name</span></Label>
+          <input className={fieldClass} placeholder="e.g. Long-range survey platform for forest surveys and aerial mapping." value={form.tagline} onChange={(e) => setForm({ ...form, tagline: e.target.value })} />
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label>Headline figures <span className="font-normal text-muted-foreground">— up to three, e.g. 2,700 mm / Wingspan</span></Label>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {form.keyFigures.map((k, i) => (
+              <div key={i} className="flex gap-2">
+                <input className={fieldClass} placeholder="Value" value={k.value} onChange={(e) => setForm({ ...form, keyFigures: form.keyFigures.map((x, j) => (j === i ? { ...x, value: e.target.value } : x)) })} />
+                <input className={fieldClass} placeholder="Label" value={k.label} onChange={(e) => setForm({ ...form, keyFigures: form.keyFigures.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)) })} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <label className="flex items-center gap-2 text-sm text-brand-navy-dark sm:col-span-2">
+          <input type="checkbox" checked={form.thirdParty} onChange={(e) => setForm({ ...form, thirdParty: e.target.checked })} />
+          Partner product (made by another company, e.g. DJI). Adds a trademark note.
+        </label>
+      </fieldset>
+
       <div className="space-y-2 sm:col-span-2">
-        <Label>Specs</Label>
+        <Label>Specs <span className="font-normal text-muted-foreground">— the group (e.g. Airframe, Performance) is optional</span></Label>
         {form.specList.map((spec, i) => (
           <div key={i} className="flex gap-2">
+            <input className={`${fieldClass} sm:max-w-40`} placeholder="Group" value={spec.group} onChange={(e) => setSpec(i, "group", e.target.value)} />
             <input className={fieldClass} placeholder="e.g. Tank capacity" value={spec.label} onChange={(e) => setSpec(i, "label", e.target.value)} />
             <input className={fieldClass} placeholder="e.g. 20 L" value={spec.value} onChange={(e) => setSpec(i, "value", e.target.value)} />
             <button
@@ -163,7 +224,7 @@ export function ProductForm({ product, mutation, submitLabel, onDone, onCancel }
         ))}
         <button
           type="button"
-          onClick={() => setForm({ ...form, specList: [...form.specList, { label: "", value: "" }] })}
+          onClick={() => setForm({ ...form, specList: [...form.specList, { group: form.specList.at(-1)?.group ?? "", label: "", value: "" }] })}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-blue hover:underline"
         >
           <Plus className="size-4" /> Add spec

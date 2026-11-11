@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { PageHero, BTN_PRIMARY, BTN_SECONDARY } from "@/components/PageHero";
 import { SERVICES } from "@/lib/services";
 import { CATALOG_SECTORS } from "@/lib/catalog";
 import { CatalogSection } from "../../CatalogSection";
@@ -30,41 +30,30 @@ export default async function ServiceDetailPage({ params }) {
 
   return (
     <main className="flex-1">
-      <section className="relative overflow-hidden bg-brand-navy px-6 py-24 text-white sm:py-32">
-        {service.hero?.image ? (
-          <>
-            <Image src={hero.image} alt="" fill priority className="object-cover" sizes="100vw" />
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-navy-dark/95 via-brand-navy-dark/75 to-brand-navy-dark/20" />
-          </>
-        ) : (
-          <Image src={hero.image} alt="" fill priority className="object-cover opacity-25" sizes="100vw" />
-        )}
-        <div className="relative mx-auto max-w-6xl">
-          <Link href="/services" className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white">
-            <ArrowLeft className="size-4" />
-            All services
-          </Link>
-          <div className="mt-6 flex size-12 items-center justify-center rounded-xl bg-brand-blue">
-            <Icon className="size-6 text-white" />
-          </div>
-          <h1 className="mt-4 max-w-3xl text-4xl font-bold sm:text-5xl">{hero.title}</h1>
-          <p className="mt-6 max-w-2xl text-lg text-white/75">{hero.description}</p>
-          <ul className="mt-8 grid max-w-3xl gap-3 sm:grid-cols-2">
-            {service.features.map((f) => (
-              <li key={f} className="flex items-start gap-2 text-sm text-white/90">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand-blue" />
-                {f}
-              </li>
-            ))}
-          </ul>
-          <Link
-            href={service.ctaHref}
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-brand-blue-dark"
-          >
-            {service.cta}
-            <ArrowRight className="size-4" />
-          </Link>
-        </div>
+      <PageHero
+        image={hero.image}
+        eyebrow="Services"
+        title={hero.title}
+        intro={hero.description}
+        crumbs={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: service.title }]}
+      >
+        <Link href={service.ctaHref} className={BTN_PRIMARY}>
+          {service.cta}
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+        <Link href="/products" className={BTN_SECONDARY}>
+          View Products
+        </Link>
+      </PageHero>
+      <section className="bg-brand-paper px-4 pb-12 sm:px-6">
+        <ul className="mx-auto grid max-w-6xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {service.features.map((f) => (
+            <li key={f} className="flex items-start gap-2.5 rounded-xl border border-neutral-200 bg-white p-4 text-sm text-brand-black">
+              <Icon className="mt-0.5 size-4 shrink-0 text-brand-blue" />
+              {f}
+            </li>
+          ))}
+        </ul>
       </section>
 
       {nav.length > 0 && (
@@ -90,9 +79,9 @@ export default async function ServiceDetailPage({ params }) {
       {!hasCatalog && (
         <section className="bg-white px-6 py-20">
           <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2">
-            <div className="flex flex-col items-center justify-center rounded-2xl bg-brand-navy px-6 py-10 text-center text-white sm:px-10">
-              <h2 className="text-2xl font-bold">Talk to our team about {service.title.toLowerCase()}</h2>
-              <p className="mt-1.5 max-w-xl text-sm text-white/70">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-neutral-200 bg-brand-paper px-6 py-10 text-center sm:px-10">
+              <h2 className="font-display text-xl font-normal tracking-tight text-brand-black">Talk to our team about {service.title.toLowerCase()}</h2>
+              <p className="mt-2 max-w-xl text-sm text-neutral-600">
                 Tell us about your site and requirements and we will recommend the right inspection approach.
               </p>
               <Link

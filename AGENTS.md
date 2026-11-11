@@ -55,7 +55,7 @@ unset ADMIN_PASSWORD
 - `server/src/modules/auth`: signup, OTP verification, resend OTP, login.
 - `server/src/modules/farmers`: authenticated profile and own requests.
 - `server/src/modules/requests`: service request create/list/update.
-- `server/src/modules/admin`: admin login, admin-only creation of other admins, stats, logbook export, user search/role/verify management. There is no public admin signup route.
+- `server/src/modules/admin`: admin login, admin-only creation of other admins (no public admin signup — bootstrap the first admin with `npm run create-admin`), stats, logbook export, user search/role/verify management.
 - `server/src/modules/catalog`: public catalog data (marketing display only — see `products` for the sellable catalogue).
 - `server/src/modules/logbooks`: collision-safe logbook counter and receipt-number counter.
 - `server/src/modules/pilots`, `server/src/modules/drones`: fleet rosters, admin-managed.
@@ -63,6 +63,7 @@ unset ADMIN_PASSWORD
 - `server/src/modules/products`, `server/src/modules/orders`: sellable catalogue, orders, manually-recorded payments, auto-issued receipts.
 - `server/src/modules/partRequests`: customer part-identification requests with photo/video attachments.
 - `server/src/modules/notifications`: outbound email (Gmail SMTP), currently used for receipt emails.
+- `server/src/modules/assistant`: public website chatbot (`POST /api/assistant/chat`) on the Claude API, streamed as plain text, rate-limited per IP. It answers only from `knowledge/company.md` (hand-edited) and `knowledge/catalog.md` (generated: `cd client && npm run build:assistant-knowledge`). Uses Claude when `ANTHROPIC_API_KEY` is set, otherwise Gemini when `GEMINI_API_KEY` is set (model `GEMINI_MODEL`, default `gemini-flash-lite-latest`, retried and then falling back to `GEMINI_FALLBACK_MODEL`, default `gemini-flash-latest`, when Google is overloaded); with neither the endpoint returns 503 and the widget shows contact details.
 
 ## Known Production Gaps
 

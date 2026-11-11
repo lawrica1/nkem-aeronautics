@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChevronDown, Home, Wrench, BookOpen, Mail, Building2 } from "lucide-react";
+import { Menu, X, ChevronDown, Home, Wrench, BookOpen, Mail, Building2, Package } from "lucide-react";
 import { getToken } from "@/lib/api";
 import { NotificationBell } from "@/components/NotificationBell";
 import { SERVICES } from "@/lib/services";
@@ -37,39 +37,39 @@ export function Navbar() {
   );
 
   return (
-    <header className="bg-brand-navy text-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-6">
+    <header className="relative z-40 border-b border-neutral-200/70 bg-white text-brand-black">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 sm:py-5">
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <Image
             src="/images/logo.png"
             alt="Nkem Aeronautics"
             width={44}
             height={44}
-            className="size-9 shrink-0 rounded-full sm:size-11"
+            className="size-9 shrink-0 rounded-full sm:size-10"
           />
           <div className="min-w-0">
-            <p className="truncate text-base font-bold tracking-tight sm:text-2xl">NKEM AERONAUTICS</p>
-            <p className="mt-1 hidden text-sm italic text-white/60 sm:block">
+            <p className="truncate font-display text-sm font-medium tracking-tight sm:text-lg">NKEM AERONAUTICS</p>
+            <p className="mt-0.5 hidden text-xs text-neutral-500 italic sm:block lg:hidden 2xl:block">
               "Where fate and human glory lead, we are always there."
             </p>
           </div>
         </Link>
 
         {/* Desktop nav */}
-        <ul className="hidden items-center gap-8 text-sm font-medium lg:flex">
+        <ul className="hidden items-center gap-5 whitespace-nowrap xl:gap-7 text-[11.5px] font-semibold tracking-[0.12em] uppercase lg:flex [&>li>a:hover]:text-brand-blue [&>li>button:hover]:text-brand-blue">
           <li>
             <Link href="/">Home</Link>
           </li>
           <li className="group relative">
-            <button type="button" aria-haspopup="true" className="flex items-center gap-1">
+            <button type="button" aria-haspopup="true" className="flex items-center gap-1 tracking-[0.12em] uppercase">
               Services
               <ChevronDown className="size-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
             </button>
-            <ul className="invisible absolute top-full left-0 z-50 w-64 rounded-lg border border-white/10 bg-brand-navy py-2 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+            <ul className="invisible absolute top-full left-0 z-50 mt-3 w-72 rounded-xl border border-neutral-200 bg-white py-2 tracking-normal normal-case opacity-0 shadow-xl transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
               <li>
                 <Link
                   href="/services"
-                  className="block border-b border-white/10 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+                  className="block border-b border-neutral-200 px-4 py-2.5 text-sm font-semibold text-brand-black hover:bg-brand-gray-light hover:text-brand-blue"
                 >
                   All services
                 </Link>
@@ -78,13 +78,16 @@ export function Navbar() {
                 <li key={service.slug}>
                   <Link
                     href={`/services/${service.slug}`}
-                    className="block px-4 py-2 text-sm font-normal text-white/85 hover:bg-white/10 hover:text-white"
+                    className="block px-4 py-2 text-sm font-normal text-neutral-700 hover:bg-brand-gray-light hover:text-brand-blue"
                   >
                     {service.label}
                   </Link>
                 </li>
               ))}
             </ul>
+          </li>
+          <li>
+            <Link href="/products">Products</Link>
           </li>
           <li>
             <Link href="/logbook">Logbook Portal</Link>
@@ -98,6 +101,14 @@ export function Navbar() {
             </li>
           )}
           <li>{dashboardLink}</li>
+          <li>
+            <Link
+              href="/contact"
+              className="rounded-md bg-brand-blue px-4 py-2.5 text-white transition-colors hover:bg-brand-blue-dark hover:text-white!"
+            >
+              Get a Quote
+            </Link>
+          </li>
         </ul>
 
         {/* Mobile controls */}
@@ -108,7 +119,7 @@ export function Navbar() {
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-brand-black"
           >
             {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -169,6 +180,12 @@ export function Navbar() {
                       ))}
                     </ul>
                   )}
+                </li>
+                <li>
+                  <Link href="/products" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-brand-gray-light">
+                    <Package className="size-4.5 text-brand-blue" />
+                    Products
+                  </Link>
                 </li>
                 <li>
                   <Link href="/logbook" className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-brand-gray-light">

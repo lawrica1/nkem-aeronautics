@@ -432,6 +432,8 @@ export const SERVICES = [
     description:
       "Specialised heavy-lift VTOL fixed-wing drone missions for cargo, emergency supply, and large-scale field operations.",
     image: "/images/services/evtol-heavy-lift.jpg",
+    // Wide, text-free crop used when the card spans a full row on the home page.
+    banner: "/images/hero/evtol-large-uav.jpeg",
     features: [
       "Heavy-lift payload delivery",
       "Emergency supply drops",

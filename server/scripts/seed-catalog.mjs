@@ -7,10 +7,10 @@ const PRODUCTS = [
   {
     id: "zam13e",
     sector: "evtol",
-    name: "ZAM13E Fixed Wing UAV Forest Survey Drone",
+    name: "NKM-AGR-500 Fixed Wing UAV Forest Survey Drone",
     description:
       "Long-range fixed-wing survey UAV for forest survey and general unmanned aerial vehicle operations.",
-    spec: "Model: ZAM13E",
+    spec: "Model: NKM-AGR-500",
     tags: ["Commercial Drone", "Electric", "Fixed Wing", "Survey"],
     availability: "Enquire to purchase",
     specs: [
@@ -34,10 +34,10 @@ const PRODUCTS = [
   {
     id: "zam2001",
     sector: "evtol",
-    name: "ZAM2001 8K GPS Camera Cargo UAV",
+    name: "NKM-LGS-50 8K GPS Camera Cargo UAV",
     description:
       "Professional GPS camera drone with 8K imaging positioning for efficient commercial and cargo UAV applications.",
-    spec: "Model: ZAM2001",
+    spec: "Model: NKM-LGS-50",
     tags: ["Commercial Drone", "8K Camera", "GPS", "Cargo UAV"],
     availability: "MOQ: 1 set",
     specs: [
@@ -60,10 +60,10 @@ const PRODUCTS = [
   {
     id: "zam201",
     sector: "evtol",
-    name: "ZAM201 VTOL Fixed-Wing Training Survey Drone",
+    name: "NKM-AGR-300 VTOL Fixed-Wing Training Survey Drone",
     description:
       "Electric VTOL general-purpose fixed-wing aircraft for training, surveying, and remote-control UAV operations.",
-    spec: "Model: ZAM201",
+    spec: "Model: NKM-AGR-300 VTOL",
     tags: ["Commercial Drone", "VTOL", "Electric", "Waterproof"],
     availability: "MOQ: 1 set",
     specs: [
@@ -115,10 +115,10 @@ const PRODUCTS = [
   {
     id: "zam237",
     sector: "evtol",
-    name: "ZAM237 Carbon Fiber Fixed-Wing Drone Kit",
+    name: "NKM-AGR-200 Carbon Fiber Fixed-Wing Drone Kit",
     description:
       "Carbon-fiber drone airframe kit for long-distance missions, large-drone builds, and cargo delivery applications.",
-    spec: "Model: ZAM237",
+    spec: "Model: NKM-AGR-200",
     tags: ["Beginner Drone", "Carbon Fiber", "Cargo Delivery", "Airframe Kit"],
     availability: "MOQ: 1pc",
     specs: [
@@ -166,10 +166,10 @@ const PRODUCTS = [
   {
     id: "aw1338",
     sector: "evtol",
-    name: "AW1338 HD 4K Long Distance Mapping Drone",
+    name: "NKM-AGR-100 HD 4K Long Distance Mapping Drone",
     description:
       "Long-distance fixed-wing mapping UAV with HD 4K camera, GPS remote-control features, and carbon-fiber airframe.",
-    spec: "Model: AW1338",
+    spec: "Model: NKM-AGR-100",
     tags: ["4K Camera", "GPS", "Mapping", "Carbon Fiber"],
     availability: "Enquire to purchase",
     specs: [
@@ -273,7 +273,7 @@ const PRODUCTS = [
   {
     id: "gr-crawler-transport",
     sector: "agricultural",
-    name: "Crawler Transport Vehicle (Remote-Controlled)",
+    name: "NKM-UGV-2 Crawler Transport Vehicle (Remote-Controlled)",
     description:
       "Remote-controlled tracked transport vehicle for hauling loads across farm terrain.",
     image: "/images/ground-robots/crawler-transport-vehicle.jpg",
@@ -297,7 +297,7 @@ const PRODUCTS = [
   {
     id: "gr-dumpcart",
     sector: "agricultural",
-    name: "DumpCart (Crawler Dump Vehicle)",
+    name: "NKM-UGV-1 Dumpcart (Crawler Dump Vehicle)",
     description:
       "Remote-controlled tracked dump vehicle for hauling and unloading materials on farm sites.",
     image: "/images/ground-robots/dumpcart-dump-vehicle.jpg",
@@ -339,7 +339,7 @@ const PRODUCTS = [
   {
     id: "aw1338-wildlife",
     sector: "wildlife",
-    name: "Nkem AW1338 HD Mapping Remote UAV",
+    name: "Nkem NKM-AGR-100 HD Mapping Remote UAV",
     description: "4K camera GPS platform designed for thermal wildlife tracking and border surveillance.",
     spec: "Optics: 4K HD Gimbal",
     tags: ["Wildlife", "4K", "GPS"],

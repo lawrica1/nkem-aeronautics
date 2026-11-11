@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiRequest } from "@/lib/api";
 
-const EMPTY = { name: "", email: "", password: "" };
+const EMPTY = { name: "", email: "" };
 
 export default function AddAdminPage() {
   const [form, setForm] = useState(EMPTY);
@@ -24,7 +24,7 @@ export default function AddAdminPage() {
     <div>
       <h1 className="text-3xl font-bold tracking-tight text-brand-navy-dark">Add Admin</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Create a new admin account. They sign in at /admin/login with this email and password.
+        Create a new admin account. We email them a link to set their own password before they can sign in.
       </p>
 
       <form
@@ -42,24 +42,12 @@ export default function AddAdminPage() {
           <Label htmlFor="email">Email</Label>
           <Input id="email" name="email" type="email" required value={form.email} onChange={handleChange} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Initial password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            value={form.password}
-            onChange={handleChange}
-          />
-          <p className="text-xs text-muted-foreground">At least 8 characters. Share it privately.</p>
-        </div>
 
         {createAdmin.isError && <p className="text-sm text-destructive">{createAdmin.error.message}</p>}
         {createAdmin.isSuccess && (
-          <p className="text-sm text-green-700">Admin {createAdmin.data.email} created.</p>
+          <p className="text-sm text-green-700">
+            Admin {createAdmin.data.email} created. They&apos;ll get an email to set their password.
+          </p>
         )}
 
         <Button type="submit" disabled={createAdmin.isPending} className="bg-brand-navy text-white hover:bg-brand-navy/90">
