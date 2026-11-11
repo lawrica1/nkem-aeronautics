@@ -43,24 +43,20 @@ function maskContact(value) {
 export function SignupView() {
   const router = useRouter();
   const [step, setStep] = useState("form"); // "form" | "otp"
-  const [signupData, setSignupData] = useState(null);
-  const [channel, setChannel] = useState("sms");
-  const [contact, setContact] = useState(null);
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const verifyOtp = useVerifyOtp();
   const resendOtp = useResendOtp();
 
   function handleSignupSuccess(data) {
-    setSignupData(data);
-    setChannel(data.otpChannel ?? (data.telephone ? "sms" : "email"));
-    setContact(data.otpContact ?? (data.telephone ?? data.email));
+    setEmail(data.email);
     setStep("otp");
   }
 
   function handleVerify(e) {
     e.preventDefault();
     verifyOtp.mutate(
-      { channel, contact, otp },
+      { email, otp },
       {
         onSuccess: () => router.push("/onboarding"),
       },
@@ -68,19 +64,8 @@ export function SignupView() {
   }
 
   function handleResend() {
-    resendOtp.mutate({ channel, contact });
+    resendOtp.mutate({ email });
   }
-
-  function handleSwitchChannel() {
-    const next = channel === "sms" ? "email" : "sms";
-    const nextContact = next === "sms" ? signupData?.telephone : signupData?.email;
-    if (!nextContact) return;
-    setChannel(next);
-    setContact(nextContact);
-    resendOtp.mutate({ channel: next, contact: nextContact });
-  }
-
-  const canSwitchChannel = channel === "sms" ? !!signupData?.email : !!signupData?.telephone;
 
   return (
     <main className="grid min-h-screen w-full lg:grid-cols-2">
@@ -146,20 +131,9 @@ export function SignupView() {
 
             <h2 className="mt-8 text-2xl font-bold text-brand-navy-dark">Verify your account</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              We sent a verification code via {channel === "sms" ? "text message" : "email"} to{" "}
-              <span className="font-medium text-foreground">{maskContact(contact) ?? "your contact"}</span>.
+              We sent a verification code by email to{" "}
+              <span className="font-medium text-foreground">{maskContact(email) ?? "your email"}</span>.
             </p>
-
-            {canSwitchChannel && (
-              <button
-                type="button"
-                onClick={handleSwitchChannel}
-                disabled={resendOtp.isPending}
-                className="mt-1 text-xs font-medium text-brand-blue hover:underline disabled:opacity-60"
-              >
-                Send it to my {channel === "sms" ? "email" : "phone"} instead
-              </button>
-            )}
 
             <form onSubmit={handleVerify} className="mt-6 space-y-4">
               <div className="space-y-2">

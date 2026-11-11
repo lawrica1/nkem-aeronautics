@@ -10,7 +10,7 @@ async function sendViaBrevoApi(to, subject, html) {
       "api-key": env.brevoApiKey,
     },
     body: JSON.stringify({
-      sender: { name: "Nkem Aeronautics", email: env.smtpUser },
+      sender: { name: env.emailFromName, email: env.emailFromAddress },
       to: [{ email: to }],
       subject,
       htmlContent: html,
@@ -39,8 +39,9 @@ function getTransporter() {
   return transporter;
 }
 
-export async function sendEmail(to, subject, html) {
+export async function sendEmail(to, subject, html, { throwOnError = false } = {}) {
   if (!env.brevoApiKey && !env.smtpPass) {
+    if (throwOnError) throw new Error("No email provider is configured.");
     console.log(`[email] ${subject} -> ${to}`);
     return;
   }
@@ -50,7 +51,7 @@ export async function sendEmail(to, subject, html) {
       await sendViaBrevoApi(to, subject, html);
     } else {
       await getTransporter().sendMail({
-        from: `"Nkem Aeronautics" <${env.smtpUser}>`,
+        from: `"${env.emailFromName}" <${env.emailFromAddress}>`,
         to,
         subject,
         html,
@@ -58,5 +59,6 @@ export async function sendEmail(to, subject, html) {
     }
   } catch (error) {
     console.error(`[email] send failed for ${to}: ${error.message}`);
+    if (throwOnError) throw error;
   }
 }

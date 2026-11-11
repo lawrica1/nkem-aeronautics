@@ -1,4 +1,9 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+// NEXT_PUBLIC_API_URL wins when set. Without it, production builds (Vercel, Render) use the
+// hosted API, so a missing or empty variable can't silently point the live site at localhost.
+const HOSTED_API_URL = "https://nkem-api.onrender.com/api";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production" ? HOSTED_API_URL : "http://localhost:5000/api");
 
 const TOKEN_KEY = "nkem_token";
 const ADMIN_TOKEN_KEY = "nkem_admin_token";

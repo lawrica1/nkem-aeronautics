@@ -63,7 +63,7 @@ npm run prisma:push
 
 ## 5. Production Blockers
 
-- OTP delivery is still console/debug based; a real SMS/email provider is needed.
+- Brevo credentials must be configured in each deployed backend environment for email OTP delivery.
 - Payment, ordering, fulfillment, pilot assignment, drone assignment, and firm dashboards are not yet complete.
 - Admin request-management screens are still limited.
 - Real product image files for the pasted eVTOL catalog images still need to be added to `client/public/images`.
