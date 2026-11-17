@@ -55,6 +55,7 @@ const NAV_GROUPS = [
     links: [
       { href: "/admin/users", label: "Users" },
       { href: "/admin/add-admin", label: "Add Admin" },
+      { href: "/admin/id-registry", label: "ID Registry" },
       { href: "/admin/organizations", label: "Organizations" },
       { href: "/admin/partners", label: "Partners" },
     ],

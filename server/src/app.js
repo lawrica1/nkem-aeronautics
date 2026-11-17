@@ -9,6 +9,7 @@ import { authRouter } from "./modules/auth/auth.routes.js";
 import { catalogRouter } from "./modules/catalog/catalog.routes.js";
 import { droneRouter } from "./modules/drones/drone.routes.js";
 import { farmerRouter } from "./modules/farmers/farmer.routes.js";
+import { idCardRouter } from "./modules/idCards/idCard.routes.js";
 import { newsRouter } from "./modules/news/news.routes.js";
 import { notificationRouter } from "./modules/notifications/notification.routes.js";
 import { operationRouter } from "./modules/operations/operation.routes.js";
@@ -65,6 +66,7 @@ export function createApp() {
   app.use("/api/admin", adminRouter);
   app.use("/api/pilots", pilotRouter);
   app.use("/api/drones", droneRouter);
+  app.use("/api/id-cards", idCardRouter);
   app.use("/api/operations", operationRouter);
   app.use("/api/products", productRouter);
   app.use("/api/orders", orderRouter);

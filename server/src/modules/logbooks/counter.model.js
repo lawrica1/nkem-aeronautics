@@ -22,3 +22,16 @@ export async function nextReceiptNumber() {
 
   return `RCT-${new Date().getFullYear()}-${String(counter.seq).padStart(6, "0")}`;
 }
+
+// Company + card type + shared sequence, e.g. NKEM-DIR-0001, NKEM-EMP-0002.
+// One counter for both types, so a number is never reused across them.
+export async function nextEmployeeId(cardType) {
+  const counter = await prisma.counter.upsert({
+    where: { key: "employeeId" },
+    update: { seq: { increment: 1 } },
+    create: { key: "employeeId", seq: 1 },
+  });
+
+  const role = cardType === "director" ? "DIR" : "EMP";
+  return `NKEM-${role}-${String(counter.seq).padStart(4, "0")}`;
+}

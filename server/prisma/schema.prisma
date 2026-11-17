@@ -405,6 +405,35 @@ model Counter {
   seq Int    @default(0)
 }
 
+enum CardType {
+  director
+  employee
+}
+
+enum IdCardStatus {
+  active
+  lost
+  returned
+}
+
+// Printed staff ID cards. employeeId is generated (NKEM-DIR-0001) and never changes once printed.
+model IdCard {
+  id         String       @id @default(cuid())
+  employeeId String       @unique
+  fullName   String
+  jobTitle   String
+  department String
+  country    String
+  cardType   CardType
+  issueDate  DateTime     @db.Date
+  expiryDate DateTime     @db.Date
+  status     IdCardStatus @default(active)
+  notes      String       @default("")
+  photoUrl   String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
 model FileAsset {
   id               String          @id @default(cuid())
   ownerId          String?

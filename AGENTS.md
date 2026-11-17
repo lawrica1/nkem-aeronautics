@@ -62,6 +62,7 @@ unset ADMIN_PASSWORD
 - `server/src/modules/operations`: pilot/drone assignment against a service request, results, farmer reviews.
 - `server/src/modules/products`, `server/src/modules/orders`: sellable catalogue, orders, manually-recorded payments, auto-issued receipts.
 - `server/src/modules/partRequests`: customer part-identification requests with photo/video attachments.
+- `server/src/modules/idCards`: admin-only staff ID card registry (ID Registry page). Employee IDs are generated as `NKEM-DIR-0001` / `NKEM-EMP-0002` from one shared counter; status is active/lost/returned.
 - `server/src/modules/notifications`: outbound email (Gmail SMTP), currently used for receipt emails.
 - `server/src/modules/assistant`: public website chatbot (`POST /api/assistant/chat`) on the Claude API, streamed as plain text, rate-limited per IP. It answers only from `knowledge/company.md` (hand-edited) and `knowledge/catalog.md` (generated: `cd client && npm run build:assistant-knowledge`). Uses Claude when `ANTHROPIC_API_KEY` is set, otherwise Gemini when `GEMINI_API_KEY` is set (model `GEMINI_MODEL`, default `gemini-flash-lite-latest`, retried and then falling back to `GEMINI_FALLBACK_MODEL`, default `gemini-flash-latest`, when Google is overloaded); with neither the endpoint returns 503 and the widget shows contact details.
 

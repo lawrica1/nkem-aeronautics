@@ -7,12 +7,12 @@ import { MoreVertical, Plus } from "lucide-react";
 const controlClass =
   "rounded-lg border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
 
-// Filters rows by active status and a case-insensitive search over the given fields.
+// Filters rows by status (a row's `status`, else its `active` flag) and a case-insensitive search over the given fields.
 export function filterRows(rows, { status, search }, fields) {
   const q = search.trim().toLowerCase();
   return (rows ?? []).filter(
     (row) =>
-      (status === "all" || row.active === (status === "active")) &&
+      (status === "all" || (row.status ?? (row.active ? "active" : "inactive")) === status) &&
       (!q || fields.some((f) => String(row[f] ?? "").toLowerCase().includes(q)))
   );
 }
@@ -36,11 +36,16 @@ export function pageList(current, total) {
   return [1, "…", current - 1, current, current + 1, "…", total];
 }
 
+const ACTIVE_OPTIONS = [
+  ["active", "Active"],
+  ["inactive", "Inactive"],
+];
+
 const pageBtn =
   "min-w-9 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-brand-navy-dark hover:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent";
 
 // Card with title, status filter, search and Add button on top, and a results count with paging below.
-export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, count, children }) {
+export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, count, statusOptions = ACTIVE_OPTIONS, children }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-5">
@@ -53,8 +58,11 @@ export function TableCard({ title, filters, onFiltersChange, addHref, addLabel, 
             onChange={(e) => onFiltersChange({ ...filters, status: e.target.value, page: 1 })}
           >
             <option value="all">All status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            {statusOptions.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </select>
           <input
             type="search"
