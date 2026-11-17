@@ -35,9 +35,9 @@ _Last synced against actual code: 2026-09-03. See `docs/SITE-FUNCTIONALITY-AUDIT
 - done: Confirmed agricultural firm dropdown sourced from `client/src/lib/firms.js`.
 - done: OTP verification step after signup.
 - done: JWT issued after login and after successful OTP verification.
-- in progress: OTP delivery is stubbed; a real SMS/email provider is still required.
-- in progress: Profile photo selector exists, but upload/storage is not implemented.
-- not started: Password reset flow.
+- done: Email-only OTP delivery through Brevo; telephone is contact information only.
+- done: Profile photo upload uses private Neon Object Storage.
+- done: Email-only password reset flow.
 
 ## Logbook & Identification
 

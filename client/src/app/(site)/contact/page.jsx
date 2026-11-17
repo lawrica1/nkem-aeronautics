@@ -9,6 +9,7 @@ import {
   Headphones,
 } from "lucide-react";
 import { ContactMessageForm } from "@/components/ContactMessageForm";
+import { PageHero } from "@/components/PageHero";
 
 export const metadata = {
   title: "Contact — Nkem Aeronautics",
@@ -114,21 +115,13 @@ function ContactCard({ detail }) {
 export default function ContactPage() {
   return (
     <main className="flex-1">
-      {/* Page hero */}
-      <section className="bg-brand-navy px-6 py-20 text-white">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 text-xs font-semibold tracking-widest text-white/60 uppercase">
-            Get In Touch
-          </p>
-          <h1 className="text-4xl font-bold sm:text-5xl">
-            Contact <span className="text-white">Nkem Aeronautics</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-white/70">
-            Whether you have a service enquiry, need to purchase a drone, or want to discuss a
-            partnership — we&apos;re here to help.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        image="/images/services/wildlife-surveillance.jpg"
+        eyebrow="Get In Touch"
+        title="Contact Nkem Aeronautics"
+        intro="Whether you have a service enquiry, need to purchase a drone, or want to discuss a partnership — we're here to help."
+        crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}
+      />
 
       {/* Inquiry form */}
       <section className="bg-brand-gray-light px-6 py-20">

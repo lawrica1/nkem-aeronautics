@@ -8,6 +8,7 @@ import { serviceRequestStatusUpdate } from "../notifications/email.templates.js"
 import { ROLES } from "../platform/platform.constants.js";
 import { REQUEST_STATUS, REQUEST_STATUS_VALUES, REQUEST_STATUS_LABELS } from "../requests/request.constants.js";
 import { serializeOperation } from "./operation.serializer.js";
+import { serializeFileAssets } from "../storage/storage.service.js";
 
 const OPERATION_INCLUDE = {
   pilot: true,
@@ -185,7 +186,7 @@ export async function listForPilot(user) {
     orderBy: { createdAt: "desc" },
   });
 
-  return operations.map((op) => ({
+  return Promise.all(operations.map(async (op) => ({
     id: op.id,
     service: op.serviceRequest.service,
     status: op.serviceRequest.status,
@@ -197,10 +198,10 @@ export async function listForPilot(user) {
     region: op.region,
     comments: op.comments,
     results: op.results,
-    files: op.files.map((f) => ({ id: f.id, url: f.url, mimeType: f.mimeType, originalName: f.originalName })),
+    files: await serializeFileAssets(op.files),
     review: op.review ? { rating: op.review.rating, comment: op.review.comment } : null,
     createdAt: op.createdAt.toISOString(),
-  }));
+  })));
 }
 
 export async function updateAsPilot(id, user, body) {

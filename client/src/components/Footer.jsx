@@ -1,4 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
+import { SERVICES } from "@/lib/services";
+import { PRODUCT_FAMILIES, CATALOG_PDF } from "@/lib/productRange";
 
 // lucide-react has no brand/logo icons, so these are inlined directly.
 function InstagramIcon(props) {
@@ -29,39 +32,67 @@ const SOCIAL_LINKS = [
   { name: "LinkedIn", href: "https://www.linkedin.com/in/nkem-aeronautics-6a7b103aa?utm_source=share_via&utm_content=profile&utm_medium=member_ios", icon: LinkedinIcon },
 ];
 
+// Site map columns, corporate-style: every public section reachable from every page.
+const COLUMNS = [
+  {
+    title: "Products",
+    links: [
+      { label: "All products", href: "/products" },
+      ...PRODUCT_FAMILIES.map((f) => ({ label: f.name, href: `/products#${f.id}` })),
+      { label: "Download catalog (PDF)", href: CATALOG_PDF, download: true },
+    ],
+  },
+  {
+    title: "Services",
+    links: [{ label: "All services", href: "/services" }, ...SERVICES.map((s) => ({ label: s.title, href: `/services/${s.slug}` }))],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About Nkem Aeronautics", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Customer service", href: "/customer-service" },
+    ],
+  },
+  {
+    title: "Portal",
+    links: [
+      { label: "Register as a farmer", href: "/signup" },
+      { label: "Log in", href: "/login" },
+      { label: "Logbook portal", href: "/logbook" },
+    ],
+  },
+];
+
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-white/10 bg-brand-navy text-white">
-      <div className="mx-auto w-full max-w-6xl px-6 py-12">
-        <div className="grid gap-8 sm:grid-cols-3">
+    <footer className="mt-auto border-t border-neutral-200 bg-brand-paper text-brand-black">
+      <div className="mx-auto w-full max-w-6xl px-6 pt-14 pb-10">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_2.8fr]">
           <div>
-            <div className="flex items-center gap-2">
-              <Image
-                src="/images/logo.png"
-                alt="Nkem Aeronautics"
-                width={32}
-                height={32}
-                className="size-8 shrink-0 rounded-full"
-              />
-              <p className="font-semibold text-white">NKEM AERONAUTICS</p>
-            </div>
-            <p className="mt-3 text-sm text-brand-footer-text">
+            <Link href="/" className="flex items-center gap-2.5">
+              <Image src="/images/logo.png" alt="Nkem Aeronautics" width={36} height={36} className="size-9 shrink-0 rounded-full" />
+              <span className="font-display text-sm font-medium">NKEM AERONAUTICS</span>
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-600">
               Leading aerial technological solutions for agriculture, land preparation, and
               autonomous surveillance across Africa.
             </p>
-          </div>
-          <div>
-            <p className="font-semibold text-white/80">Headquarters &amp; Address</p>
-            <p className="mt-3 text-sm text-brand-footer-text">
-              Junction of Cairo Road and Independence Avenue, Lusaka 10101, Zambia
-            </p>
-            <p className="mt-3 text-sm text-brand-footer-text">Website: nkemaeronautics.com</p>
-          </div>
-          <div>
-            <p className="font-semibold text-white/80">Contact Us</p>
-            <p className="mt-3 text-sm text-brand-footer-text">Email: <a href="mailto:nkem@nkemaeronautics.com" className="hover:text-white transition-colors">nkem@nkemaeronautics.com</a></p>
-            <p className="text-sm text-brand-footer-text">Tel / WhatsApp: +237 670 439 117</p>
-            <div className="mt-4 flex gap-4">
+            <dl className="mt-6 space-y-3 text-sm">
+              <div>
+                <dt className="text-[11px] font-semibold tracking-[0.14em] text-neutral-500 uppercase">Headquarters</dt>
+                <dd className="mt-1 text-neutral-700">Junction of Cairo Road and Independence Avenue, Lusaka 10101, Zambia</dd>
+              </div>
+              <div>
+                <dt className="text-[11px] font-semibold tracking-[0.14em] text-neutral-500 uppercase">Contact</dt>
+                <dd className="mt-1 text-neutral-700">
+                  <a href="mailto:nkem@nkemaeronautics.com" className="hover:text-brand-blue">nkem@nkemaeronautics.com</a>
+                  <br />
+                  Tel / WhatsApp: +237 670 439 117
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-6 flex gap-3">
               {SOCIAL_LINKS.map(({ name, href, icon: Icon }) => (
                 <a
                   key={name}
@@ -69,17 +100,43 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={name}
-                  className="text-brand-footer-text transition-colors hover:text-white"
+                  className="flex size-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-600 transition-colors hover:border-brand-blue hover:text-brand-blue"
                 >
-                  <Icon className="size-5" />
+                  <Icon className="size-4" />
                 </a>
               ))}
             </div>
           </div>
+
+          <nav aria-label="Site map" className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {COLUMNS.map((col) => (
+              <div key={col.title}>
+                <p className="font-display text-xs font-medium tracking-tight">{col.title}</p>
+                <ul className="mt-4 space-y-2.5">
+                  {col.links.map((l) => (
+                    <li key={l.href + l.label}>
+                      {l.download ? (
+                        <a href={l.href} download className="text-sm text-neutral-600 hover:text-brand-blue">
+                          {l.label}
+                        </a>
+                      ) : (
+                        <Link href={l.href} className="text-sm text-neutral-600 hover:text-brand-blue">
+                          {l.label}
+                        </Link>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
         </div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs text-brand-footer-text/70">
-        &copy; {new Date().getFullYear()} Nkem Aeronautics. All rights reserved.
+      <div className="border-t border-neutral-200">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-5 text-xs text-neutral-500">
+          <p>&copy; {new Date().getFullYear()} Nkem Aeronautics. All rights reserved.</p>
+          <p>Specifications are provided for guidance and may change without notice. Third-party trademarks belong to their owners.</p>
+        </div>
       </div>
     </footer>
   );

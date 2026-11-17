@@ -1,0 +1,112 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Block critical production advisories
+        run: npm audit --omit=dev --audit-level=critical
+
+      - name: Generate Prisma client
+        run: npm run prisma:generate
+
+      - name: Validate entry point
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client
+    env:
+      NEXT_PUBLIC_API_URL: https://api.nkemaeronautics.com/api
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Block critical production advisories
+        run: npm audit --omit=dev --audit-level=critical
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build production frontend
+        run: npm run build
+
+  deploy:
+    name: Deploy production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: false
+    steps:
+      - name: Configure production SSH access
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+
+      - name: Deploy exact commit
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          VPS_HOST: ${{ vars.VPS_HOST }}
+          VPS_PORT: ${{ vars.VPS_PORT }}
+          VPS_USER: ${{ vars.VPS_USER }}
+        run: |
+          ssh -p "$VPS_PORT" "$VPS_USER@$VPS_HOST" \
+            "deploy $DEPLOY_SHA"

@@ -30,11 +30,11 @@ export function NotificationBell() {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Notifications"
-        className="relative rounded-full p-1.5 text-white/90 hover:bg-white/10"
+        className="relative rounded-full p-1.5 text-brand-black hover:bg-brand-gray-light"
       >
         <Bell className="size-5" />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-gold text-[10px] font-bold text-brand-navy-dark">
+          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-blue text-[10px] font-bold text-white">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}

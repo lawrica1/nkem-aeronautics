@@ -1,11 +1,13 @@
 import { Hero } from "@/components/Hero";
 import { Challenges } from "@/components/Challenges";
 import { ServicesOverview } from "@/components/ServicesOverview";
+import { FleetCapabilities } from "@/components/FleetCapabilities";
 import { HowItWorks } from "@/components/HowItWorks";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { ManufacturingProcess, ProjectLifecycle } from "@/components/ProjectLifecycle";
 import { NewsSection } from "@/components/NewsSection";
-import { ServiceCards } from "@/components/ServiceCards";
+import { CallToAction } from "@/components/CallToAction";
+import { FeaturedProducts } from "@/components/FeaturedProducts";
 
 export const metadata = {
   title: "Nkem Aeronautics — Aerial UAV Solutions",
@@ -17,18 +19,16 @@ export default function HomePage() {
   return (
     <main className="flex-1">
       <Hero />
-      <Challenges />
       <ServicesOverview />
-      <section id="catalog" className="border-t border-border bg-white px-6 py-20">
-        <div className="mx-auto max-w-6xl">
-          <ServiceCards />
-        </div>
-      </section>
-      <ProjectLifecycle />
-      <ManufacturingProcess />
+      <FeaturedProducts />
+      <Challenges />
+      <FleetCapabilities />
       <HowItWorks />
       <WhyChooseUs />
+      <ProjectLifecycle />
+      <ManufacturingProcess />
       <NewsSection />
+      <CallToAction />
     </main>
   );
 }

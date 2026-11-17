@@ -6,16 +6,13 @@ import { Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PhoneInput } from "@/components/ui/PhoneInput";
 import { apiRequest } from "@/lib/api";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [step, setStep] = useState("contact"); // "contact" | "otp" | "password"
-  const [method, setMethod] = useState("email");
-  const [contact, setContact] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,7 +26,7 @@ export default function ForgotPasswordPage() {
     try {
       await apiRequest("/auth/forgot-password", {
         method: "POST",
-        body: method === "email" ? { email: contact } : { telephone: contact },
+        body: { email },
       });
       setStep("otp");
     } catch (err) {
@@ -50,7 +47,7 @@ export default function ForgotPasswordPage() {
     try {
       await apiRequest("/auth/reset-password", {
         method: "POST",
-        body: { contact, otp, newPassword },
+        body: { email, otp, newPassword },
       });
       router.push("/login?reset=1");
     } catch (err) {
@@ -71,61 +68,27 @@ export default function ForgotPasswordPage() {
         </Link>
         <h1 className="mt-4 text-2xl font-bold text-brand-navy-dark">Reset your password</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {step === "contact" && "Enter your email or phone number and we'll send a verification code."}
-          {step === "otp" && `Enter the code we sent to ${contact}.`}
+          {step === "contact" && "Enter your email and we'll send a verification code."}
+          {step === "otp" && `Enter the code we sent to ${email}.`}
         </p>
       </div>
 
       {step === "contact" && (
         <form onSubmit={handleRequestCode} className="space-y-5">
-          {/* Method toggle */}
-          <div className="flex rounded-lg border border-border bg-brand-input/60 p-1">
-            {[
-              { id: "email", label: "Email" },
-              { id: "phone", label: "Phone number" },
-            ].map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => { setMethod(opt.id); setContact(""); }}
-                className={cn(
-                  "flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
-                  method === opt.id
-                    ? "bg-white text-brand-navy-dark shadow-sm"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
           <div className="space-y-2">
-            <Label htmlFor="contact">
-              {method === "email" ? "Email address" : "Phone number"}
-            </Label>
-            {method === "email" ? (
-              <div className="relative">
-                <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="contact"
-                  type="email"
-                  placeholder="you@example.com"
-                  required
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            ) : (
-              <PhoneInput
-                id="contact"
-                name="contact"
+            <Label htmlFor="email">Email address</Label>
+            <div className="relative">
+              <Mail className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
                 required
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="pl-9"
               />
-            )}
+            </div>
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -164,7 +127,7 @@ export default function ForgotPasswordPage() {
             onClick={() => setStep("contact")}
             className="w-full text-sm text-muted-foreground hover:text-foreground"
           >
-            Use a different contact
+            Use a different email
           </button>
         </form>
       )}
