@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
+import { affiliateRouter } from "./modules/affiliates/affiliate.routes.js";
 import { assistantRouter } from "./modules/assistant/assistant.routes.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { catalogRouter } from "./modules/catalog/catalog.routes.js";
@@ -67,6 +68,7 @@ export function createApp() {
   app.use("/api/pilots", pilotRouter);
   app.use("/api/drones", droneRouter);
   app.use("/api/id-cards", idCardRouter);
+  app.use("/api/affiliates", affiliateRouter);
   app.use("/api/operations", operationRouter);
   app.use("/api/products", productRouter);
   app.use("/api/orders", orderRouter);

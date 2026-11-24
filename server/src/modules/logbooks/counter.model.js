@@ -23,6 +23,17 @@ export async function nextReceiptNumber() {
   return `RCT-${new Date().getFullYear()}-${String(counter.seq).padStart(6, "0")}`;
 }
 
+// Affiliate referral codes, e.g. NKEM-REF-ZM-0001. One counter across countries, so a number is never reused.
+export async function nextReferralCode(country) {
+  const counter = await prisma.counter.upsert({
+    where: { key: "referralCode" },
+    update: { seq: { increment: 1 } },
+    create: { key: "referralCode", seq: 1 },
+  });
+
+  return `NKEM-REF-${country}-${String(counter.seq).padStart(4, "0")}`;
+}
+
 // Company + card type + shared sequence, e.g. NKEM-DIR-0001, NKEM-EMP-0002.
 // One counter for both types, so a number is never reused across them.
 export async function nextEmployeeId(cardType) {

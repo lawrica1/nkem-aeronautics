@@ -38,6 +38,7 @@ const NAV_GROUPS = [
       { href: "/admin/orders", label: "Orders" },
       { href: "/admin/part-requests", label: "Part Requests" },
       { href: "/admin/quotes", label: "Quote Requests" },
+      { href: "/admin/affiliates", label: "Affiliates" },
     ],
   },
   {

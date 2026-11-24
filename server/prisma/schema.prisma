@@ -434,6 +434,30 @@ model IdCard {
   updatedAt  DateTime     @updatedAt
 }
 
+enum AffiliateStatus {
+  active
+  paused
+}
+
+// Referral partners. referralCode is generated (NKEM-REF-ZM-0001) and never changes once handed out.
+// country is an ISO 3166-1 alpha-2 code from the shared signup country list.
+model Affiliate {
+  id             String          @id @default(cuid())
+  referralCode   String          @unique
+  name           String
+  company        String          @default("")
+  email          String          @unique
+  phone          String          @default("")
+  country        String
+  commissionRate Decimal         @default(0) @db.Decimal(5, 2)
+  status         AffiliateStatus @default(active)
+  notes          String          @default("")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([country])
+}
+
 model FileAsset {
   id               String          @id @default(cuid())
   ownerId          String?
