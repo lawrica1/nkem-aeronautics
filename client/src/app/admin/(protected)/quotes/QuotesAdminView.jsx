@@ -4,6 +4,14 @@ import { useState } from "react";
 import { useAdminQuotes, useUpdateQuote } from "@/hooks/useQuotes";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { ListToolbar, matchRows, SaveStatus, EmptyList } from "@/components/admin/AdminTable";
+
+const TABS = [
+  { label: "New", statuses: ["new"] },
+  { label: "Contacted", statuses: ["contacted"] },
+  { label: "Closed", statuses: ["closed"] },
+  { label: "All" },
+];
 
 const fieldClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
@@ -42,15 +50,19 @@ function QuoteRow({ quote }) {
             {SECTOR_LABELS[quote.sector] ?? quote.sector} &middot; {formatDate(quote.createdAt)}
           </p>
         </div>
-        <select
-          className={`${fieldClass} w-auto`}
-          defaultValue={quote.status}
-          onChange={(e) => update.mutate({ id: quote.id, status: e.target.value })}
-        >
-          {STATUS_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
+        <div className="flex items-center gap-3">
+          <SaveStatus mutation={update} />
+          <select
+            aria-label="Status"
+            className={`${fieldClass} w-auto`}
+            defaultValue={quote.status}
+            onChange={(e) => update.mutate({ id: quote.id, status: e.target.value })}
+          >
+            {STATUS_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
@@ -104,21 +116,38 @@ function QuoteRow({ quote }) {
           Save
         </Button>
       </div>
-      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
     </div>
   );
 }
 
 export function QuotesAdminView() {
   const { data: quotes, isLoading, isError, error } = useAdminQuotes();
+  const [tab, setTab] = useState(TABS[0]);
+  const [search, setSearch] = useState("");
 
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading quote requests…</p>;
   if (isError) return <p className="text-sm text-destructive">{error.message}</p>;
-  if (!quotes?.length) return <p className="text-sm text-muted-foreground">No quote requests yet.</p>;
+
+  const shown = matchRows(quotes, tab, search, (q) => [q.name, q.email, q.company, q.whatsapp, q.interestedProduct]);
 
   return (
-    <div className="space-y-3">
-      {quotes.map((quote) => <QuoteRow key={quote.id} quote={quote} />)}
+    <div className="space-y-4">
+      <ListToolbar
+        tabs={TABS}
+        tab={tab}
+        onTab={setTab}
+        rows={quotes}
+        search={search}
+        onSearch={setSearch}
+        placeholder="Search name, email, company…"
+      />
+      {shown.length ? (
+        <div className="space-y-3">
+          {shown.map((quote) => <QuoteRow key={quote.id} quote={quote} />)}
+        </div>
+      ) : (
+        <EmptyList>{search ? "No quote requests match your search." : `No quote requests in “${tab.label}”.`}</EmptyList>
+      )}
     </div>
   );
 }

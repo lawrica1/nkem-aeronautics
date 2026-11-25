@@ -121,6 +121,59 @@ export async function getStats() {
   };
 }
 
+// Landing-page overview: what needs action now, plus the latest activity.
+export async function getDashboard() {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const [
+    pendingLogbooks,
+    newRequests,
+    awaitingPayment,
+    newPartRequests,
+    newQuotes,
+    verifiedUsers,
+    signupsThisWeek,
+    totalRequests,
+    totalOrders,
+    recentRequests,
+    recentUsers,
+  ] = await Promise.all([
+    prisma.user.count({ where: { identificationNumber: { not: null }, logbookVerifiedAt: null } }),
+    prisma.serviceRequest.count({ where: { status: "submitted" } }),
+    prisma.order.count({ where: { status: "pending_payment" } }),
+    prisma.partRequest.count({ where: { status: "submitted" } }),
+    prisma.quoteRequest.count({ where: { status: "new" } }),
+    prisma.user.count({ where: { isVerified: true } }),
+    prisma.user.count({ where: { createdAt: { gte: weekAgo } } }),
+    prisma.serviceRequest.count(),
+    prisma.order.count(),
+    prisma.serviceRequest.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        service: true,
+        status: true,
+        region: true,
+        createdAt: true,
+        user: { select: { name: true, surname: true } },
+      },
+    }),
+    prisma.user.findMany({
+      where: { role: ROLES.FARMER },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, name: true, surname: true, identificationNumber: true, region: true, createdAt: true },
+    }),
+  ]);
+
+  return {
+    attention: { pendingLogbooks, newRequests, awaitingPayment, newPartRequests, newQuotes },
+    totals: { verifiedUsers, signupsThisWeek, totalRequests, totalOrders },
+    recentRequests,
+    recentUsers,
+  };
+}
+
 // logbook: "pending" | "approved" | "all" narrows to registered accounts (those holding a Logbook ID).
 export async function listUsers({ search, role, sector, country, logbook } = {}) {
   const users = await prisma.user.findMany({

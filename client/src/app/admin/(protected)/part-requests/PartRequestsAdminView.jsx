@@ -4,6 +4,14 @@ import { useState } from "react";
 import { useAdminPartRequests, useUpdatePartRequest } from "@/hooks/usePartRequests";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { ListToolbar, matchRows, SaveStatus, EmptyList } from "@/components/admin/AdminTable";
+
+const TABS = [
+  { label: "New", statuses: ["submitted"] },
+  { label: "In review", statuses: ["in_review"] },
+  { label: "Done", statuses: ["identified", "unavailable", "closed"] },
+  { label: "All" },
+];
 
 const fieldClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
@@ -34,15 +42,19 @@ function PartRequestRow({ request }) {
           </p>
           <p className="text-xs text-muted-foreground">{formatDate(request.createdAt)}</p>
         </div>
-        <select
-          className={`${fieldClass} w-auto`}
-          defaultValue={request.status}
-          onChange={(e) => update.mutate({ id: request.id, status: e.target.value })}
-        >
-          {STATUS_OPTIONS.map(([value, label]) => (
-            <option key={value} value={value}>{label}</option>
-          ))}
-        </select>
+        <div className="flex items-center gap-3">
+          <SaveStatus mutation={update} />
+          <select
+            aria-label="Status"
+            className={`${fieldClass} w-auto`}
+            defaultValue={request.status}
+            onChange={(e) => update.mutate({ id: request.id, status: e.target.value })}
+          >
+            {STATUS_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <p className="text-sm text-brand-navy-dark">{request.description}</p>
@@ -69,21 +81,38 @@ function PartRequestRow({ request }) {
           Save
         </Button>
       </div>
-      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
     </div>
   );
 }
 
 export function PartRequestsAdminView() {
   const { data: requests, isLoading, isError, error } = useAdminPartRequests();
+  const [tab, setTab] = useState(TABS[0]);
+  const [search, setSearch] = useState("");
 
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading part requests…</p>;
   if (isError) return <p className="text-sm text-destructive">{error.message}</p>;
-  if (!requests?.length) return <p className="text-sm text-muted-foreground">No part requests yet.</p>;
+
+  const shown = matchRows(requests, tab, search, (r) => [r.user?.name, r.user?.surname, r.user?.email, r.description]);
 
   return (
-    <div className="space-y-3">
-      {requests.map((request) => <PartRequestRow key={request.id} request={request} />)}
+    <div className="space-y-4">
+      <ListToolbar
+        tabs={TABS}
+        tab={tab}
+        onTab={setTab}
+        rows={requests}
+        search={search}
+        onSearch={setSearch}
+        placeholder="Search customer or part description…"
+      />
+      {shown.length ? (
+        <div className="space-y-3">
+          {shown.map((request) => <PartRequestRow key={request.id} request={request} />)}
+        </div>
+      ) : (
+        <EmptyList>{search ? "No part requests match your search." : `No part requests in “${tab.label}”.`}</EmptyList>
+      )}
     </div>
   );
 }

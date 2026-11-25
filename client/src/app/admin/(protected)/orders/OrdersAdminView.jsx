@@ -7,6 +7,25 @@ import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { formatXAF } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { ListToolbar, matchRows, SaveStatus, EmptyList } from "@/components/admin/AdminTable";
+
+const TABS = [
+  { label: "Awaiting payment", statuses: ["pending_payment"] },
+  { label: "In progress", statuses: ["paid", "processing", "ready"] },
+  { label: "Completed", statuses: ["completed"] },
+  { label: "Cancelled", statuses: ["cancelled", "payment_failed"] },
+  { label: "All" },
+];
+
+const STATUS_STYLE = {
+  pending_payment: "border-amber-200 bg-amber-50 text-amber-700",
+  paid: "border-blue-200 bg-blue-50 text-blue-700",
+  processing: "border-sky-200 bg-sky-50 text-sky-700",
+  ready: "border-indigo-200 bg-indigo-50 text-indigo-700",
+  completed: "border-green-200 bg-green-50 text-green-700",
+  cancelled: "border-gray-200 bg-gray-100 text-gray-500",
+  payment_failed: "border-red-200 bg-red-50 text-red-700",
+};
 
 const fieldClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/30";
@@ -33,7 +52,7 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-function OnSiteSaleForm() {
+function OnSiteSaleForm({ onDone }) {
   const { data: products } = useAdminProducts();
   const createOrder = useCreateAdminOrder();
   const [userSearch, setUserSearch] = useState("");
@@ -104,18 +123,18 @@ function OnSiteSaleForm() {
 
       {createOrder.isError && <p className="text-sm text-destructive">{createOrder.error.message}</p>}
 
-      <Button
-        disabled={!userId || lines.length === 0 || createOrder.isPending}
-        className="bg-brand-navy text-white hover:bg-brand-navy/90"
-        onClick={() =>
-          createOrder.mutate(
-            { userId, items: lines, channel: "on_site" },
-            { onSuccess: () => setLines([]) },
-          )
-        }
-      >
-        {createOrder.isPending ? "Recording…" : "Create order"}
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          disabled={!userId || lines.length === 0 || createOrder.isPending}
+          className="bg-brand-navy text-white hover:bg-brand-navy/90"
+          onClick={() => createOrder.mutate({ userId, items: lines, channel: "on_site" }, { onSuccess: onDone })}
+        >
+          {createOrder.isPending ? "Recording…" : "Create order"}
+        </Button>
+        <Button type="button" variant="outline" onClick={onDone}>
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 }
@@ -156,7 +175,9 @@ function PaymentForm({ orderId }) {
       >
         {recordPayment.isPending ? "Recording…" : "Record payment"}
       </Button>
-      {recordPayment.isError && <p className="w-full text-sm text-destructive">{recordPayment.error.message}</p>}
+      <div className="w-full">
+        <SaveStatus mutation={recordPayment} />
+      </div>
     </div>
   );
 }
@@ -177,7 +198,11 @@ function OrderRow({ order }) {
             {order.channel === "on_site" ? "On-site" : "Online"} · {order.items.length} item(s) · {formatDate(order.createdAt)}
           </p>
         </div>
-        <span className="rounded-full bg-brand-input px-2.5 py-0.5 text-xs font-medium text-brand-navy-dark">{order.statusLabel}</span>
+        <span
+          className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLE[order.status] ?? STATUS_STYLE.cancelled}`}
+        >
+          {order.statusLabel}
+        </span>
       </button>
 
       {isOpen && (
@@ -211,10 +236,10 @@ function OrderRow({ order }) {
                 ))}
               </select>
             </div>
+            <div className="pb-2">
+              <SaveStatus mutation={updateStatus} />
+            </div>
           </div>
-          {updateStatus.isError && (
-            <p className="text-sm text-destructive">{updateStatus.error.message}</p>
-          )}
         </div>
       )}
     </div>
@@ -223,22 +248,50 @@ function OrderRow({ order }) {
 
 export function OrdersAdminView() {
   const { data: orders, isLoading, isError, error } = useAdminOrders();
+  const [tab, setTab] = useState(TABS[0]);
+  const [search, setSearch] = useState("");
+  const [showSaleForm, setShowSaleForm] = useState(false);
+
+  const shown = matchRows(orders, tab, search, (o) => [
+    o.user?.name,
+    o.user?.surname,
+    o.user?.email,
+    o.receipt?.receiptNumber,
+    ...o.items.map((item) => item.productName),
+  ]);
 
   return (
-    <div className="space-y-6">
-      <OnSiteSaleForm />
+    <div className="space-y-4">
+      {showSaleForm ? (
+        <OnSiteSaleForm onDone={() => setShowSaleForm(false)} />
+      ) : (
+        <Button className="bg-brand-navy text-white hover:bg-brand-navy/90" onClick={() => setShowSaleForm(true)}>
+          + Record on-site sale
+        </Button>
+      )}
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading orders…</p>}
       {isError && <p className="text-sm text-destructive">{error.message}</p>}
 
       {!isLoading && !isError && (
-        <div className="space-y-3">
-          {orders?.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No orders yet.</p>
+        <>
+          <ListToolbar
+            tabs={TABS}
+            tab={tab}
+            onTab={setTab}
+            rows={orders}
+            search={search}
+            onSearch={setSearch}
+            placeholder="Search customer, product, receipt no…"
+          />
+          {shown.length ? (
+            <div className="space-y-3">
+              {shown.map((order) => <OrderRow key={order.id} order={order} />)}
+            </div>
           ) : (
-            orders?.map((order) => <OrderRow key={order.id} order={order} />)
+            <EmptyList>{search ? "No orders match your search." : `No orders in “${tab.label}”.`}</EmptyList>
           )}
-        </div>
+        </>
       )}
     </div>
   );

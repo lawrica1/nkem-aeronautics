@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
     try {
       const data = await apiRequest("/admin/login", { method: "POST", body: form });
       setAdminToken(data.token);
-      router.push("/admin/logbooks");
+      router.push("/admin/dashboard");
     } catch (err) {
       setError(err.message);
     } finally {

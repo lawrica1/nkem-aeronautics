@@ -131,7 +131,7 @@ export function LogbookVerificationView() {
                 <Detail label="Address" value={user.address} />
                 <Detail label="Affiliation" value={user.firmLabel || user.organizationName} />
                 <Detail label="Registered" value={formatDate(user.createdAt)} />
-                <Detail label="Account" value={user.isVerified ? "Phone verified" : "Phone not verified"} />
+                <Detail label="Account" value={user.isVerified ? "Email verified" : "Email not verified"} />
               </dl>
             </li>
           );

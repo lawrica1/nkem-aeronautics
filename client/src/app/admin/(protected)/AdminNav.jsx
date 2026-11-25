@@ -16,16 +16,19 @@ import {
   Newspaper,
   ExternalLink,
   Plane,
+  LayoutDashboard,
 } from "lucide-react";
 import { AdminLogoutButton } from "./AdminLogoutButton";
+import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 
 // Collapsible groups keep the sidebar short enough to fit without a scrollbar.
 const NAV_GROUPS = [
+  { title: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard" },
   {
     title: "Operations",
     icon: ClipboardList,
     links: [
-      { href: "/admin/requests", label: "Requests" },
+      { href: "/admin/requests", label: "Requests", badge: "newRequests" },
       { href: "/admin/pilots", label: "Pilots" },
     ],
   },
@@ -35,9 +38,9 @@ const NAV_GROUPS = [
     icon: ShoppingCart,
     links: [
       { href: "/admin/products", label: "Products" },
-      { href: "/admin/orders", label: "Orders" },
-      { href: "/admin/part-requests", label: "Part Requests" },
-      { href: "/admin/quotes", label: "Quote Requests" },
+      { href: "/admin/orders", label: "Orders", badge: "awaitingPayment" },
+      { href: "/admin/part-requests", label: "Part Requests", badge: "newPartRequests" },
+      { href: "/admin/quotes", label: "Quote Requests", badge: "newQuotes" },
       { href: "/admin/affiliates", label: "Affiliates" },
     ],
   },
@@ -45,7 +48,7 @@ const NAV_GROUPS = [
     title: "Logbooks",
     icon: BookOpen,
     links: [
-      { href: "/admin/logbook-verification", label: "Logbook Verification" },
+      { href: "/admin/logbook-verification", label: "Logbook Verification", badge: "pendingLogbooks" },
       { href: "/admin/logbooks", label: "Logbooks" },
       { href: "/admin/reports", label: "Reports" },
     ],
@@ -73,10 +76,20 @@ const groupOf = (pathname) => NAV_GROUPS.find((g) => g.links?.some((l) => pathna
 
 const ROW = "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors";
 
+// "Needs attention" count next to a nav item; hidden at zero so the sidebar stays quiet.
+function Count({ n }) {
+  if (!n) return null;
+  return (
+    <span className="ml-auto min-w-5 rounded-full bg-amber-500 px-1.5 text-center text-xs font-semibold leading-5 text-white tabular-nums">
+      {n}
+    </span>
+  );
+}
+
 function Brand({ onClose }) {
   return (
     <div className="flex items-center gap-2 py-5 pr-3 pl-5">
-      <Link href="/admin/logbooks" className="flex flex-1 items-center gap-3">
+      <Link href="/admin/dashboard" className="flex flex-1 items-center gap-3">
         <Image src="/images/logo.png" alt="" width={32} height={32} className="size-8 rounded-full" />
         <p className="text-base font-bold text-brand-navy-dark">Nkem Aeronautics</p>
       </Link>
@@ -96,6 +109,8 @@ function Brand({ onClose }) {
 function NavList({ pathname }) {
   // Accordion: only one group open at a time.
   const [open, setOpen] = useState(() => groupOf(pathname));
+  const attention = useAdminDashboard().data?.attention ?? {};
+  const countOf = (links) => links.reduce((sum, l) => sum + (attention[l.badge] ?? 0), 0);
 
   // Navigating into a collapsed group opens it, so the active page is always visible.
   useEffect(() => {
@@ -141,6 +156,7 @@ function NavList({ pathname }) {
               >
                 <group.icon className="size-5 shrink-0" />
                 <span className="flex-1 text-left">{group.title}</span>
+                {!isOpen && <Count n={countOf(group.links)} />}
                 <ChevronRight className={`size-4 text-slate-400 transition-transform ${isOpen ? "rotate-90" : ""}`} />
               </button>
 
@@ -153,13 +169,14 @@ function NavList({ pathname }) {
                         <Link
                           href={link.href}
                           aria-current={active ? "page" : undefined}
-                          className={`block rounded-lg px-3 py-1.5 text-[15px] transition-colors ${
+                          className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-[15px] transition-colors ${
                             active
                               ? "bg-brand-blue/10 font-semibold text-brand-blue"
                               : "text-slate-600 hover:bg-slate-100 hover:text-brand-navy-dark"
                           }`}
                         >
                           {link.label}
+                          <Count n={attention[link.badge]} />
                         </Link>
                       </li>
                     );

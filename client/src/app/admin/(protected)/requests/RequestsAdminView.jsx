@@ -12,6 +12,15 @@ import { FileUpload } from "@/components/portal/FileUpload";
 import { OperationMap } from "@/components/portal/OperationMap";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { ListToolbar, matchRows, SaveStatus, EmptyList } from "@/components/admin/AdminTable";
+
+const TABS = [
+  { label: "To do", statuses: ["submitted", "under_review", "requires_info", "processing"] },
+  { label: "Scheduled", statuses: ["assigned", "in_progress"] },
+  { label: "Completed", statuses: ["completed"] },
+  { label: "Closed", statuses: ["rejected", "cancelled"] },
+  { label: "All" },
+];
 
 const STATUS_OPTIONS = [
   ["assigned", "Assigned"],
@@ -265,8 +274,10 @@ function OperationPanel({ operation }) {
         >
           {update.isPending ? "Saving…" : "Save"}
         </Button>
+        <div className="pb-2">
+          <SaveStatus mutation={update} />
+        </div>
       </div>
-      {update.isError && <p className="text-sm text-destructive">{update.error.message}</p>}
     </div>
   );
 }
@@ -293,7 +304,9 @@ function PartnerShare({ request, partners }) {
       <p className="pb-2 text-xs text-muted-foreground">
         Partners get read-only visibility of what you share here.
       </p>
-      {assignPartner.isError && <p className="w-full text-sm text-destructive">{assignPartner.error.message}</p>}
+      <div className="pb-2">
+        <SaveStatus mutation={assignPartner} />
+      </div>
     </div>
   );
 }
@@ -305,26 +318,43 @@ export function RequestsAdminView() {
   const { data: drones } = useDrones();
   const { data: partners } = usePartners();
   const [expandedId, setExpandedId] = useState(null);
+  const [tab, setTab] = useState(TABS[0]);
+  const [search, setSearch] = useState("");
+
+  const shown = matchRows(requests, tab, search, (r) => [r.user?.name, r.user?.surname, r.service, r.region, r.location]);
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
-          <Label htmlFor="country-filter" className="text-xs">Country</Label>
-          <select id="country-filter" className={fieldClass} style={{ width: "auto" }} value={country} onChange={(e) => setCountry(e.target.value)}>
-            <option value="">All</option>
-            {COUNTRY_OPTIONS.map((c) => (
-              <option key={c.value} value={c.value}>{c.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <ListToolbar
+        tabs={TABS}
+        tab={tab}
+        onTab={setTab}
+        rows={requests}
+        search={search}
+        onSearch={setSearch}
+        placeholder="Search farmer, service, region…"
+      >
+        <select
+          aria-label="Country"
+          className={fieldClass}
+          style={{ width: "auto" }}
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        >
+          <option value="">All countries</option>
+          {COUNTRY_OPTIONS.map((c) => (
+            <option key={c.value} value={c.value}>{c.label}</option>
+          ))}
+        </select>
+      </ListToolbar>
 
       {isLoading && <p className="text-sm text-muted-foreground">Loading requests…</p>}
       {isError && <p className="text-sm text-destructive">{error.message}</p>}
-      {!isLoading && !isError && !requests?.length && <p className="text-sm text-muted-foreground">No service requests match.</p>}
+      {!isLoading && !isError && !shown.length && (
+        <EmptyList>{search ? "No requests match your search." : `No requests in “${tab.label}”.`}</EmptyList>
+      )}
 
-      {!isLoading && !isError && requests?.length > 0 && requests.map((request) => {
+      {!isLoading && !isError && shown.map((request) => {
         const isOpen = expandedId === request.id;
         return (
           <div key={request.id} className="rounded-2xl border border-border bg-white shadow-sm">

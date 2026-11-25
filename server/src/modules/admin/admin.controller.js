@@ -12,6 +12,10 @@ export async function stats(_req, res) {
   res.json(await adminService.getStats());
 }
 
+export async function dashboard(_req, res) {
+  res.json(await adminService.getDashboard());
+}
+
 export async function listUsers(req, res) {
   res.json(await adminService.listUsers(req.query));
 }

@@ -167,5 +167,68 @@ export function RowMenu({ items }) {
   );
 }
 
-export const thClass = "px-6 py-3 text-xs font-semibold text-brand-navy-dark";
+// Card-list pages: tabs are [{ label, statuses }], omitted statuses = everything.
+const inTab = (row, tab) => !tab?.statuses || tab.statuses.includes(row.status);
+
+export function matchRows(rows, tab, search, textOf) {
+  const q = search.trim().toLowerCase();
+  return (rows ?? []).filter(
+    (row) => inTab(row, tab) && (!q || textOf(row).filter(Boolean).join(" ").toLowerCase().includes(q))
+  );
+}
+
+// Segmented status tabs with live counts, plus a search box. Extra filters go in children.
+export function ListToolbar({ tabs, tab, onTab, rows, search, onSearch, placeholder = "Search…", children }) {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap rounded-lg bg-brand-gray-light p-1">
+        {tabs.map((t) => {
+          const count = (rows ?? []).filter((row) => inTab(row, t)).length;
+          const active = t.label === tab.label;
+          return (
+            <button
+              key={t.label}
+              type="button"
+              onClick={() => onTab(t)}
+              aria-pressed={active}
+              className={`flex items-center gap-1.5 rounded-md px-4 py-1.5 text-sm font-medium ${
+                active ? "bg-white text-brand-navy-dark shadow-sm" : "text-muted-foreground hover:text-brand-navy-dark"
+              }`}
+            >
+              {t.label}
+              <span className="rounded-full bg-slate-200/70 px-1.5 text-xs tabular-nums">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+      <input
+        type="search"
+        aria-label="Search"
+        className={`${controlClass} min-w-[220px] flex-1`}
+        placeholder={placeholder}
+        value={search}
+        onChange={(e) => onSearch(e.target.value)}
+      />
+      {children}
+    </div>
+  );
+}
+
+// Inline feedback for a react-query mutation, so every save visibly lands (or explains why not).
+export function SaveStatus({ mutation }) {
+  if (mutation.isPending) return <span className="text-sm text-muted-foreground">Saving…</span>;
+  if (mutation.isError) return <span className="text-sm text-destructive">{mutation.error.message}</span>;
+  if (mutation.isSuccess) return <span className="text-sm font-medium text-green-700">✓ Saved</span>;
+  return null;
+}
+
+export function EmptyList({ children }) {
+  return (
+    <p className="rounded-2xl border border-dashed border-border bg-white px-4 py-12 text-center text-sm text-muted-foreground">
+      {children}
+    </p>
+  );
+}
+
+export const thClass ="px-6 py-3 text-xs font-semibold text-brand-navy-dark";
 export const tdClass = "px-6 py-3.5";
