@@ -48,7 +48,7 @@ export function createApp() {
     env.nodeEnv === "production"
       ? [env.clientOrigin, ...env.corsOrigins.map(originPattern)]
       : (origin, callback) => {
-          if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) return callback(null, true);
+          if (!origin || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) return callback(null, true);
           callback(new Error("Not allowed by CORS"));
         };
   app.use(cors({ origin: corsOrigin, credentials: true }));
@@ -56,6 +56,9 @@ export function createApp() {
   app.use(morgan(env.nodeEnv === "production" ? "combined" : "dev"));
 
   app.get("/health", (_req, res) => {
+    // The site pings this cross-origin to wake the API; helmet's same-origin default makes the
+    // browser log the response as blocked. Nothing sensitive here, so allow it.
+    res.set("Cross-Origin-Resource-Policy", "cross-origin");
     res.json({ status: "ok", service: "nkem-aeronautics-server" });
   });
 
