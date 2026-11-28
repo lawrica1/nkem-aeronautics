@@ -6,7 +6,7 @@ Initiated in 2022 and officially registered in 2026, Nkem Aeronautics has over f
 
 The business covers complete drone systems, integrated sensors, high-precision payloads and industry-specific application software, used in agricultural crop protection, logistics and delivery, powerline inspection, and public safety management.
 
-More than 200 employees, 60% of them researchers and developers. Core R&D staff graduated from the University of Bamenda, University of Buea, The Copperbelt University, Kwame Nkrumah University, Zambia University College of Technology (ZUT) and other universities. Most main parts are manufactured in-house.
+15 employees, 60% of them researchers and developers. Core R&D staff graduated from the University of Bamenda, University of Buea, The Copperbelt University, Kwame Nkrumah University, Zambia University College of Technology (ZUT) and other universities. Most main parts are manufactured in-house.
 
 700+ intellectual properties applied for and 500+ patents authorized for drones. Qualifications include High Technology Enterprise. The UAVs have passed Africa's harsh climate tests.
 

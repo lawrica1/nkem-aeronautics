@@ -11,7 +11,7 @@ import { TeamSection } from "@/components/TeamSection";
 const MILESTONES = [
   { icon: Rocket, value: "2022", label: "R&D initiated" },
   { icon: BadgeCheck, value: "2026", label: "Officially registered" },
-  { icon: Users, value: "200+", label: "Employees, 60% researchers & developers" },
+  { icon: Users, value: "15", label: "Employees, 60% researchers & developers" },
   { icon: FileText, value: "700+", label: "Intellectual properties applied for" },
   { icon: ShieldCheck, value: "500+", label: "Patents authorized for drones" },
 ];
@@ -57,7 +57,7 @@ function AboutTab() {
         safety management.
       </p>
       <p className="text-lg leading-relaxed text-brand-navy-dark">
-        Of more than 200 employees in our company, 60% are researchers and developers. The core
+        Of the 15 employees in our company, 60% are researchers and developers. The core
         R&amp;D personnel, having graduated from University of Bamenda, University of Buea, The
         Copperbelt University, Kwame Nkrumah University, Zambia University College of Technology
         (ZUT) and other well-known colleges and universities, possess rich experience and
