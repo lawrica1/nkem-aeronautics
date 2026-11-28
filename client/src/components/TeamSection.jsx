@@ -4,7 +4,10 @@ import { SectionHeading } from "@/components/SectionHeading";
 // People shown on the Company page. `photo: null` shows the person's initials until a photo is
 // added under public/images/team/ (800×1000 JPEG, portrait).
 const LEADERSHIP = [
-  { name: "Kemba Daniel Teba", role: "Chief Executive Officer", photo: "/images/team/kemba-daniel-teba.jpg" },
+  { name: "Kemba Daniel Teba", role: "Chief Executive Officer and Founder", photo: "/images/team/kemba-daniel-teba.jpg" },
+  { name: "Hellen Choweni", role: "Co-Founder", photo: "/images/team/hellen-choweni.jpg" },
+  { name: "Stephen Chola", role: "Co-Founder", photo: "/images/team/stephen-chola.jpg" },
+  { name: "Wilson Zulu", role: "Co-Founder", photo: "/images/team/wilson-zulu.jpg" },
   { name: "Ndi Denzel Ndang", role: "Chief Technology Officer", photo: "/images/team/ndi-denzel-ndang.jpg" },
   { name: "Narcisse Ndongkain", role: "Chief Information Officer", photo: "/images/team/narcisse-ndongkain.jpg" },
 ];
@@ -13,11 +16,8 @@ const TEAM = [
   { name: "Bekono Akono Marthe Lunya Lawrica", role: "Software Engineer", photo: "/images/team/bekono-akono-marthe-lunya-lawrica.jpg" },
   { name: "Chuye Princely Tata", role: "Software Engineer", photo: "/images/team/chuye-princely-tata.jpg" },
   { name: "Emarman Marie Virgine", role: "Digital Marketing", photo: "/images/team/emarman-marie-virgine.jpg" },
-  { name: "Hellen Choweni", role: "Co-Founder", photo: "/images/team/hellen-choweni.jpg" },
   { name: "Kang Fritz Andie", role: "Cybersecurity Engineer", photo: "/images/team/kang-fritz-andie.jpg" },
   { name: "Marie Doriane Edoa", role: "Secretary", photo: "/images/team/marie-doriane-edoa.jpg" },
-  { name: "Stephen Chola", role: "Co-Founder", photo: "/images/team/stephen-chola.jpg" },
-  { name: "Wilson Zulu", role: "Co-Founder", photo: "/images/team/wilson-zulu.jpg" },
 ];
 
 const initials = (name) =>
