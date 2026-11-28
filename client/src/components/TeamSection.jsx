@@ -19,6 +19,7 @@ const TEAM = [
   { name: "Isaac Nkhoma", role: "Economist", photo: "/images/team/isaac-nkhoma.jpg" },
   { name: "Kang Fritz Andie", role: "Cybersecurity Engineer", photo: "/images/team/kang-fritz-andie.jpg" },
   { name: "Marie Doriane Edoa", role: "Secretary", photo: "/images/team/marie-doriane-edoa.jpg" },
+  { name: "Muyunda Mwangala", role: "Research and Development", photo: "/images/team/muyunda-mwangala.jpg" },
 ];
 
 const initials = (name) =>
