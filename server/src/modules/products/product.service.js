@@ -63,6 +63,12 @@ async function uniqueSlug(name) {
   }
 }
 
+// Optional JSON columns: Prisma rejects a plain null, so "clear this field" becomes a database NULL.
+function nullJson(data) {
+  for (const key of ["specs", "keyFigures", "compare"]) if (data[key] === null) data[key] = Prisma.DbNull;
+  return data;
+}
+
 export async function create(body) {
   if (!body.name) throw new HttpError(400, "name is required.");
   if (!body.sector) throw new HttpError(400, "sector is required.");
@@ -82,7 +88,7 @@ export async function create(body) {
   if (data.family === "") data.family = null;
   data.slug = data.slug ? slugify(data.slug) : await uniqueSlug(data.name);
 
-  return prisma.product.create({ data });
+  return prisma.product.create({ data: nullJson(data) });
 }
 
 export async function update(id, body) {
@@ -96,7 +102,7 @@ export async function update(id, body) {
     data.price = body.price === "" || body.price === null ? null : Number(body.price);
   }
 
-  const product = await prisma.product.update({ where: { id }, data }).catch((err) => {
+  const product = await prisma.product.update({ where: { id }, data: nullJson(data) }).catch((err) => {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") return null;
     throw err;
   });

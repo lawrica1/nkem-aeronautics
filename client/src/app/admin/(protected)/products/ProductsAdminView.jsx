@@ -36,6 +36,7 @@ function toForm(product) {
     tagline: product?.tagline ?? "",
     thirdParty: product?.thirdParty ?? false,
     keyFigures: [0, 1, 2].map((i) => ({ value: product?.keyFigures?.[i]?.value ?? "", label: product?.keyFigures?.[i]?.label ?? "" })),
+    compare: product?.compare && typeof product.compare === "object" ? product.compare : {},
     // FileUpload works with asset objects; stored products only keep the URLs.
     images: (product?.images ?? []).map((url) => ({ id: url, url, mimeType: "image/", originalName: url.split("/").pop() })),
   };
@@ -56,9 +57,17 @@ function specsPayload(specList) {
   return groups;
 }
 
-function toPayload({ specList, keyFigures, ...form }) {
+// Only the chosen family's "At a glance" columns are saved; blank ones fall back to a same-named spec.
+function comparePayload(familyId, compare) {
+  const columns = PRODUCT_FAMILIES.find((f) => f.id === familyId)?.compare ?? [];
+  const filled = columns.filter((col) => String(compare[col] ?? "").trim()).map((col) => [col, String(compare[col]).trim()]);
+  return filled.length ? Object.fromEntries(filled) : null;
+}
+
+function toPayload({ specList, keyFigures, compare, ...form }) {
   return {
     ...form,
+    compare: comparePayload(form.family, compare),
     tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
     service: form.service || null,
     family: form.family || null,
@@ -199,6 +208,26 @@ export function ProductForm({ product, mutation, submitLabel, onDone, onCancel }
             ))}
           </div>
         </div>
+        {form.family && (
+          <div className="space-y-2 sm:col-span-2">
+            <Label>
+              At a glance <span className="font-normal text-muted-foreground">— the comparison table on the family page; a blank box uses the spec with the same name</span>
+            </Label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {PRODUCT_FAMILIES.find((f) => f.id === form.family)?.compare.map((col) => (
+                <div key={col} className="space-y-1">
+                  <label htmlFor={`compare-${col}`} className="text-xs text-muted-foreground">{col}</label>
+                  <input
+                    id={`compare-${col}`}
+                    className={fieldClass}
+                    value={form.compare[col] ?? ""}
+                    onChange={(e) => setForm({ ...form, compare: { ...form.compare, [col]: e.target.value } })}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <label className="flex items-center gap-2 text-sm text-brand-navy-dark sm:col-span-2">
           <input type="checkbox" checked={form.thirdParty} onChange={(e) => setForm({ ...form, thirdParty: e.target.checked })} />
           Partner product (made by another company, e.g. DJI). Adds a trademark note.
