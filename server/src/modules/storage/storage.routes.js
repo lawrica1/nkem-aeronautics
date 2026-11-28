@@ -7,3 +7,4 @@ import { uploadSingleFile } from "./upload.middleware.js";
 export const storageRouter = Router();
 
 storageRouter.post("/uploads", requireUser, uploadSingleFile, asyncHandler(controller.upload));
+storageRouter.get(/^\/public\/(.+)$/, asyncHandler(controller.publicFile));

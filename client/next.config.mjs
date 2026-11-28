@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from "./src/lib/api.js";
+
 /** @type {import('next').NextConfig} */
 
 // Product pages moved to the standardized NKM model codes (Oct 2026). Old links keep working.
@@ -16,6 +18,13 @@ const RENAMED_PRODUCTS = {
 
 const nextConfig = {
   output: "standalone",
+  images: {
+    // Admin-uploaded website photos: a permanent API address that redirects to a fresh signed
+    // storage link (server/src/modules/storage). No query strings, nothing else on the API host.
+    remotePatterns: [new URL(`${getApiBaseUrl()}/storage/public/**`)],
+    // The dev API runs on 127.0.0.1, which Next 16 refuses to optimise from by default.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
+  },
   async redirects() {
     return Object.entries(RENAMED_PRODUCTS).map(([from, to]) => ({
       source: `/products/${from}`,

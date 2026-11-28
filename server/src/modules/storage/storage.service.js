@@ -24,9 +24,38 @@ function getStorageClient() {
   return client;
 }
 
+// Photos shown on the public site. Only admins may upload them, only as images, and they are served
+// from a permanent API address (/api/storage/public/<key>) that redirects to a fresh signed link,
+// so a saved URL never expires. Everything else stays private behind short-lived signed links.
+export const PUBLIC_PURPOSES = ["product-photos", "drone-photos", "news"];
+const PUBLIC_KEY = /^(product-photos|drone-photos|news)\/\d{4}-\d{2}-\d{2}\/[0-9a-f-]{36}(\.[a-z0-9]+)?$/;
+
+export const isPublicKey = (key) => PUBLIC_KEY.test(key);
+export const publicUrlForKey = (apiOrigin, key) => `${apiOrigin}/api/storage/public/${key}`;
+
+// The object key inside one of our storage URLs (a signed https link or an s3:// reference), else null.
+export function storageKeyFromUrl(url) {
+  try {
+    const bucket = requireEnv("STORAGE_BUCKET", env.storageBucket);
+    const u = new URL(url);
+    if (u.protocol === "s3:") return u.hostname === bucket ? decodeURIComponent(u.pathname.slice(1)) : null;
+    const endpointHost = new URL(requireEnv("AWS_ENDPOINT_URL_S3", env.storageEndpoint)).host;
+    const prefix = `/${bucket}/`;
+    return u.host === endpointHost && u.pathname.startsWith(prefix) ? decodeURIComponent(u.pathname.slice(prefix.length)) : null;
+  } catch {
+    return null;
+  }
+}
+
+// Re-signs a saved storage link (signed links expire); anything else is returned unchanged.
+export async function freshStorageUrl(url) {
+  const key = url && storageKeyFromUrl(url);
+  return key ? signedUrlForKey(key) : url;
+}
+
 function extensionFor(file) {
-  const ext = path.extname(file.originalname || "").toLowerCase();
-  if (ext) return ext;
+  const ext = path.extname(file.originalname || "").toLowerCase().replace(/[^.a-z0-9]/g, "");
+  if (ext.length > 1) return ext;
 
   const [, subtype] = file.mimetype.split("/");
   return subtype ? `.${subtype.replace(/[^a-z0-9]/gi, "")}` : "";

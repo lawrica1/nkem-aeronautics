@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 import { HttpError } from "../../shared/errors/HttpError.js";
 import { nextEmployeeId } from "../logbooks/counter.model.js";
+import { freshStorageUrl } from "../storage/storage.service.js";
 
 const CARD_TYPES = ["director", "employee"];
 const STATUSES = ["active", "lost", "returned"];
@@ -20,8 +21,12 @@ function toPhotoUrl(value) {
   return String(value);
 }
 
+// Photos live in private storage behind signed links that expire, so re-sign on every read.
+const withFreshPhoto = async (card) => ({ ...card, photoUrl: await freshStorageUrl(card.photoUrl) });
+
 export async function list() {
-  return prisma.idCard.findMany({ orderBy: { createdAt: "desc" } });
+  const cards = await prisma.idCard.findMany({ orderBy: { createdAt: "desc" } });
+  return Promise.all(cards.map(withFreshPhoto));
 }
 
 export async function create(body) {
@@ -33,7 +38,7 @@ export async function create(body) {
   const expiryDate = toDate(body.expiryDate, "Expiry date");
   if (expiryDate <= issueDate) throw new HttpError(400, "Expiry date must be after the issue date.");
 
-  return prisma.idCard.create({
+  const card = await prisma.idCard.create({
     data: {
       employeeId: await nextEmployeeId(body.cardType),
       ...Object.fromEntries(TEXT_FIELDS.map((key) => [key, String(body[key]).trim()])),
@@ -44,6 +49,7 @@ export async function create(body) {
       photoUrl: toPhotoUrl(body.photoUrl),
     },
   });
+  return withFreshPhoto(card);
 }
 
 // employeeId and cardType are printed on the card, so they stay fixed; a wrong type means a new card.
@@ -68,7 +74,7 @@ export async function update(id, body) {
     throw err;
   });
   if (!card) throw new HttpError(404, "ID card not found.");
-  return card;
+  return withFreshPhoto(card);
 }
 
 export async function remove(id) {
