@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 // People shown on the Company page. `photo: null` shows the person's initials until a photo is
 // added under public/images/team/ (800×1000 JPEG, portrait).
 const LEADERSHIP = [
+  { name: "Teba Abel Kemba", role: "Chairman", photo: "/images/team/teba-abel-kemba.jpg" },
   { name: "Kemba Daniel Teba", role: "Chief Executive Officer and Founder", photo: "/images/team/kemba-daniel-teba.jpg" },
   { name: "Hellen Choweni", role: "Co-Founder", photo: "/images/team/hellen-choweni.jpg" },
   { name: "Stephen Chola", role: "Co-Founder", photo: "/images/team/stephen-chola.jpg" },
